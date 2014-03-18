@@ -100,7 +100,7 @@ bool SpellInstance::isColliding() const
 
 void SpellInstance::explodeSpell(IPhysics* p_Physics, const HitData& p_Hit, BodyHandle p_CasterBody)
 {
-	float modifier = -1.f;
+	float modifier = -.6f;
 	float casterEffectModifier = 4.f;
 
 	if(p_Hit.IDInBody == 1)
@@ -116,7 +116,12 @@ void SpellInstance::explodeSpell(IPhysics* p_Physics, const HitData& p_Hit, Body
 		{
 			p_Physics->applyImpulse(p_Hit.collider, vTemp.xyz() * casterEffectModifier  * p_Physics->getTimestep());
 		}
-
-
+		Vector3 currentVelocity = p_Physics->getBodyVelocity(p_Hit.collider);
+		float currentSpeedSq = currentVelocity.x * currentVelocity.x + currentVelocity.y * currentVelocity.y + currentVelocity.z * currentVelocity .z;
+		static const float maxSpellFlySpeed = 2500.f;
+		if (currentSpeedSq > maxSpellFlySpeed * maxSpellFlySpeed)
+		{
+			p_Physics->setBodyVelocity(p_Hit.collider, currentVelocity * (maxSpellFlySpeed / sqrtf(currentSpeedSq)));
+		}
 	}
 }
