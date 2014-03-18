@@ -49,7 +49,7 @@ bool HUDScene::init(unsigned int p_SceneID, IGraphics *p_Graphics, ResourceManag
 	Input *p_InputQueue, GameLogic *p_GameLogic, EventManager *p_EventManager)
 {
 	m_SceneID = p_SceneID;
-	m_GUIFont = "StoneHenge";
+	m_GUIFont = "Calibri";
 	m_Graphics = p_Graphics;
 	m_EventManager = p_EventManager;
 	m_ResourceManager = p_ResourceManager;
@@ -115,7 +115,7 @@ void HUDScene::onFrameTimeElement(float p_DeltaTime)
 		m_Graphics->set2D_ObjectPosition(m_GUI["Time"], position);
 
 		m_Graphics->set2D_ObjectScale(m_GUI["TimeBG"], m_TimeScale);
-		m_Graphics->setTextColor(m_TextHandle["TimeBG"], Vector4(m_BGColor, percentage));
+		m_Graphics->setTextColor(m_TextHandle["TimeBG"], Vector4(m_BGColor, percentage*0.8f));
 		m_Graphics->set2D_ObjectPosition(m_GUI["TimeBG"], Vector3(position.x-2, position.y-2, position.z+1));
 	}
 
@@ -571,15 +571,15 @@ void HUDScene::createTimeElement()
 	m_TimeScale = scale;
 
 	m_TimePosition = pos;
-	createTextElement("Time", m_Graphics->createText(L"00:00.00", Vector2(300.f, 80.f), m_GUIFont.c_str(), 72.f, Vector4(m_Color, 0.f), Vector3(0.f, 0.f, 0.f), 1.f, 0.f));
+	createTextElement("Time", m_Graphics->createText(L"+00:00.00", m_GUIFont.c_str(), 72.f, Vector4(m_Color, 0.f), Vector3(0.f, 0.f, 0.f), 1.f, 0.f));
 	createGUIElement("Time", m_Graphics->create2D_Object(m_TimePosition, scale, 0.f, m_TextHandle["Time"]));
 	m_Graphics->setTextBackgroundColor(m_TextHandle["Time"], Vector4(m_Color, 0.0f));
-	createTextElement("TimeBG", m_Graphics->createText(L"00:00.00", Vector2(300.f, 80.f), m_GUIFont.c_str(), 72.f, Vector4(m_Color, 0.f), Vector3(0.f, 0.f, 0.f), 1.f, 0.f));
+	createTextElement("TimeBG", m_Graphics->createText(L"+00:00.00", m_GUIFont.c_str(), 72.f, Vector4(m_BGColor, 0.f), Vector3(0.f, 0.f, 0.f), 1.f, 0.f));
 	createGUIElement("TimeBG", m_Graphics->create2D_Object(Vector3(m_TimePosition.x-2, m_TimePosition.y-2, m_TimePosition.z+1), scale, 0.f, m_TextHandle["TimeBG"]));
 	m_Graphics->setTextAlignment(m_TextHandle["Time"], TEXT_ALIGNMENT::JUSTIFIED);
 	m_Graphics->setTextAlignment(m_TextHandle["TimeBG"], TEXT_ALIGNMENT::JUSTIFIED);
 
-	createTextElement("TimeFlash", m_Graphics->createText(L"00:00.00", Vector2(500.f, 300.f), m_GUIFont.c_str(), 72.f, Vector4(1.f, 1.f, 1.f, 0.f), Vector3(0.f, 0.f, 0.f), 1.f, 0.f));
+	createTextElement("TimeFlash", m_Graphics->createText(L"+00:00.00", m_GUIFont.c_str(), 72.f, Vector4(1.f, 1.f, 1.f, 0.f), Vector3(0.f, 0.f, 0.f), 1.f, 0.f));
 	createGUIElement("TimeFlash", m_Graphics->create2D_Object(Vector3(0.f, 150.f, 0.f), scale, 0.f, m_TextHandle["TimeFlash"]));
 	
 	pos = Vector3(420, 250, 1);
@@ -591,11 +591,11 @@ void HUDScene::createTimeElement()
 	createTextElement("ElapsedTime", m_Graphics->createText(L"00:00.00", Vector2(300.f, 80.f), m_GUIFont.c_str(), 72.f, Vector4(m_Color, 0.f), Vector3(0.f, 0.f, 0.f), 1.f, 0.f));
 	createGUIElement("ElapsedTime", m_Graphics->create2D_Object(Vector3(pos.x+19.f, pos.y, pos.z), scale, 0.f, m_TextHandle["ElapsedTime"]));
 
-	createTextElement("ElapsedTimeBG", m_Graphics->createText(L"00:00.00", Vector2(300.f, 80.f), m_GUIFont.c_str(), 72.f, Vector4(m_BGColor, 0.f), Vector3(0.f, 0.f, 0.f), 1.f, 0.f));
+	createTextElement("ElapsedTimeBG", m_Graphics->createText(L"00:00.00", Vector2(300.f, 80.f), m_GUIFont.c_str(), 72.f, Vector4(m_BGColor, 0.8f), Vector3(0.f, 0.f, 0.f), 1.f, 0.f));
 	createGUIElement("ElapsedTimeBG", m_Graphics->create2D_Object(Vector3(pos.x+17, pos.y-2, pos.z+1), scale, 0.f, m_TextHandle["ElapsedTimeBG"]));
 
 	m_Graphics->setTextColor(m_TextHandle["ElapsedTime"], Vector4(m_Color, 1.0f));
-	m_Graphics->setTextColor(m_TextHandle["ElapsedTimeBG"], Vector4(m_BGColor, 1.0f));
+	m_Graphics->setTextColor(m_TextHandle["ElapsedTimeBG"], Vector4(m_BGColor, 0.8f));
 	m_Graphics->setTextAlignment(m_TextHandle["ElapsedTime"], TEXT_ALIGNMENT::JUSTIFIED);
 	m_Graphics->setTextAlignment(m_TextHandle["ElapsedTimeBG"], TEXT_ALIGNMENT::JUSTIFIED);
 }

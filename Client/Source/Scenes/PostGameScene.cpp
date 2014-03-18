@@ -94,12 +94,12 @@ void PostGameScene::preLoadModels()
 	static const Vector3 shadowColor(0.8156862745098039f, 0.8156862745098039f, 0.8156862745098039f);
 
 	static const wchar_t* headerText = L"Goal time";
-	static const char* headerFont = "StoneHenge";
+	static const char* headerFont = "Sketch Gothic School";
 	static const float headerFontSize = 100.f;
 	static const Vector3 headerPos(0.f, 250.f, 2.f);
 	static const Vector3 shadowOffset(-3.f, -2.f, 1.f);
 
-	static const char* listFont = "StoneHenge";
+	static const char* listFont = "Calibri";
 	static const float listFontSize = 24.f;
 	static const Vector4 listForground(1.f, 1.f, 1.f, 1.f);
 	static const Vector4 listBackground(darkBlue, 0.4f);
