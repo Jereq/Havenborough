@@ -316,8 +316,8 @@ we	0.7
 *Clip
 na 	SideJumpRight
 sp 	1.0
-st 	208
-en 	227
+st 	228
+en 	247
 lo 	1
 f	Hip
 tr	2
@@ -331,8 +331,8 @@ we	1.0
 *Clip
 na 	SideJumpLeft
 sp 	1.0
-st 	228
-en 	247
+st 	208
+en 	227
 lo 	1
 f	Hip
 tr	2
