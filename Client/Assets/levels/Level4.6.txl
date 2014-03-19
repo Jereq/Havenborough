@@ -1,5 +1,5 @@
 *ObjectHeader*
-#numObj: 3581
+#numObj: 3582
 
 #MESH: Island1
 #Translation: -6468.859375 0 -30278.160156
@@ -17905,6 +17905,11 @@
 #Translation: -12660.494141 3238.08252 -11855.731445
 #Rotation: -0.157961 -0.656236 -1.339746
 #Scale: 0.795393 0.795393 0.795393
+
+#MESH: WoodenPlatform3
+#Translation: -12244.118164 3149.756104 -11110.954102
+#Rotation: -2.62574 0 0
+#Scale: 1 1 1
 
 *LightHeader*
 #numLights 59
