@@ -1,5 +1,5 @@
 *ObjectHeader*
-#numObj: 3572
+#numObj: 3581
 
 #MESH: Island1
 #Translation: -6468.859375 0 -30278.160156
@@ -1947,12 +1947,7 @@
 #Scale: 1 1 1
 
 #MESH: Floor6
-#Translation: -13763.079102 3206.181641 -11022.167969
-#Rotation: 2.090782 0 0
-#Scale: 1 1 1
-
-#MESH: Floor6
-#Translation: -12721.054688 3206.181885 -11622.454102
+#Translation: -13763.079102 3206.181885 -11022.167969
 #Rotation: 2.090782 0 0
 #Scale: 1 1 1
 
@@ -3507,7 +3502,7 @@
 #Scale: 1 1 1
 
 #MESH: SuspensionBridge1
-#Translation: -14836.436523 5536.689941 -8545.96582
+#Translation: -14788.800781 5536.689941 -8462.764648
 #Rotation: 2.090782 -0.177974 0
 #Scale: 1 1 1
 
@@ -7692,6 +7687,21 @@
 #Scale: 1.55 1 1
 
 #MESH: StoneBrick2
+#Translation: -6589.751953 6585.96875 -841.446777
+#Rotation: -1.088213 0 0
+#Scale: 1.55 1 1
+
+#MESH: StoneBrick2
+#Translation: -6703.743164 6585.96875 -1059.029053
+#Rotation: -1.088213 0 0
+#Scale: 1.75 1 1
+
+#MESH: StoneBrick2
+#Translation: -6822.966309 6585.96875 -1286.598267
+#Rotation: -1.088213 0 0
+#Scale: 1.75 1 1
+
+#MESH: StoneBrick2
 #Translation: -9333.738281 6585.96875 -6079.071289
 #Rotation: -1.088213 0 0
 #Scale: 1.924199 1 1
@@ -7795,21 +7805,6 @@
 #Translation: -6942.189941 6585.96875 -1514.167358
 #Rotation: -1.088213 0 0
 #Scale: 1.75 1 1
-
-#MESH: StoneBrick2
-#Translation: -6822.966309 6585.96875 -1286.598267
-#Rotation: -1.088213 0 0
-#Scale: 1.75 1 1
-
-#MESH: StoneBrick2
-#Translation: -6703.743164 6585.96875 -1059.029053
-#Rotation: -1.088213 0 0
-#Scale: 1.75 1 1
-
-#MESH: StoneBrick2
-#Translation: -6589.751953 6585.96875 -841.446777
-#Rotation: -1.088213 0 0
-#Scale: 1.55 1 1
 
 #MESH: StoneBrick2
 #Translation: 780.948181 6590.849121 -4728.671387
@@ -14123,7 +14118,7 @@
 
 #MESH: Tunnel1
 #Translation: -7554.920898 4835.163086 -8066.568848
-#Rotation: -1.068979 0 0
+#Rotation: -1.066745 0 0
 #Scale: 1 1 1
 
 #MESH: Tunnel2
@@ -17861,6 +17856,56 @@
 #Rotation: -0.979696 0 0
 #Scale: 1 1 1
 
+#MESH: Floor8
+#Translation: -12721.054688 3206.181885 -11622.454102
+#Rotation: -2.60466 0 0
+#Scale: 1 1 1
+
+#MESH: Barrel1
+#Translation: -12635.476563 3246.576904 -11681.379883
+#Rotation: -0.0991322 0 0
+#Scale: 0.795393 0.795393 0.795393
+
+#MESH: Crate1
+#Translation: -12550.208008 3247.38501 -11673.488281
+#Rotation: 1.259689 0 0
+#Scale: 1 1 1
+
+#MESH: Barrel1
+#Translation: -12688.270508 3246.576904 -11648.686523
+#Rotation: -0.0991322 0 0
+#Scale: 0.795393 0.795393 0.795393
+
+#MESH: Crate1
+#Translation: -12634.333984 3247.38501 -11766.019531
+#Rotation: 1.259689 0 0
+#Scale: 1 1 1
+
+#MESH: Crate1
+#Translation: -12751.513672 3247.38501 -11799.820313
+#Rotation: 1.873929 0 0
+#Scale: 1 1 1
+
+#MESH: Barrel1
+#Translation: -12709.860352 3246.576904 -11711.458984
+#Rotation: -0.0991322 0 0
+#Scale: 0.795393 0.795393 0.795393
+
+#MESH: Crate1
+#Translation: -12538.072266 3247.38501 -11768.109375
+#Rotation: 1.5748 0 0
+#Scale: 1 1 1
+
+#MESH: Crate1
+#Translation: -12570.491211 3326.98584 -11728.748047
+#Rotation: 1.5748 0 0
+#Scale: 1 1 1
+
+#MESH: Barrel1
+#Translation: -12660.494141 3238.08252 -11855.731445
+#Rotation: -0.157961 -0.656236 -1.339746
+#Scale: 0.795393 0.795393 0.795393
+
 *LightHeader*
 #numLights 59
 
@@ -17921,12 +17966,6 @@ Intensity: 0.3
 
 #Light: pointLightShape11
 #Translation: -7037.918945 279.952759 -31245.486328
-Color: 0.745098 0.543009 0.0438293
-Type: kPointLight
-Intensity: 0.3
-
-#Light: pointLightShape12
-#Translation: -15925.444336 8120.751953 -4421.037598
 Color: 0.745098 0.543009 0.0438293
 Type: kPointLight
 Intensity: 0.3
@@ -18075,8 +18114,8 @@ Color: 0.745098 0.543009 0.0438293
 Type: kPointLight
 Intensity: 0.3
 
-#Light: pointLightShape42
-#Translation: -13844.116211 8090.024902 -4514.208984
+#Light: pointLightShape12
+#Translation: -15925.444336 8120.751953 -4421.037598
 Color: 0.745098 0.543009 0.0438293
 Type: kPointLight
 Intensity: 0.3
@@ -18107,6 +18146,12 @@ Intensity: 0.3
 
 #Light: pointLightShape41
 #Translation: -14065.209961 8090.024902 -1924.899536
+Color: 0.745098 0.543009 0.0438293
+Type: kPointLight
+Intensity: 0.3
+
+#Light: pointLightShape42
+#Translation: -13844.116211 8090.024902 -4514.208984
 Color: 0.745098 0.543009 0.0438293
 Type: kPointLight
 Intensity: 0.3
@@ -18611,14 +18656,6 @@ Translation: -7954.16476 6595.916912 -6793.018746
 #Translation: -7037.602769 274.137367 -31246.967315
 #Rotation: -2.748195 0 0
 
-#Effect: smoke
-#Translation: -15925.887968 8141.04357 -4423.587426
-#Rotation: -0.789228 0 0
-
-#Effect: fire
-#Translation: -15926.935898 8114.936653 -4420.769618
-#Rotation: -0.789228 0 0
-
 #Effect: fire
 #Translation: -15489.373657 8114.936653 -3979.842919
 #Rotation: -0.789228 0 0
@@ -18803,12 +18840,12 @@ Translation: -7954.16476 6595.916912 -6793.018746
 #Translation: -19172.453876 9455.960509 -1210.664007
 #Rotation: -0.789228 0 0
 
-#Effect: fire
-#Translation: -13845.607422 8084.209722 -4513.94106
+#Effect: smoke
+#Translation: -15925.887968 8141.04357 -4423.587426
 #Rotation: -0.789228 0 0
 
-#Effect: smoke
-#Translation: -13844.559492 8110.316639 -4516.758868
+#Effect: fire
+#Translation: -15926.935898 8114.936653 -4420.769618
 #Rotation: -0.789228 0 0
 
 #Effect: fire
@@ -18850,6 +18887,14 @@ Translation: -7954.16476 6595.916912 -6793.018746
 #Effect: smoke
 #Translation: -14067.10521 8110.316639 -1926.662177
 #Rotation: -0.139782 0 0
+
+#Effect: fire
+#Translation: -13845.607422 8084.209722 -4513.94106
+#Rotation: -0.789228 0 0
+
+#Effect: smoke
+#Translation: -13844.559492 8110.316639 -4516.758868
+#Rotation: -0.789228 0 0
 
 #Effect: smoke
 #Translation: -1555.525259 5183.916348 5938.390196
