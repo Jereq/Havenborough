@@ -493,7 +493,7 @@ bool Graphics::releaseTexture(const char *p_TextureId)
 	return false;
 }
 
-bool Graphics::createParticleEffectDefinition(const char * /*p_FileId*/, const char *p_FilePath)
+bool Graphics::createParticleEffectDefinition(const char * p_FileId, const char *p_FilePath)
 {
 	std::vector<ParticleEffectDefinition::ptr> tempList = m_ParticleFactory->createParticleEffectDefinition(p_FilePath);
 	

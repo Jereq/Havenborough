@@ -89,9 +89,9 @@ bool GameScene::init(unsigned int p_SceneID, IGraphics *p_Graphics, ResourceMana
 	TweakSettings* tweakSettings = TweakSettings::getInstance();
 	tweakSettings->setListener("camera.flipped", std::function<void(bool)>([&] (bool p_Val) { m_UseFlippedCamera = p_Val; }));
 
-	unsigned int id = m_Graphics->createText(L"Press again to exit \nPress any key to continue     ", "Verdana", 27.f, Vector4(0.8f, 0.8f, 0.8f, 1.f), Vector3(0.0f, 0.0f, 0.0f), 1.0f, 0.f);
-	m_Graphics->setTextBackgroundColor(id, Vector4(0.f, 0.f, 0.f, 0.4f));
-	m_PauseId = m_Graphics->create2D_Object(Vector3(0,0,0), Vector3(1,1,1), 0.f, id);
+	m_ExitTextId = m_Graphics->createText(L"Press again to exit \nPress any key to continue     ", "Verdana", 27.f, Vector4(0.8f, 0.8f, 0.8f, 1.f), Vector3(0.0f, 0.0f, 0.0f), 1.0f, 0.f);
+	m_Graphics->setTextBackgroundColor(m_ExitTextId, Vector4(0.f, 0.f, 0.f, 0.4f));
+	m_PauseId = m_Graphics->create2D_Object(Vector3(0,0,0), Vector3(1,1,1), 0.f, m_ExitTextId);
 	m_RenderPause = false;
 
 	return true;
@@ -101,6 +101,8 @@ void GameScene::destroy()
 {
 	releasePreLoadedModels();
 	m_ResourceManager->releaseResource(m_SkyboxID);
+	m_Graphics->deleteText(m_ExitTextId);
+	m_Graphics->release2D_Model(m_PauseId);
 }
 
 void GameScene::onFrame(float p_DeltaTime, int* p_IsCurrentScene)

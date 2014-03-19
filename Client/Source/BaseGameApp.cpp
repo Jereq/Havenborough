@@ -273,12 +273,15 @@ void BaseGameApp::shutdown()
 	IPhysics::deletePhysics(m_Physics);
 	m_Physics = nullptr;
 	
-	m_Sound->stopSound(m_BackgroundSoundID);
-	m_Sound->releaseInstance(m_BackgroundSoundID);
+	if(m_BackgroundSoundsList.size() != 0)
+	{
+		m_Sound->stopSound(m_BackgroundSoundID);
+		m_Sound->releaseInstance(m_BackgroundSoundID);
+	}
 	m_ResourceManager->unregisterResourceType("sound");
 	ISound::deleteSound(m_Sound);
 	m_Sound = nullptr;
-
+	
 	m_ResourceManager->unregisterResourceType("model");
 	m_ResourceManager->unregisterResourceType("particleSystem");
 	m_ResourceManager->unregisterResourceType("texture");
@@ -467,10 +470,13 @@ void BaseGameApp::render()
 void BaseGameApp::startGame(IEventData::Ptr p_Data)
 {
 	m_SceneManager.startRun();
-	m_BackgroundSoundID = m_Sound->createSoundInstance("Background");
-	m_Sound->setSoundModes(m_BackgroundSoundID, false, true);
-	m_Sound->addSoundToGroup(m_BackgroundSoundID, ISound::ChannelGroup::MUSIC);
-	m_Sound->playSound(m_BackgroundSoundID);
+	if(m_BackgroundSoundsList.size() != 0)
+	{
+		m_BackgroundSoundID = m_Sound->createSoundInstance("Background");
+		m_Sound->setSoundModes(m_BackgroundSoundID, false, true);
+		m_Sound->addSoundToGroup(m_BackgroundSoundID, ISound::ChannelGroup::MUSIC);
+		m_Sound->playSound(m_BackgroundSoundID);
+	}
 }
 
 void BaseGameApp::quitGame(IEventData::Ptr p_Data)
