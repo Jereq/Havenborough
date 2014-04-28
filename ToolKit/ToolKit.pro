@@ -16,8 +16,15 @@ win32 {
 }
 
 SOURCES += Source/main.cpp\
-        Source/MainWindow.cpp
+        Source/MainWindow.cpp \
+    Source/TreeItem.cpp \
+    Source/TreeFilter.cpp
 
-HEADERS  += Source/MainWindow.h
+HEADERS  += Source/MainWindow.h \
+    Source/TreeItem.h \
+    Source/TreeFilter.h
 
 FORMS    += Source/MainWindow.ui
+
+RESOURCES += \
+    Resources.qrc
