@@ -108,6 +108,11 @@ private:
 			position(p_Pos), direction(p_Dir)
 		{
 		}
+		Ray() :
+			position(XMFLOAT4(0.f, 0.f, 0.f, 0.f)), direction(XMFLOAT4(0.f, 0.f, 0.f, 0.f))
+		{
+			
+		}
 	};
 };
 

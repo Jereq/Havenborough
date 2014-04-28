@@ -1010,7 +1010,20 @@ bool Collision::raySphereIntersect(const XMFLOAT2 &p_MousePos, const XMFLOAT2 &p
 	if(s < 0 && lengthSquared > radiusSquared)
 		return false; //miss
 
+	//squared distance from sphere center to projection
+	float m = lengthSquared - (s*s);
 
+	if(m > radiusSquared)
+		return false; //miss
+	
+	float q = radiusSquared - m;
+	q = XMVectorSqrt(XMVectorSet(q, q, q, q)).m128_f32[0];
+
+	if(lengthSquared > radiusSquared)
+	{
+		float t = s - q;
+		//if(t < )
+	}
 
 	return true;
 }
