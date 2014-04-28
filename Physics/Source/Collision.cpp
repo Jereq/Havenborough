@@ -967,3 +967,50 @@ bool Collision::checkCollision(XMVECTOR p_Axis, float p_TriangleProjection0, flo
 	}
 	return true;
 }
+
+bool Collision::raySphereIntersect(const XMFLOAT2 &p_MousePos, const XMFLOAT2 &p_WindowSize ,const Sphere &p_Sphere, const XMFLOAT4X4 &p_Projection, const XMFLOAT4X4 &p_View)
+{
+	XMFLOAT4 fRay;
+
+	//transfrom ray from screen to view space.
+	fRay.x = (((2.0f * p_MousePos.x)/p_WindowSize.x) - 1.0f) / p_Projection._11;
+	fRay.y = -(((2.0f * p_MousePos.y)/p_WindowSize.y) - 1.0f) / p_Projection._22;
+	fRay.z = 1.0f;
+	fRay.w = 0.0f;
+
+	//View matrix invers needed to transform ray from view to world space.
+	XMMATRIX viewInverse = XMLoadFloat4x4(&p_View);
+	viewInverse = XMMatrixInverse(&XMVectorSet(0.f, 0.f, 0.f, 0.f), viewInverse);
+	XMVECTOR vRay = XMLoadFloat4(&fRay); 
+	
+	//transform to world space
+	XMVECTOR rayInWorld = XMVector3TransformCoord(XMVectorSet(0.f, 0.f, 0.f, 0.f), viewInverse);
+	XMVECTOR rayDirWorld = XMVector3TransformNormal(vRay, viewInverse);
+	rayDirWorld = XMVector4Normalize(rayDirWorld);
+
+	//Create ray.
+	Ray r;
+	XMStoreFloat4(&r.position, rayInWorld);
+	XMStoreFloat4(&r.direction, rayDirWorld);
+
+
+	//Intersection test starts
+
+	//Transfrom to object space?
+	float deltaDistance = 0.001f;
+	XMVECTOR spherePos = XMLoadFloat4(&p_Sphere.getPosition());
+
+	XMVECTOR length = spherePos - rayInWorld;
+	//projection of lenght onto ray direction
+	float s = XMVector3Dot(length, rayDirWorld).m128_f32[0];
+
+	float lengthSquared = XMVector3Dot(length, length).m128_f32[0];
+	float radiusSquared = p_Sphere.getSqrRadius();
+
+	if(s < 0 && lengthSquared > radiusSquared)
+		return false; //miss
+
+
+
+	return true;
+}

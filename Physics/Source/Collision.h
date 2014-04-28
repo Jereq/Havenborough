@@ -90,11 +90,24 @@ public:
 	*/
 	static HitData HullVsSphere(Hull const &p_Hull, Sphere const &p_Sphere);
 
+	static bool raySphereIntersect(const XMFLOAT2 &p_MousePos, const XMFLOAT2 &p_WindowSize ,const Sphere &p_Sphere, const XMFLOAT4X4 &p_Projection, const XMFLOAT4X4 &p_View);
+
 private:
 	static HitData SATBoxVsBox(OBB const &p_OBB, BoundingVolume const &p_vol);
 	static HitData SATBoxVsHull(OBB const &p_OBB, Hull const &p_Hull);
 	static void checkCollisionDepth(float p_RA, float p_RB, float p_R, float &p_Overlap, DirectX::XMVECTOR p_L, DirectX::XMVECTOR &p_Least);
 	static bool checkCollision(DirectX::XMVECTOR p_Axis, float p_TriangleProjection0, float p_TriangleProjection1,
 							   float p_BoxProjection, float &p_Overlap, DirectX::XMVECTOR &p_Least);
+
+	struct Ray
+	{
+		DirectX::XMFLOAT4 position;
+		DirectX::XMFLOAT4 direction;
+
+		Ray(DirectX::XMFLOAT4 p_Pos, DirectX::XMFLOAT4 p_Dir) :
+			position(p_Pos), direction(p_Dir)
+		{
+		}
+	};
 };
 
