@@ -54,3 +54,9 @@ BoostTest/Bin/SplineTest.xml
 *.psess
 Client/Bin/The Apprentice of Havenborough.exe.config
 Client/Bin/The Apprentice of Havenborough.vshost.exe.config
+
+# Qt generated files
+ToolKit/ToolKit.pro.user
+build-ToolKit-Desktop_Qt_5_2_1_MSVC2012_32bit-Debug/ToolKit.vcxproj
+build-ToolKit-Desktop_Qt_5_2_1_MSVC2012_32bit-Debug/ToolKit.vcxproj.filters
+build-ToolKit-Desktop_Qt_5_2_1_MSVC2012_32bit-Debug/ui_*
