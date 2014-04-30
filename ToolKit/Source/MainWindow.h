@@ -22,6 +22,8 @@ private slots:
 
     void on_actionObject_Tree_triggered();
 
+    void on_actionExit_triggered();
+
 private:
 	Ui::MainWindow *ui;
 };

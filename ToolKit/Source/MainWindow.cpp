@@ -33,12 +33,22 @@ void MainWindow::on_m_ObjectTreeAddButton_clicked()
 {
     TreeFilter *newFilter = new TreeFilter("NewFilter");
 
-	QTreeWidgetItem * currItem = ui->m_ObjectTree->currentItem()->parent();
+    QTreeWidgetItem *currItem = ui->m_ObjectTree->currentItem();
+    QTreeWidgetItem *currItemParent = currItem->parent();
 
-	if(currItem)
-		currItem->addChild(newFilter);
-	else
-		ui->m_ObjectTree->addTopLevelItem(newFilter);
+    TreeFilter *cFilter = dynamic_cast<TreeFilter*>(currItem);
+
+    if(cFilter)
+    {
+        currItem->addChild(newFilter);
+    }
+    else
+    {
+        if(currItemParent)
+            currItemParent->addChild(newFilter);
+        else
+            ui->m_ObjectTree->addTopLevelItem(newFilter);
+    }
 }
 
 void MainWindow::on_m_ObjectTreeRemoveButton_clicked()
@@ -50,4 +60,9 @@ void MainWindow::on_m_ObjectTreeRemoveButton_clicked()
 void MainWindow::on_actionObject_Tree_triggered()
 {
     ui->m_ObjectDockableWidget->show();
+}
+
+void MainWindow::on_actionExit_triggered()
+{
+    exit(0);
 }
