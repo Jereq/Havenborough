@@ -386,6 +386,11 @@ void GameScene::registeredInput(std::string p_Action, float p_Value, float p_Pre
 	{
 		m_GameLogic->setPlayerClimb(p_Value > 0.5f);
 	}
+	else if(p_Action == "activatePie")
+	{
+		std::shared_ptr<MouseEventDataPie> mousePos(new MouseEventDataPie(Vector2(0.f, 0.f), p_Value > 0.5f));
+		m_EventManager->queueEvent(mousePos);
+	}
 	else if (p_Action == "lookRight")
 	{
 		m_GameLogic->movePlayerView(p_Value * m_ViewSensitivity, 0.f);
