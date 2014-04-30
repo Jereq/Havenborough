@@ -199,6 +199,12 @@ public:
 	 */
 	float getOriginalFOV() const;
 	
+	/**
+	 * Casts a ray from the mouse position
+	 * 
+	 * @p_MousePos the mouse position in screen space.
+	 */
+	void castRay(const DirectX::XMFLOAT4 &p_RayDir, const DirectX::XMFLOAT4 &p_RayOrigin);
 private:
 	void handleNetwork();
 	void joinGame();

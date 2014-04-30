@@ -343,7 +343,7 @@ void GameScene::registeredInput(std::string p_Action, float p_Value, float p_Pre
 		}
 		else if(p_Action == "spellCast")
 		{
-			m_GameLogic->throwSpell("TestSpell");
+			createAndTransformRay(XMFLOAT2(0.f,0.f));
 		}
 		else if(p_Action == "drawPivots")
 		{
@@ -414,6 +414,11 @@ void GameScene::setMouseSensitivity(float p_Value)
 void GameScene::setSoundManager(ISound *p_SoundManager)
 {
 	m_SoundManager = p_SoundManager;
+}
+
+void GameScene::setResolution(Vector2 p_Resolution)
+{
+	m_WindowSize = p_Resolution;
 }
 
 /*########## TEST FUNCTIONS ##########*/
@@ -805,4 +810,40 @@ void GameScene::releasePreLoadedModels()
 		m_ResourceManager->releaseResource(res);
 	}
 	m_ResourceIDs.clear();
+}
+
+void GameScene::createAndTransformRay(const DirectX::XMFLOAT2 &p_MousePos)
+{
+	XMFLOAT4 fV;
+	XMFLOAT4X4 fView = m_Graphics->getView();
+	XMFLOAT4X4 fProj = m_Graphics->getProj();
+	
+	//transfrom ray from screen to view space.
+	fV.x = (((2.0f * p_MousePos.x)/m_WindowSize.x) - 1.0f) / fProj._11;
+	fV.y = -(((2.0f * p_MousePos.y)/m_WindowSize.y) - 1.0f) / fProj._22;
+	fV.z = 1.0f;
+	fV.w = 0.0f;
+
+	//View matrix invers needed to transform ray from view to world space.
+	XMMATRIX viewInverse = XMLoadFloat4x4(&fView);
+	viewInverse = XMMatrixInverse(&XMVectorSet(0.f, 0.f, 0.f, 0.f), viewInverse);
+	XMVECTOR vV = XMLoadFloat4(&fV);
+	XMFLOAT4X4 fViewInverse;
+	XMStoreFloat4x4(&fViewInverse, viewInverse);
+
+	//transform to world
+	//XMVECTOR vRayDir = XMVector3Transform(vV, viewInverse);
+	//XMVECTOR vRayOrigin = XMVectorSet(	fViewInverse._41,
+	//									fViewInverse._42, 
+	//									fViewInverse._43,
+	//									1.0f);
+	XMFLOAT4 fRayDir;
+	XMStoreFloat4(&fRayDir, XMVector3Transform(vV, viewInverse));
+
+	XMFLOAT4 fRayOrigin = XMFLOAT4(	fViewInverse._41,
+									fViewInverse._42, 
+									fViewInverse._43,
+									1.0f);
+
+	m_GameLogic->castRay(fRayDir, fRayOrigin);
 }

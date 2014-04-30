@@ -90,7 +90,17 @@ public:
 	*/
 	static HitData HullVsSphere(Hull const &p_Hull, Sphere const &p_Sphere);
 
-	static bool raySphereIntersect(const XMFLOAT2 &p_MousePos, const XMFLOAT2 &p_WindowSize ,const Sphere &p_Sphere, const XMFLOAT4X4 &p_Projection, const XMFLOAT4X4 &p_View);
+
+	/**
+	 * Check if a ray intersects with a body.
+	 * @param, p_Sphere the sphere surrounding the body to test against
+	 * @param, p_RayDir direction of the ray in world space
+	 * @param, p_RayOrigin origin of the ray in world space
+	 * @returns true if there an intersection otherwise false
+	 */
+	static bool raySphereIntersect(const Sphere &p_Sphere, const DirectX::XMFLOAT4 &p_RayDirection, const DirectX::XMFLOAT4 &p_RayOrigin);
+
+	//static bool raySphereIntersect(const DirectX::XMFLOAT2 &p_MousePos, const DirectX::XMFLOAT2 &p_WindowSize ,const Sphere &p_Sphere, const DirectX::XMFLOAT4X4 &p_Projection, const DirectX::XMFLOAT4X4 &p_View);
 
 private:
 	static HitData SATBoxVsBox(OBB const &p_OBB, BoundingVolume const &p_vol);
@@ -99,20 +109,5 @@ private:
 	static bool checkCollision(DirectX::XMVECTOR p_Axis, float p_TriangleProjection0, float p_TriangleProjection1,
 							   float p_BoxProjection, float &p_Overlap, DirectX::XMVECTOR &p_Least);
 
-	struct Ray
-	{
-		DirectX::XMFLOAT4 position;
-		DirectX::XMFLOAT4 direction;
-
-		Ray(DirectX::XMFLOAT4 p_Pos, DirectX::XMFLOAT4 p_Dir) :
-			position(p_Pos), direction(p_Dir)
-		{
-		}
-		Ray() :
-			position(XMFLOAT4(0.f, 0.f, 0.f, 0.f)), direction(XMFLOAT4(0.f, 0.f, 0.f, 0.f))
-		{
-			
-		}
-	};
 };
 

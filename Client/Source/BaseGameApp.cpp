@@ -165,6 +165,7 @@ void BaseGameApp::init()
 	((HUDScene*)m_SceneManager.getScene(RunScenes::GAMEHUD).get())->setHUDSettings(settings.getHUDSettings(), resolution);
 	((GameScene*)m_SceneManager.getScene(RunScenes::GAMEMAIN).get())->setMouseSensitivity(settings.getSettingValue("MouseSensitivity"));
 	((GameScene*)m_SceneManager.getScene(RunScenes::GAMEMAIN).get())->setSoundManager(m_Sound);
+	((GameScene*)m_SceneManager.getScene(RunScenes::GAMEMAIN).get())->setResolution(resolution);
 
 	m_MemoryInfo.update();
 	

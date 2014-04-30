@@ -968,35 +968,38 @@ bool Collision::checkCollision(XMVECTOR p_Axis, float p_TriangleProjection0, flo
 	return true;
 }
 
-bool Collision::raySphereIntersect(const XMFLOAT2 &p_MousePos, const XMFLOAT2 &p_WindowSize ,const Sphere &p_Sphere, const XMFLOAT4X4 &p_Projection, const XMFLOAT4X4 &p_View)
+//bool Collision::raySphereIntersect(const XMFLOAT2 &p_MousePos, const XMFLOAT2 &p_WindowSize const Sphere &p_Sphere, const XMFLOAT4X4 &p_Projection, const XMFLOAT4X4 &p_View)
+bool Collision::raySphereIntersect(const Sphere &p_Sphere, const XMFLOAT4 &p_RayDirection, const XMFLOAT4 &p_RayOrigin)
 {
-	XMFLOAT4 fV;
+	//XMFLOAT4 fV;
 
-	//transfrom ray from screen to view space.
-	fV.x = (((2.0f * p_MousePos.x)/p_WindowSize.x) - 1.0f) / p_Projection._11;
-	fV.y = -(((2.0f * p_MousePos.y)/p_WindowSize.y) - 1.0f) / p_Projection._22;
-	fV.z = 1.0f;
-	fV.w = 0.0f;
+	////transfrom ray from screen to view space.
+	//fV.x = (((2.0f * p_MousePos.x)/p_WindowSize.x) - 1.0f) / p_Projection._11;
+	//fV.y = -(((2.0f * p_MousePos.y)/p_WindowSize.y) - 1.0f) / p_Projection._22;
+	//fV.z = 1.0f;
+	//fV.w = 0.0f;
 
-	//View matrix invers needed to transform ray from view to world space.
-	XMMATRIX viewInverse = XMLoadFloat4x4(&p_View);
-	viewInverse = XMMatrixInverse(&XMVectorSet(0.f, 0.f, 0.f, 0.f), viewInverse);
-	XMVECTOR vV = XMLoadFloat4(&fV);
-	XMFLOAT4X4 fViewInverse;
-	XMStoreFloat4x4(&fViewInverse, viewInverse);
+	////View matrix invers needed to transform ray from view to world space.
+	//XMMATRIX viewInverse = XMLoadFloat4x4(&p_View);
+	//viewInverse = XMMatrixInverse(&XMVectorSet(0.f, 0.f, 0.f, 0.f), viewInverse);
+	//XMVECTOR vV = XMLoadFloat4(&fV);
+	//XMFLOAT4X4 fViewInverse;
+	//XMStoreFloat4x4(&fViewInverse, viewInverse);
 
-	//transform to world
-	XMVECTOR rayDir = XMVector3Transform(vV, viewInverse);
-	XMVECTOR rayOrigin = XMVectorSet(	viewInverse.r[4].m128_f32[0],
-										viewInverse.r[4].m128_f32[1], 
-										viewInverse.r[4].m128_f32[2],
-										1.0f);
+	////transform to world
+	//XMVECTOR rayDir = XMVector3Transform(vV, viewInverse);
+	//XMVECTOR rayOrigin = XMVectorSet(	fViewInverse._41,
+	//									fViewInverse._42, 
+	//									fViewInverse._43,
+	//									1.0f);
 	//Intersection test starts
 
 	//Transfrom to object space?
-	XMVECTOR spherePos = XMLoadFloat4(&p_Sphere.getPosition());
+	const XMVECTOR spherePos = XMLoadFloat4(&p_Sphere.getPosition());
+	const XMVECTOR rayDir = XMLoadFloat4(&p_RayDirection);
+	const XMVECTOR rayOrigin = XMLoadFloat4(&p_RayOrigin);
 
-	XMVECTOR length = spherePos - rayOrigin;
+	const XMVECTOR length = spherePos - rayOrigin;
 	//projection of lenght onto ray direction
 	float s = XMVector3Dot(length, rayDir).m128_f32[0];
 

@@ -711,6 +711,9 @@ public:
 	 */
 	virtual void setFOV(float p_FOV) = 0;
 
+	virtual DirectX::XMFLOAT4X4 getView() const = 0;
+
+	virtual DirectX::XMFLOAT4X4 getProj() const = 0;
 private:
 
 	/**

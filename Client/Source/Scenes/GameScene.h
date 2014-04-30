@@ -42,6 +42,7 @@ private:
 	bool m_SoundExist;
 
 	float m_ViewSensitivity;
+	Vector2 m_WindowSize;
 
 	struct ReachIK
 	{
@@ -115,6 +116,8 @@ public:
 	void setMouseSensitivity(float p_Value);
 
 	void setSoundManager(ISound *p_SoundManager);
+
+	void setResolution(Vector2 p_Resolution);
 private:
 	std::string changeBackGroundSound(const std::string& p_FontFolderPath);
 
@@ -150,4 +153,6 @@ private:
 
 	void preLoadModels();
 	void releasePreLoadedModels();
+
+	void createAndTransformRay(const DirectX::XMFLOAT2 &p_MousePos);
 };

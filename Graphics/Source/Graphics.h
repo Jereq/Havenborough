@@ -219,6 +219,10 @@ public:
 	void setShadowMapResolution(int p_ShadowMapResolution) override;
 	void setFOV(float p_FOV) override;
 
+	DirectX::XMFLOAT4X4 getView() const override;
+	DirectX::XMFLOAT4X4 getProj() const override;
+
+
 private:
 	void createDefaultShaders(void) override;
 	void shutdown(void) override;

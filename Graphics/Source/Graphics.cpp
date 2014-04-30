@@ -1172,6 +1172,15 @@ void Graphics::setFOV(float p_FOV)
 	}
 }
 
+DirectX::XMFLOAT4X4 Graphics::getView() const
+{
+	return m_ViewMatrix;
+}
+
+DirectX::XMFLOAT4X4 Graphics::getProj() const
+{
+	return m_ProjectionMatrix;
+}
 
 void Graphics::createDefaultShaders(void)
 {
