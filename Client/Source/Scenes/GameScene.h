@@ -17,6 +17,7 @@ private:
 	bool m_ChangeList;
 	bool m_RenderDebugBV;
 	int m_SkyboxID;
+	unsigned int m_ExitTextId;
 
 	bool m_UseThirdPersonCamera;
 	bool m_UseFlippedCamera;

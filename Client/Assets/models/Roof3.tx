@@ -9,7 +9,7 @@
 *Materials
 Material: brick1
 DiffuseMap: Brickwall1_COLOR.dds
-NormalMap: Default_NRM.dds
+NormalMap: Brickwall1_NRM.dds
 SpecularMap: Default_SPEC.dds
 
 Material: beams

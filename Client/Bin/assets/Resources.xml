@@ -291,6 +291,7 @@
         <Resource Name="Tunnel2" Path="assets/volumes/CB_Tunnel2.txc"/>
         <Resource Name="Wall1v2" Path="assets/volumes/CB_Wall1v2.txc"/>
         <Resource Name="Wall2v2" Path="assets/volumes/CB_Wall2v2.txc"/>
+        <Resource Name="Flag1" Path="assets/volumes/CB_Flag1.txc"/>
     </ResourceType>
     <ResourceType Type="animation">
         <Resource Name="Dzala" Path="assets/animations/Dzala.atx"/>

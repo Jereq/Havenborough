@@ -24,7 +24,7 @@ SpecularMap: Default_SPEC.dds
 
 Material: Roof_mat
 DiffuseMap: RoofTiles_COLOR.dds
-NormalMap: Default_NRM.dds
+NormalMap: RoofTiles_NRM.dds
 SpecularMap: Default_SPEC.dds
 
 Material: Fabric

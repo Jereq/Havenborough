@@ -107,6 +107,14 @@ public:
 		std::vector<Light> *p_PointLights, std::vector<Light> *p_DirectionalLights, Light *p_ShadowMappedLight,
 		float *p_FOV, float p_FarZ);
 
+	/**
+	 * Resizes all rendering buffers, used to change resolution.
+	 *
+	 * @param p_ScreenWidth the new resolution width in pixels
+	 * @param p_ScreenHeight the resolution height in pixels
+	 * @param p_DepthStencilView the default depth stencil view
+	 */
+	void resize(unsigned int p_ScreenWidth, unsigned int p_ScreenHeight, ID3D11DepthStencilView *p_DepthStencilView);
 
 	/*
 	* Creates the shadow map Texture2D desc, depthMap, depthStencilViewDesc, ShaderResourceViewDesc.
@@ -184,6 +192,7 @@ private:
 	void updateLightBuffer(bool p_Big, bool p_ShadowMapped);
 
 
+	void createAllRenderTargets();
 	ID3D11RenderTargetView *createRenderTarget(D3D11_TEXTURE2D_DESC &desc);
 	ID3D11ShaderResourceView *createShaderResourceView(D3D11_TEXTURE2D_DESC &desc, ID3D11RenderTargetView *p_Rendertarget);
 	void createBuffers();

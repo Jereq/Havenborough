@@ -119,8 +119,8 @@ bool Level::loadLevel(std::istream& p_LevelData, ActorList::ptr p_ActorOut)
 			Vector3 temp = Vector3(0,0,0);
 			if(effect.m_EffectName == "fire")
 			{
-				m_EventManager->queueEvent(IEventData::Ptr(new Create3DSoundEventData("Fire", i, 10.0f, 50+i, true, true)));
-				m_EventManager->queueEvent(IEventData::Ptr(new Play3DSoundEventData(i, 50+i, effect.m_Translation[i], temp)));
+				m_EventManager->queueEvent(IEventData::Ptr(new Create3DSoundEventData("Fire", particleEffect->getId(), 10.0f, 0, true, true)));
+				m_EventManager->queueEvent(IEventData::Ptr(new Play3DSoundEventData(particleEffect->getId(), 0, effect.m_Translation[i], temp)));
 			}
 			particleEffect->setRotation(rotation);
 			p_ActorOut->addActor(particleEffect);

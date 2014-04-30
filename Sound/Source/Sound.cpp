@@ -420,7 +420,7 @@ void Sound::errorCheck(FMOD_RESULT p_Result)
 	if(p_Result != FMOD_OK)
 	{
 		SoundLogger::log(SoundLogger::Level::ERROR_L, "FMOD Error! " + std::string(FMOD_ErrorString(p_Result)));
-		throw SoundException("FMOD Error!" + std::string(FMOD_ErrorString(p_Result)),__LINE__,__FILE__);
+		throw SoundException("FMOD Error! " + std::string(FMOD_ErrorString(p_Result)),__LINE__,__FILE__);
 	}
 }
 
