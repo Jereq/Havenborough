@@ -420,11 +420,18 @@ HRESULT FontContext::CreateFontCollection(
 
 	std::vector<std::string> files;
 
-	boost::filesystem::directory_iterator currFile(p_FontFolderPath);
-	for (; currFile != boost::filesystem::directory_iterator(); ++currFile)
+	try
 	{
-		auto filename = currFile->path();
-		files.push_back(filename.string());
+		boost::filesystem::directory_iterator currFile(p_FontFolderPath);
+		for (; currFile != boost::filesystem::directory_iterator(); ++currFile)
+		{
+			auto filename = currFile->path();
+			files.push_back(filename.string());
+		}
+	}
+	catch (boost::filesystem::filesystem_error)
+	{
+		// Failed to read fonts, continue with what we've got
 	}
 
 	std::ostringstream stream;

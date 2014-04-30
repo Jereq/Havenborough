@@ -7,3 +7,8 @@ copy "C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\redist\x86\Microsof
 copy "C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\redist\x86\Microsoft.VC110.CRT\msvcp110.dll" Bin\
 copy "C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\D3Dcompiler_46.dll" Bin\
 copy "C:\Program Files (x86)\FMOD SoundSystem\FMOD Programmers API Windows\api\fmodex.dll" Bin\
+
+copy ..\Graphics\Test\Graphicsd.dll Bin\
+copy ..\Graphics\Test\Graphicsd.pdb Bin\
+copy ..\Physics\Test\Physicsd.dll Bin\
+copy ..\Physics\Test\Physicsd.pdb Bin\
