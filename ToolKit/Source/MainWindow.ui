@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="animated">
+   <bool>false</bool>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="QWidget" name="m_RenderWidget" native="true">
     <property name="geometry">
@@ -172,37 +175,32 @@
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="dockWidget">
+  <widget class="QDockWidget" name="dockWidget_2">
    <attribute name="dockWidgetArea">
     <number>8</number>
    </attribute>
-   <widget class="QWidget" name="dockWidgetContents_2">
-    <layout class="QGridLayout" name="gridLayout_2">
+   <widget class="QWidget" name="dockWidgetContents_3">
+    <layout class="QGridLayout" name="gridLayout_3">
      <item row="0" column="0">
-      <widget class="QTableWidget" name="tableWidget">
+      <widget class="ExtendedTableWidget" name="tableWidget_2">
        <row>
         <property name="text">
-         <string>Picture</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>Name</string>
+         <string>Cell1</string>
         </property>
        </row>
        <column>
         <property name="text">
-         <string>Item1</string>
+         <string>Col1</string>
         </property>
        </column>
        <column>
         <property name="text">
-         <string>item2</string>
+         <string>Col2</string>
         </property>
        </column>
        <column>
         <property name="text">
-         <string>item3</string>
+         <string>Col3</string>
         </property>
        </column>
       </widget>
@@ -252,6 +250,13 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>ExtendedTableWidget</class>
+   <extends>QTableWidget</extends>
+   <header>extendedtablewidget.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

@@ -24,6 +24,16 @@ MainWindow::MainWindow(QWidget *parent) :
     TreeFilter *filter1 = new TreeFilter("Filter1");
 
     ui->m_ObjectTree->addTopLevelItem(filter1);
+
+
+
+
+
+    QIcon icon(":/Icons/Assets/Filter.png");
+    QTableWidgetItem *item = new QTableWidgetItem();
+    item->setIcon(icon);
+    item->setText("Object");
+    ui->tableWidget_2->setItem(0,0,item);
 }
 
 MainWindow::~MainWindow()
