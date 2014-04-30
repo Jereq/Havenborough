@@ -321,6 +321,11 @@ void Graphics::resize(unsigned int p_ScreenWidth, unsigned int p_ScreenHeight)
 
 	m_ScreenWidth = p_ScreenWidth;
 	m_ScreenHeight = p_ScreenHeight;
+
+	XMStoreFloat4x4(&m_ProjectionMatrix, XMMatrixTranspose(XMMatrixPerspectiveFovLH(m_FOV,
+		(float)m_ScreenWidth / (float)m_ScreenHeight, m_NearZ, m_FarZ)));
+
+	m_DeferredRender->FOVIsUpdated();
 }
 
 void Graphics::shutdown(void)

@@ -229,6 +229,13 @@ void DeferredRenderer::renderDeferred()
 {
 	// Clear render targets.
 	clearRenderTargets();
+		
+	if(m_FOVIsUpdated)
+	{
+		updateSSAO_VarConstantBuffer();
+		m_FOVIsUpdated = false;
+	}
+	updateConstantBuffer(*m_ViewMatrix, *m_ProjectionMatrix);
 
 	// Update constant buffer and render
 	if(m_Objects.size() > 0)
@@ -238,15 +245,6 @@ void DeferredRenderer::renderDeferred()
 		ID3D11RenderTargetView *rtv[] = {
 		m_RT[IGraphics::RenderTarget::DIFFUSE], m_RT[IGraphics::RenderTarget::NORMAL], m_RT[IGraphics::RenderTarget::W_POSITION]
 		};
-		
-		if(m_FOVIsUpdated)
-		{
-			updateSSAO_VarConstantBuffer();
-			m_FOVIsUpdated = false;
-		}
-
-		updateConstantBuffer(*m_ViewMatrix, *m_ProjectionMatrix);
-		unsigned int one = 1;
 
 		std::vector<std::vector<Renderable>> instancedModels;
 		std::vector<Renderable> animatedOrSingle;
