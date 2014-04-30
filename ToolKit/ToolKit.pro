@@ -28,6 +28,10 @@ INCLUDEPATH += "$(SolutionDir)Graphics/include"
 debug: LIBS += -L"$(SolutionDir)Graphics/Test"
 release: LIBS += -L"$(SolutionDir)Graphics/Bin"
 
+INCLUDEPATH += "$(SolutionDir)Common/3rd party"
+INCLUDEPATH += "$(BOOST_INC_DIR)"
+LIBS += -L"$(BOOST_LIB_DIR)"
+
 SOURCES += Source/main.cpp\
         Source/MainWindow.cpp \
     Source/TreeItem.cpp \
