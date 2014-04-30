@@ -75,6 +75,12 @@ void ScreenRenderer::initialize(ID3D11Device *p_Device, ID3D11DeviceContext *p_D
 	createBuffers();
 }
 
+void ScreenRenderer::resize(ID3D11DepthStencilView *p_DepthStencilView, ID3D11RenderTargetView *p_RenderTarget)
+{
+	m_DepthStencilView = p_DepthStencilView;
+	m_RenderTarget = p_RenderTarget;
+}
+
 void ScreenRenderer::add2D_Object(Renderable2D &p_Object)
 {
 	m_2D_Objects.push_back(p_Object);

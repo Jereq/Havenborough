@@ -122,7 +122,7 @@ public:
 
 	void onResize(unsigned int nWidth, unsigned int nHeight) override
 	{
-		//m_Graphics->reInitialize((HWND)winId(), nWidth, nHeight, false);
+		m_Graphics->resize(nWidth, nHeight);
 
 		render();
 	}

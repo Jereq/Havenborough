@@ -47,6 +47,14 @@ public:
 	*/
 	void initialize(ID3D11Device *p_Device, ID3D11DeviceContext *p_DeviceContext, DirectX::XMFLOAT4X4 *p_ViewMatrix,
 		DirectX::XMFLOAT4 p_OrthoData, ID3D11DepthStencilView *p_DepthStencilView, ID3D11RenderTargetView *p_RenderTarget);
+	
+	/**
+	 * Resizes all rendering buffers, used to change resolution.
+	 *
+	 * @param p_DepthStencilView the default depth stencil view
+	 * @param p_RenderTarget the default render target
+	 */
+	void resize(ID3D11DepthStencilView *p_DepthStencilView, ID3D11RenderTargetView *p_RenderTarget);
 
 	/**
 	* Adds a specific object to the list of objects to be rendered during the next render call.
