@@ -305,9 +305,13 @@ void DeferredRenderer::renderDeferred()
 
 		m_Objects.clear();
 	}
-	m_RenderSkyDome = false;
+	
+	if (m_SkyDome && m_RenderSkyDome)
+	{
+		renderSkyDomeImpl();
+		m_RenderSkyDome = false;
+	}
 }
-
 
 void DeferredRenderer::renderGeometry(ID3D11DepthStencilView* p_DepthStencilView, unsigned int nrRT, ID3D11RenderTargetView* rtv[],
 									  const std::vector<std::vector<Renderable>> &p_InstancedModels, 
@@ -516,13 +520,35 @@ void DeferredRenderer::renderLighting(const std::vector<std::vector<Renderable>>
 
 	m_Buffer["DefaultConstant"]->unsetBuffer(0);
 
-	m_DeviceContext->OMSetBlendState(m_BlendState2, blendFactor, sampleMask);
-	if(m_SkyDome && m_RenderSkyDome)
-		m_SkyDome->RenderSkyDome(m_RT[IGraphics::RenderTarget::DIFFUSE], m_DepthStencilView, m_Buffer["DefaultConstant"]);
-
 	ID3D11SamplerState* const nullSamplerState = nullptr;
 	m_DeviceContext->PSSetSamplers(0, 1, &nullSamplerState);
 
+	m_DeviceContext->PSSetShaderResources(0, 5, nullsrvs);
+	m_DeviceContext->OMSetRenderTargets(0, 0, 0);
+	m_DeviceContext->RSSetState(previousRasterState);
+	m_DeviceContext->OMSetDepthStencilState(previousDepthState,0);
+	m_DeviceContext->OMSetBlendState(0, blendFactor, sampleMask);
+	SAFE_RELEASE(previousRasterState);
+	SAFE_RELEASE(previousDepthState);
+}
+
+void DeferredRenderer::renderSkyDomeImpl()
+{
+	ID3D11RasterizerState *previousRasterState;
+	ID3D11DepthStencilState *previousDepthState;
+	m_DeviceContext->RSGetState(&previousRasterState);
+	m_DeviceContext->OMGetDepthStencilState(&previousDepthState,0);
+
+	float blendFactor[] = {0.0f, 0.0f, 0.0f, 0.0f};
+	UINT sampleMask = 0xffffffff;
+	m_DeviceContext->OMSetBlendState(m_BlendState2, blendFactor, sampleMask);
+
+	m_SkyDome->RenderSkyDome(m_RT[IGraphics::RenderTarget::DIFFUSE], m_DepthStencilView, m_Buffer["DefaultConstant"]);
+
+	ID3D11SamplerState* const nullSamplerState = nullptr;
+	m_DeviceContext->PSSetSamplers(0, 1, &nullSamplerState);
+	
+	ID3D11ShaderResourceView *nullsrvs[] = {0,0,0,0,0};
 	m_DeviceContext->PSSetShaderResources(0, 5, nullsrvs);
 	m_DeviceContext->OMSetRenderTargets(0, 0, 0);
 	m_DeviceContext->RSSetState(previousRasterState);
