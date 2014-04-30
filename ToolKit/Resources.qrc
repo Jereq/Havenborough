@@ -6,4 +6,7 @@
         <file>Assets/stylesheet-branch-open.png</file>
         <file>Assets/stylesheet-vline.png</file>
     </qresource>
+    <qresource prefix="/Icons">
+        <file>Assets/Filter.png</file>
+    </qresource>
 </RCC>
