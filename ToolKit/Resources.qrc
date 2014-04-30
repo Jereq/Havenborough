@@ -8,5 +8,6 @@
     </qresource>
     <qresource prefix="/Icons">
         <file>Assets/Filter.png</file>
+        <file>Assets/object.png</file>
     </qresource>
 </RCC>
