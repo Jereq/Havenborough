@@ -1,6 +1,6 @@
 #include "TreeFilter.h"
 
-TreeFilter::TreeFilter(QWidget *parent)
+TreeFilter::TreeFilter()
 {
 }
 

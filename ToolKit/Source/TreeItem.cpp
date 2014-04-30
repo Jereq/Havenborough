@@ -1,6 +1,6 @@
 #include "TreeItem.h"
 
-TreeItem::TreeItem(QWidget *parent)
+TreeItem::TreeItem()
 {
 }
 
