@@ -12,7 +12,13 @@ MainWindow::MainWindow(QWidget *parent) :
 {
 	ui->setupUi(this);
 
+    //Layout setup
+    setCorner(Qt::TopLeftCorner, Qt::LeftDockWidgetArea);
+    setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
+    setCorner(Qt::TopRightCorner, Qt::RightDockWidgetArea);
+    setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
 
+    //Test Objects & ObjectTree Test code
 	TreeItem *item1 = new TreeItem("Object1");
     TreeItem *item2 = new TreeItem("Object2");
     TreeItem *item3 = new TreeItem("Object3");
@@ -22,18 +28,18 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->m_ObjectTree->addTopLevelItem(item3);
 
     TreeFilter *filter1 = new TreeFilter("Filter1");
-
     ui->m_ObjectTree->addTopLevelItem(filter1);
 
-
-
-
-
+    //Tablewidget test code
     QIcon icon(":/Icons/Assets/Filter.png");
     QTableWidgetItem *item = new QTableWidgetItem();
     item->setIcon(icon);
     item->setText("Object");
-    ui->tableWidget_2->setItem(0,0,item);
+    item->setTextAlignment(Qt::AlignBottom | Qt::AlignCenter);
+
+    ui->m_ObjectTable->setItem(0,0,item);
+    ui->m_ObjectTable->resizeColumnsToContents();
+    ui->m_ObjectTable->resizeRowsToContents();
 }
 
 MainWindow::~MainWindow()

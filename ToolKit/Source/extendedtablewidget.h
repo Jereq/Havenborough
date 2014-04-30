@@ -5,8 +5,11 @@
 
 class ExtendedTableWidget : public QTableWidget
 {
+Q_OBJECT
 public:
-    explicit ExtendedTableWidget(QWidget *parent = 0) : QTableWidget(parent){}
+    explicit ExtendedTableWidget(QWidget *parent = 0) : QTableWidget(parent)
+    {
+    }
 private:
 
 protected:
@@ -19,7 +22,8 @@ protected:
         QStyleOptionViewItem option = QTableWidget::viewOptions();
         option.decorationAlignment = Qt::AlignHCenter | Qt::AlignCenter;
         option.decorationPosition = QStyleOptionViewItem::Top;
-
+        option.decorationSize = QSize(200, 200);
+		
         return option;
 
     }
