@@ -6,11 +6,14 @@
 #include <qvector3d.h>
 #include <qwidget.h>
 
+#include "Camera.h"
+
 class DXWidget : public QWidget
 {
 	Q_OBJECT
 
 protected:
+	Camera m_Camera;
 	bool m_StandBy;
 	double m_LastRendered;
 	QPointF m_ClickPos;
@@ -82,7 +85,7 @@ protected:
 
 		if (isCameraOperation(e))
 		{
-			//m_Camera->backup();
+			m_Camera.backup();
 
 			if ((e->buttons() & Qt::LeftButton) && !(e->buttons() & Qt::RightButton))
 			{
@@ -110,22 +113,22 @@ protected:
 		{
 			if ((e->buttons() & Qt::LeftButton) && !(e->buttons() & Qt::RightButton))
 			{
-				//QPointF delta = (e->localPos() - m_ClickPos) / (float)height() * 180.f;
-				//m_Camera->recover();
-				//rotateCamera(delta.x(), delta.y(), 0.f);
+				QPointF delta = (e->localPos() - m_ClickPos) / (float)height() * DirectX::XM_PI;
+				m_Camera.recover();
+				m_Camera.rotate(delta.x(), delta.y(), 0.f);
 				update();
 			}
 			else if ((e->buttons() & Qt::RightButton) && !(e->buttons() & Qt::LeftButton))
 			{
 				//QPointF delta = (e->localPos() - m_ClickPos) / (float)height() * m_Camera->getCenterOfInterest();
-				//m_Camera->recover();
+				m_Camera.recover();
 				//moveCamera(0, 0, delta.y());
 				update();
 			}
 			else if (e->buttons() & Qt::MiddleButton)
 			{
 				//QPointF delta = (e->localPos() - m_ClickPos) / (float)height() * m_Camera->getCenterOfInterest();
-				//m_Camera->recover();
+				m_Camera.recover();
 				//moveCamera(-delta.x(), delta.y(), 0.f);
 				update();
 			}
