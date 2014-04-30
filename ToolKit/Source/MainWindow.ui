@@ -135,6 +135,12 @@
          image:url(:/Pictures/Assets/stylesheet-branch-open.png);
  }</string>
        </property>
+       <property name="verticalScrollBarPolicy">
+        <enum>Qt::ScrollBarAsNeeded</enum>
+       </property>
+       <property name="horizontalScrollBarPolicy">
+        <enum>Qt::ScrollBarAsNeeded</enum>
+       </property>
        <property name="dragEnabled">
         <bool>true</bool>
        </property>
