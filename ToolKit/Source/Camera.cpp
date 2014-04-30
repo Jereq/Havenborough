@@ -21,25 +21,28 @@ const Vector3& Camera::getUp() const
 	return m_Up;
 }
 
-void Camera::backup()
+Vector3 Camera::getRight() const
 {
-	m_BackupPosition = m_Position;
-	m_BackupForward = m_Forward;
-	m_BackupUp = m_Up;
+	using namespace DirectX;
+
+	XMVECTOR forward = XMLoadFloat3(&m_Forward);
+	XMVECTOR up = XMLoadFloat3(&m_Up);
+	XMVECTOR right = XMVector3Cross(up, forward);
+
+	Vector3 vRight;
+	XMStoreFloat3(&vRight, right);
+	return vRight;
 }
 
-void Camera::recover()
+void Camera::translate(const Vector3& p_Offset)
 {
-	m_Position = m_BackupPosition;
-	m_Forward = m_BackupForward;
-	m_Up = m_BackupUp;
+	m_Position = m_Position + p_Offset;
 }
 
 void Camera::rotate(float p_Yaw, float p_Pitch, float p_Roll)
 {
 	using namespace DirectX;
 
-	XMVECTOR position = XMVectorSet(m_Position.x, m_Position.y, m_Position.z, 1.f);
 	XMVECTOR forward = XMLoadFloat3(&m_Forward);
 	XMVECTOR up = XMLoadFloat3(&m_Up);
 
@@ -48,11 +51,9 @@ void Camera::rotate(float p_Yaw, float p_Pitch, float p_Roll)
 	XMMATRIX roll = XMMatrixRotationAxis(forward, p_Roll);
 	XMMATRIX rotation = pitch * roll * yaw;
 
-	position = XMVector4Transform(position, rotation);
 	forward = XMVector3Normalize(XMVector3Transform(forward, rotation));
 	up = XMVector3Normalize(XMVector3Transform(up, rotation));
 
-	XMStoreFloat3(&m_Position, position);
 	XMStoreFloat3(&m_Forward, forward);
 	XMStoreFloat3(&m_Up, up);
 }
