@@ -97,7 +97,7 @@ public:
 		//	return;
 		//}
 		
-		m_Graphics->updateCamera(Vector3(), Vector3(0.f, 0.f, 1.f), Vector3(0.f, 1.f, 0.f));
+		m_Graphics->updateCamera(m_Camera.getPosition(), m_Camera.getForward(), m_Camera.getUp());
 		m_Graphics->renderSkydome();
 
 		present();

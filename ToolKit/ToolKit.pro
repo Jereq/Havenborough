@@ -35,13 +35,15 @@ LIBS += -L"$(BOOST_LIB_DIR)"
 SOURCES += Source/main.cpp\
         Source/MainWindow.cpp \
     Source/TreeItem.cpp \
-    Source/TreeFilter.cpp
+    Source/TreeFilter.cpp \
+    Source/Camera.cpp
 
 HEADERS  += Source/MainWindow.h \
     Source/TreeItem.h \
     Source/TreeFilter.h \
     Source/DXWidget.h \
-    Source/MyDX11Widget.h
+    Source/MyDX11Widget.h \
+    Source/Camera.h
 
 FORMS    += Source/MainWindow.ui
 
