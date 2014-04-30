@@ -71,10 +71,10 @@ void MainWindow::on_actionExit_triggered()
 
 void MainWindow::on_actionOpen_triggered()
 {
-    QString fullFilePath = QFileDialog::getOpenFileName(this, tr("Open level"), "/home/ME", tr("Level Files (*.xml)"));
+    QString fullFilePath = QFileDialog::getOpenFileName(this, tr("Open Level"), "/home/ME", tr("Level Files (*.xml)"));
 }
 
 void MainWindow::on_actionSave_triggered()
 {
-    QFileDialog::getSaveFileName(this, tr("Save level as..."), "/home/ME", tr("Level Files (*.xml"));
+    QFileDialog::getSaveFileName(this, tr("Save Level As..."), "/home/ME", tr("Level Files (*.xml"));
 }
