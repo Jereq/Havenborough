@@ -4,6 +4,8 @@
 #include "TreeItem.h"
 #include "TreeFilter.h"
 
+#include <QFileDialog>
+
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
 	ui(new Ui::MainWindow)
@@ -65,4 +67,14 @@ void MainWindow::on_actionObject_Tree_triggered()
 void MainWindow::on_actionExit_triggered()
 {
     exit(0);
+}
+
+void MainWindow::on_actionOpen_triggered()
+{
+    QString fullFilePath = QFileDialog::getOpenFileName(this, tr("Open level"), "/home/ME", tr("Level Files (*.xml)"));
+}
+
+void MainWindow::on_actionSave_triggered()
+{
+    QFileDialog::getSaveFileName(this, tr("Save level as..."), "/home/ME", tr("Level Files (*.xml"));
 }
