@@ -27,4 +27,10 @@ private slots:
     void on_actionObject_Tree_triggered();
 
 	void idle();
+    void on_actionExit_triggered();
+
+    void on_actionOpen_triggered();
+
+    void on_actionSave_triggered();
+
 };

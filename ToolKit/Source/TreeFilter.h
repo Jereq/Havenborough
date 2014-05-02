@@ -6,7 +6,7 @@
 class TreeFilter : public QTreeWidgetItem
 {
   public:
-    explicit TreeFilter(QWidget* parent = 0);
+    explicit TreeFilter();
     TreeFilter(std::string p_FilterName);
 
   private:
