@@ -25,6 +25,9 @@ protected:
 	static const int slowMovementSpeed = 100;
 	float m_MovementSpeed;
 
+	QPointF m_MouseStartPos;
+	QPointF m_MouseDir;
+
 public:
 	DXWidget(QWidget* parent = nullptr, Qt::WindowFlags flags = 0)
 		: QWidget(parent, flags),
@@ -46,6 +49,7 @@ public:
 
 		m_StandBy = false;
 		m_LastRendered = 0;
+
 	}
 
 	virtual ~DXWidget()
@@ -256,7 +260,11 @@ protected:
 			else if ((e->buttons() & Qt::RightButton) && !(e->buttons() & Qt::LeftButton))
 			{
 				//showStatus(tr("Dolly Tool: RMB Drag: Use mouse to dolly"));
-				setCursor(Qt::SizeVerCursor);
+				setCursor(Qt::CrossCursor);
+
+				m_MouseStartPos = e->localPos();
+				m_MouseDir = QPointF(0, 0);
+
 			}
 			else if (e->buttons() & Qt::MiddleButton)
 			{
@@ -282,6 +290,12 @@ protected:
 			{
 				//QPointF delta = (e->localPos() - m_ClickPos) / (float)height() * m_Camera->getCenterOfInterest();
 				//moveCamera(0, 0, delta.y());
+
+				m_MouseDir = e->localPos() - m_MouseStartPos;
+				qreal dotMouseDir = QPointF::dotProduct(m_MouseDir, m_MouseDir);
+				m_MouseDir = m_MouseDir / dotMouseDir;
+
+
 				update();
 			}
 			else if (e->buttons() & Qt::MiddleButton)
