@@ -22,6 +22,11 @@ MainWindow::MainWindow(QWidget *parent) :
     TreeFilter *filter1 = new TreeFilter("Filter1");
 
     ui->m_ObjectTree->addTopLevelItem(filter1);
+
+	m_Timer.setInterval(1000 / 60);
+	m_Timer.setSingleShot(false);
+	QObject::connect(&m_Timer, SIGNAL(timeout()), this, SLOT(idle()));
+	m_Timer.start();
 }
 
 MainWindow::~MainWindow()
@@ -50,4 +55,10 @@ void MainWindow::on_m_ObjectTreeRemoveButton_clicked()
 void MainWindow::on_actionObject_Tree_triggered()
 {
     ui->m_ObjectDockableWidget->show();
+}
+
+void MainWindow::idle()
+{
+	ui->m_RenderWidget->updateStep(m_Timer.interval() / 1000.f);
+	ui->m_RenderWidget->update();
 }

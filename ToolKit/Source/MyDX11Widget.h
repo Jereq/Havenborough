@@ -20,6 +20,8 @@ private:
 	IGraphics* m_Graphics;
 	ResourceManager m_ResourceManager;
 	int m_SkyboxID;
+	int m_HouseRes;
+	IGraphics::InstanceId m_HouseInst;
 
 public:
 	explicit MyDX11Widget(QWidget* parent = nullptr, Qt::WindowFlags flags = 0)
@@ -61,6 +63,10 @@ public:
 
 		m_SkyboxID = m_ResourceManager.loadResource("texture","SKYBOXDDS");
 		m_Graphics->createSkydome("SKYBOXDDS", 10000.f);
+
+		m_HouseRes = m_ResourceManager.loadResource("model", "House10");
+		m_HouseInst = m_Graphics->createModelInstance("House10");
+		m_Graphics->setModelPosition(m_HouseInst, Vector3(0.f, 0.f, 2000.f));
 	}
 
 	void uninitialize() override
@@ -68,6 +74,8 @@ public:
 		m_ResourceManager.setReleaseImmediately(true);
 		
 		m_ResourceManager.releaseResource(m_SkyboxID);
+		m_Graphics->eraseModelInstance(m_HouseInst);
+		m_ResourceManager.releaseResource(m_HouseRes);
 
 		m_ResourceManager.unregisterResourceType("model");
 		m_ResourceManager.unregisterResourceType("texture");
@@ -99,6 +107,10 @@ public:
 		
 		m_Graphics->updateCamera(m_Camera.getPosition(), m_Camera.getForward(), m_Camera.getUp());
 		m_Graphics->renderSkydome();
+
+		m_Graphics->renderModel(m_HouseInst);
+
+		m_Graphics->useFrameDirectionalLight(Vector3(1.f, 1.f, 1.f), Vector3(0.3f, -0.8f, 0.f), 1.f);
 
 		present();
 	}
