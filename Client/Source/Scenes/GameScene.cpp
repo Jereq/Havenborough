@@ -814,36 +814,24 @@ void GameScene::releasePreLoadedModels()
 
 void GameScene::createAndTransformRay(const DirectX::XMFLOAT2 &p_MousePos)
 {
-	XMFLOAT4 fV;
 	XMFLOAT4X4 fView = m_Graphics->getView();
 	XMFLOAT4X4 fProj = m_Graphics->getProj();
-	
-	//transfrom ray from screen to view space.
-	fV.x = (((2.0f * p_MousePos.x)/m_WindowSize.x) - 1.0f) / fProj._11;
-	fV.y = -(((2.0f * p_MousePos.y)/m_WindowSize.y) - 1.0f) / fProj._22;
-	fV.z = 1.0f;
-	fV.w = 0.0f;
 
-	//View matrix invers needed to transform ray from view to world space.
-	XMMATRIX viewInverse = XMLoadFloat4x4(&fView);
-	viewInverse = XMMatrixInverse(&XMVectorSet(0.f, 0.f, 0.f, 0.f), viewInverse);
-	XMVECTOR vV = XMLoadFloat4(&fV);
-	XMFLOAT4X4 fViewInverse;
-	XMStoreFloat4x4(&fViewInverse, viewInverse);
+	XMMATRIX mView = XMLoadFloat4x4(&fView);
+	XMMATRIX mProj = XMLoadFloat4x4(&fProj);
+	XMVECTOR cursorScreenSpace = XMVectorSet(p_MousePos.x, p_MousePos.y, 0.f, 0.f);
+	XMVECTOR unprojectedCursor = XMVector3Unproject(cursorScreenSpace, 0.f, 0.f, m_WindowSize.x, m_WindowSize.y, 0.f, 1.f, mProj, mView, XMMatrixIdentity());
+	XMVECTOR vRayOrigin = XMVectorSet(	fView._41,
+										fView._42, 
+										fView._43,
+										1.0f);
 
-	//transform to world
-	//XMVECTOR vRayDir = XMVector3Transform(vV, viewInverse);
-	//XMVECTOR vRayOrigin = XMVectorSet(	fViewInverse._41,
-	//									fViewInverse._42, 
-	//									fViewInverse._43,
-	//									1.0f);
-	XMFLOAT4 fRayDir;
-	XMStoreFloat4(&fRayDir, XMVector3Transform(vV, viewInverse));
+	XMVECTOR direction = unprojectedCursor - vRayOrigin;
+	direction = XMVector3Normalize(direction);
 
-	XMFLOAT4 fRayOrigin = XMFLOAT4(	fViewInverse._41,
-									fViewInverse._42, 
-									fViewInverse._43,
-									1.0f);
+	XMFLOAT4 fRayDir, fRayOrigin;
+	XMStoreFloat4(&fRayDir, direction);
+	XMStoreFloat4(&fRayOrigin, vRayOrigin);
 
 	m_GameLogic->castRay(fRayDir, fRayOrigin);
 }

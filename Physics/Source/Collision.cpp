@@ -1,5 +1,6 @@
 #include "Collision.h"
 #include "PhysicsExceptions.h"
+#include "PhysicsLogger.h"
 #define EPSILON XMVectorGetX(g_XMEpsilon)
 using namespace DirectX;
 
@@ -968,30 +969,9 @@ bool Collision::checkCollision(XMVECTOR p_Axis, float p_TriangleProjection0, flo
 	return true;
 }
 
-//bool Collision::raySphereIntersect(const XMFLOAT2 &p_MousePos, const XMFLOAT2 &p_WindowSize const Sphere &p_Sphere, const XMFLOAT4X4 &p_Projection, const XMFLOAT4X4 &p_View)
 bool Collision::raySphereIntersect(const Sphere &p_Sphere, const XMFLOAT4 &p_RayDirection, const XMFLOAT4 &p_RayOrigin)
 {
-	//XMFLOAT4 fV;
 
-	////transfrom ray from screen to view space.
-	//fV.x = (((2.0f * p_MousePos.x)/p_WindowSize.x) - 1.0f) / p_Projection._11;
-	//fV.y = -(((2.0f * p_MousePos.y)/p_WindowSize.y) - 1.0f) / p_Projection._22;
-	//fV.z = 1.0f;
-	//fV.w = 0.0f;
-
-	////View matrix invers needed to transform ray from view to world space.
-	//XMMATRIX viewInverse = XMLoadFloat4x4(&p_View);
-	//viewInverse = XMMatrixInverse(&XMVectorSet(0.f, 0.f, 0.f, 0.f), viewInverse);
-	//XMVECTOR vV = XMLoadFloat4(&fV);
-	//XMFLOAT4X4 fViewInverse;
-	//XMStoreFloat4x4(&fViewInverse, viewInverse);
-
-	////transform to world
-	//XMVECTOR rayDir = XMVector3Transform(vV, viewInverse);
-	//XMVECTOR rayOrigin = XMVectorSet(	fViewInverse._41,
-	//									fViewInverse._42, 
-	//									fViewInverse._43,
-	//									1.0f);
 	//Intersection test starts
 
 	//Transfrom to object space?
@@ -999,36 +979,61 @@ bool Collision::raySphereIntersect(const Sphere &p_Sphere, const XMFLOAT4 &p_Ray
 	const XMVECTOR rayDir = XMLoadFloat4(&p_RayDirection);
 	const XMVECTOR rayOrigin = XMLoadFloat4(&p_RayOrigin);
 
-	const XMVECTOR length = spherePos - rayOrigin;
-	//projection of lenght onto ray direction
-	float s = XMVector3Dot(length, rayDir).m128_f32[0];
+	//const XMVECTOR length = spherePos - rayOrigin;
+	////projection of lenght onto ray direction
+	//float s = XMVector3Dot(length, rayDir).m128_f32[0];
 
-	float lengthSquared = XMVector3Dot(length, length).m128_f32[0];
-	float radiusSquared = p_Sphere.getSqrRadius();
+	//float lengthSquared = XMVector3Dot(length, length).m128_f32[0];
+	//float radiusSquared = p_Sphere.getSqrRadius();
 
-	if(s < 0 && lengthSquared > radiusSquared)
-		return false; //miss
+	//if(s < 0 && lengthSquared > radiusSquared)
+	//	return false; //miss
 
-	//squared distance from sphere center to projection
-	float m = lengthSquared - (s*s);
+	////squared distance from sphere center to projection
+	//float m = lengthSquared - (s*s);
 
-	if(m > radiusSquared)
-		return false; //miss
+	//if(m > radiusSquared)
+	//	return false; //miss
+	//
+	//float q = radiusSquared - m;
+	//q = XMVectorSqrt(XMVectorSet(q, q, q, q)).m128_f32[0];
+
+	//float t;
+	//if(lengthSquared > radiusSquared)
+	//{
+	//	t = s - q;
+	//}
+	//else
+	//{
+	//	t = s + q;
+	//}
+
+	////t should be returned somehow if it's gonna be used.
+	//return true;
+
+
+
+	XMVECTOR m = rayOrigin - spherePos;
+	float b = XMVector3Dot(m, rayDir).m128_f32[0];
+	float c = XMVector3Dot(m,m).m128_f32[0] - p_Sphere.getRadius() * p_Sphere.getRadius();
+
+	//Exit if the ray's origin is outside sphere(c > 0) and ray pointing away from sphere(b > 0)
+	if(c > 0.f && b > 0.f)
+		return false;
+	//A negative dicsriminant corresponds to ray missing sphere
+	float discr = b*b - c;
+	if(discr < 0.f)
+		return false;
 	
-	float q = radiusSquared - m;
-	q = XMVectorSqrt(XMVectorSet(q, q, q, q)).m128_f32[0];
-
-	float t;
-	if(lengthSquared > radiusSquared)
+	float t = -b - sqrtf(discr);
+	//If t is negative, ray started insided the pshere so clamp t to zero
+	if(t < 0.f)
 	{
-		t = s - q;
+		t = 0.f;
+		PhysicsLogger::log(PhysicsLogger::Level::INFO, "Inside sphere hit");
+		return true;
 	}
-	else
-	{
-		t = s + q;
-	}
-
-	//t should be returned somehow if it's gonna be used.
+	PhysicsLogger::log(PhysicsLogger::Level::INFO, "Outside sphere hit");
 	return true;
 }
 

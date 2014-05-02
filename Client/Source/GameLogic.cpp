@@ -659,7 +659,9 @@ float GameLogic::getOriginalFOV() const
 void GameLogic::castRay(const XMFLOAT4 &p_RayDir, const XMFLOAT4 &p_RayOrigin)
 {
 	BodyHandle b = m_Physics->rayCast(XMFLOAT4ToVector3(&p_RayDir), XMFLOAT4ToVector3(&p_RayOrigin));
-	Logger::log(Logger::Level::INFO, "Ray hit body: " + b);
+	std::string s("Ray hit body: " + std::to_string(b));
+	Logger::log(Logger::Level::INFO, s);
+
 }
 
 void GameLogic::handleNetwork()

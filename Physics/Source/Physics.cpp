@@ -849,11 +849,18 @@ void Physics::setBodyForceCollisionNormal(BodyHandle p_Body, BodyHandle p_BodyVi
 
 BodyHandle Physics::rayCast(const Vector3 &p_RayDirection, const Vector3 &p_RayOrigin)
 {
+	//Transfrom ray to meters instead of cm
+	Vector3 RayOrigConvToM = p_RayOrigin * 0.01f;
+
 	XMFLOAT4 rayDir = Vector3ToXMFLOAT4(&p_RayDirection, 0.f);
-	XMFLOAT4 rayOrigin = Vector3ToXMFLOAT4(&p_RayOrigin, 1.f);
-	for(unsigned int i = 0; i < m_Bodies.size(); i++)
+	XMFLOAT4 rayOrigin = Vector3ToXMFLOAT4(&RayOrigConvToM, 1.f);
+	for(unsigned int i = 1; i < m_Bodies.size(); i++)
 	{
-		if(Collision::raySphereIntersect(*m_Bodies[i].getSurroundingSphere(), rayDir, rayOrigin))
+		Body &b = m_Bodies[i];
+		if(!b.getIsImmovable())
+			continue;
+
+		if(Collision::raySphereIntersect(*b.getSurroundingSphere(), rayDir, rayOrigin))
 		{
 			return m_Bodies[i].getHandle();
 		}
