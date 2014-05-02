@@ -118,7 +118,7 @@ void MainWindow::idle()
 
 void MainWindow::on_actionExit_triggered()
 {
-    exit(0);
+	close();
 }
 
 void MainWindow::on_actionOpen_triggered()
