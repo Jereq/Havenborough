@@ -85,6 +85,13 @@ public:
 		DirectX::XMFLOAT4X4 *p_ViewMatrix, DirectX::XMFLOAT4X4 *p_ProjectionMatrix, ID3D11RenderTargetView *p_RenderTarget);
 
 	/**
+	 * Resizes all rendering buffers, used to change resolution.
+	 *
+	 * @param p_RenderTarget the default render target
+	 */
+	void resize(ID3D11RenderTargetView *p_RenderTarget);
+
+	/**
 	* Adds a new text object to a list of all existing objects. Throws exception if ID already exists.
 	* @param p_InstanceId the ID of the text object when created
 	* @param p_Object the text object

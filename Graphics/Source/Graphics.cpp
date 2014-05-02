@@ -264,6 +264,70 @@ bool Graphics::reInitialize(HWND p_Hwnd, int p_ScreenWidht, int p_ScreenHeight, 
 	return true;
 }
 
+void Graphics::resize(unsigned int p_ScreenWidth, unsigned int p_ScreenHeight)
+{
+	ID3D11RenderTargetView* viewList[1] = { nullptr };
+
+	m_DeviceContext->ClearState();
+	m_DeviceContext->OMSetRenderTargets(1, viewList, nullptr);
+
+	SAFE_RELEASE(m_RenderTargetView);
+	SAFE_RELEASE(m_DepthStencilView);
+
+	HRESULT hr;
+	if (FAILED(hr = m_SwapChain->ResizeBuffers(1, p_ScreenWidth, p_ScreenHeight, DXGI_FORMAT_UNKNOWN, DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH)))
+	{
+		throw GraphicsException("Failed to resize buffers", __LINE__, __FILE__);
+	}
+
+	if (FAILED(createDepthStencilBuffer(p_ScreenWidth, p_ScreenHeight)))
+	{
+		throw GraphicsException("Failed to recreate depth stencil buffer", __LINE__, __FILE__);
+	}
+	
+	m_DeviceContext->OMSetDepthStencilState(m_DepthStencilState, 1);
+
+	ID3D11Resource* backbufferResource = nullptr;
+	if (FAILED(m_SwapChain->GetBuffer(0, IID_PPV_ARGS(&backbufferResource))))
+	{
+		throw GraphicsException("Failed to get backbuffer", __LINE__, __FILE__);
+	}
+
+	if (FAILED(createRenderTargetView()))
+	{
+		throw GraphicsException("Failed to create render target view", __LINE__, __FILE__);
+	}
+
+	if (FAILED(createDepthStencilView()))
+	{
+		throw GraphicsException("Failed to create depth stencil view", __LINE__, __FILE__);
+	}
+
+	m_DeviceContext->OMSetRenderTargets(1, &m_RenderTargetView, m_DepthStencilView);
+	m_DeviceContext->RSSetState(m_RasterState);
+
+	setViewPort(p_ScreenWidth, p_ScreenHeight);
+
+	SAFE_RELEASE(backbufferResource);
+	
+	float nearZ = 8.0f;
+	float farZ = 100000.0f;
+	initializeMatrices(p_ScreenWidth, p_ScreenHeight, nearZ, farZ);
+
+	m_DeferredRender->resize(p_ScreenWidth, p_ScreenHeight, m_DepthStencilView);
+	m_ForwardRenderer->resize(m_DepthStencilView, m_RenderTargetView);
+	m_ScreenRenderer->resize(m_DepthStencilView, m_RenderTargetView);
+	m_TextRenderer->resize(m_RenderTargetView);
+
+	m_ScreenWidth = p_ScreenWidth;
+	m_ScreenHeight = p_ScreenHeight;
+
+	XMStoreFloat4x4(&m_ProjectionMatrix, XMMatrixTranspose(XMMatrixPerspectiveFovLH(m_FOV,
+		(float)m_ScreenWidth / (float)m_ScreenHeight, m_NearZ, m_FarZ)));
+
+	m_DeferredRender->FOVIsUpdated();
+}
+
 void Graphics::shutdown(void)
 {
 	GraphicsLogger::log(GraphicsLogger::Level::INFO, "Shutting down graphics");
@@ -1298,6 +1362,7 @@ HRESULT Graphics::createRenderTargetView(void)
 
 	D3D11_TEXTURE2D_DESC desc;
 	backBufferPtr->GetDesc(&desc);
+
 	int usage = VRAMInfo::getInstance()->calculateFormatUsage(desc.Format, desc.Width, desc.Height);
 	VRAMInfo::getInstance()->updateUsage(usage);
 	//Create the render target view with the back buffer pointer.
@@ -1326,6 +1391,16 @@ HRESULT Graphics::createDepthStencilBuffer(int p_ScreenWidth, int p_ScreenHeight
 	depthBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
 	depthBufferDesc.CPUAccessFlags = 0;
 	depthBufferDesc.MiscFlags = 0;
+
+	if (m_DepthStencilBuffer)
+	{
+		D3D11_TEXTURE2D_DESC prevDesc;
+		m_DepthStencilBuffer->GetDesc(&prevDesc);
+		unsigned int prevSize = VRAMInfo::getInstance()->calculateFormatUsage(prevDesc.Format, prevDesc.Width, prevDesc.Height);
+		VRAMInfo::getInstance()->updateUsage(prevSize);
+
+		m_DepthStencilBuffer->Release();
+	}
 
 	unsigned int size = VRAMInfo::getInstance()->calculateFormatUsage(depthBufferDesc.Format,
 		depthBufferDesc.Width, depthBufferDesc.Height);

@@ -6,21 +6,31 @@
 #include <qvector3d.h>
 #include <qwidget.h>
 
+#include "Camera.h"
+#include "FlyControl.h"
+#include "KeyboardControl.h"
+
 class DXWidget : public QWidget
 {
 	Q_OBJECT
 
 protected:
+	Camera m_Camera;
+	KeyboardControl m_Control;
+	FlyControl m_FlyControl;
 	bool m_StandBy;
 	double m_LastRendered;
-	QPointF m_ClickPos;
+	QPointF m_PrevMousePos;
 
 public:
 	DXWidget(QWidget* parent = nullptr, Qt::WindowFlags flags = 0)
-		: QWidget(parent, flags)
+		: QWidget(parent, flags),
+		m_FlyControl(&m_Camera, &m_Control)
 	{
 		setAttribute(Qt::WA_PaintOnScreen);
 		setAttribute(Qt::WA_NoSystemBackground);
+
+		setFocusPolicy(Qt::FocusPolicy::StrongFocus);
 
 		m_StandBy = false;
 		m_LastRendered = 0;
@@ -38,6 +48,11 @@ public:
 
 	virtual void render() {}
 	virtual void present() {}
+
+	void updateStep(float p_DeltaTime)
+	{
+		m_FlyControl.update(p_DeltaTime);
+	}
 
 protected:
 	QPaintEngine* paintEngine() const { return nullptr; }
@@ -62,12 +77,24 @@ protected:
 
 	void keyPressEvent(QKeyEvent* e) override
 	{
-		switch (e->key())
-		{
-		case Qt::Key::Key_Escape:
-		default:
-			QWidget::keyPressEvent(e);
-		}
+		if (m_Control.keyPressEvent(e))
+			return;
+
+		if (m_FlyControl.keyPressEvent(e))
+			return;
+
+		QWidget::keyPressEvent(e);
+	}
+
+	void keyReleaseEvent(QKeyEvent* e) override
+	{
+		if (m_Control.keyReleaseEvent(e))
+			return;
+
+		if (m_FlyControl.keyReleaseEvent(e))
+			return;
+
+		QWidget::keyReleaseEvent(e);
 	}
 
 	static bool isCameraOperation(QMouseEvent* e)
@@ -78,12 +105,10 @@ protected:
 
 	void mousePressEvent(QMouseEvent* e) override
 	{
-		m_ClickPos = e->localPos();
+		m_PrevMousePos = e->localPos();
 
 		if (isCameraOperation(e))
 		{
-			//m_Camera->backup();
-
 			if ((e->buttons() & Qt::LeftButton) && !(e->buttons() & Qt::RightButton))
 			{
 				//showStatus(tr("Tumble Tool: LMB Drag: Use LMB or MMB to tumble"));
@@ -110,26 +135,25 @@ protected:
 		{
 			if ((e->buttons() & Qt::LeftButton) && !(e->buttons() & Qt::RightButton))
 			{
-				//QPointF delta = (e->localPos() - m_ClickPos) / (float)height() * 180.f;
-				//m_Camera->recover();
-				//rotateCamera(delta.x(), delta.y(), 0.f);
+				QPointF delta = (e->localPos() - m_PrevMousePos) / (float)height() * DirectX::XM_PI;
+				m_Camera.rotate(delta.x(), delta.y(), 0.f);
 				update();
 			}
 			else if ((e->buttons() & Qt::RightButton) && !(e->buttons() & Qt::LeftButton))
 			{
 				//QPointF delta = (e->localPos() - m_ClickPos) / (float)height() * m_Camera->getCenterOfInterest();
-				//m_Camera->recover();
 				//moveCamera(0, 0, delta.y());
 				update();
 			}
 			else if (e->buttons() & Qt::MiddleButton)
 			{
 				//QPointF delta = (e->localPos() - m_ClickPos) / (float)height() * m_Camera->getCenterOfInterest();
-				//m_Camera->recover();
 				//moveCamera(-delta.x(), delta.y(), 0.f);
 				update();
 			}
 		}
+
+		m_PrevMousePos = e->localPos();
 
 		QWidget::mouseMoveEvent(e);
 	}

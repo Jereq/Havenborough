@@ -1,7 +1,7 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#pragma once
 
 #include <QMainWindow>
+#include <QTimer>
 
 namespace Ui {
 class MainWindow;
@@ -10,6 +10,10 @@ class MainWindow;
 class MainWindow : public QMainWindow
 {
 	Q_OBJECT
+
+private:
+	Ui::MainWindow *ui;
+	QTimer m_Timer;
 
 public:
 	explicit MainWindow(QWidget *parent = 0);
@@ -22,8 +26,11 @@ private slots:
 
     void on_actionObject_Tree_triggered();
 
-private:
-	Ui::MainWindow *ui;
-};
+	void idle();
+    void on_actionExit_triggered();
 
-#endif // MAINWINDOW_H
+    void on_actionOpen_triggered();
+
+    void on_actionSave_triggered();
+
+};

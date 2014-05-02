@@ -1,6 +1,6 @@
 #include "TreeItem.h"
 
-TreeItem::TreeItem(QWidget *parent)
+TreeItem::TreeItem()
 {
 }
 
@@ -8,7 +8,5 @@ TreeItem::TreeItem(std::string p_ItemName)
 {
     setText(0, QString::fromStdString(p_ItemName));
     setFlags(Qt::ItemIsDragEnabled | Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-
-    //Debug coloring
-    setBackground(0,*(new QBrush(Qt::red,Qt::SolidPattern)));
+    setIcon(0, QIcon(":/Icons/Assets/object.png"));
 }

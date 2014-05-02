@@ -65,6 +65,11 @@ void TextRenderer::initialize(ID3D11Device *p_Device, ID3D11DeviceContext *p_Dev
 	createRasterizerState();
 }
 
+void TextRenderer::resize(ID3D11RenderTargetView *p_RenderTarget)
+{
+	m_RenderTargetView = p_RenderTarget;
+}
+
 void TextRenderer::addTextObject(TextId p_InstanceId, TextInstance &p_Object)
 {
 	if(m_TextList.count(p_InstanceId) > 0)		

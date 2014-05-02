@@ -6,7 +6,7 @@
 class TreeItem : public QTreeWidgetItem
 {
   public:
-    explicit TreeItem(QWidget* parent = 0);
+    explicit TreeItem();
     TreeItem(std::string p_ItemName);
 
   private:

@@ -28,16 +28,27 @@ INCLUDEPATH += "$(SolutionDir)Graphics/include"
 debug: LIBS += -L"$(SolutionDir)Graphics/Test"
 release: LIBS += -L"$(SolutionDir)Graphics/Bin"
 
+INCLUDEPATH += "$(SolutionDir)Common/3rd party"
+INCLUDEPATH += "$(BOOST_INC_DIR)"
+LIBS += -L"$(BOOST_LIB_DIR)"
+
 SOURCES += Source/main.cpp\
         Source/MainWindow.cpp \
     Source/TreeItem.cpp \
-    Source/TreeFilter.cpp
+    Source/TreeFilter.cpp \
+    Source/Camera.cpp \
+    Source/KeyboardControl.cpp \
+    Source/FlyControl.cpp
 
 HEADERS  += Source/MainWindow.h \
     Source/TreeItem.h \
     Source/TreeFilter.h \
+    Source/extendedtablewidget.h \
     Source/DXWidget.h \
-    Source/MyDX11Widget.h
+    Source/MyDX11Widget.h \
+    Source/Camera.h \
+    Source/KeyboardControl.h \
+    Source/FlyControl.h
 
 FORMS    += Source/MainWindow.ui
 

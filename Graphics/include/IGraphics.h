@@ -102,6 +102,14 @@ public:
 	virtual bool reInitialize(HWND p_Hwnd, int p_ScreenWidth, int p_ScreenHeight, bool p_Fullscreen) = 0;
 
 	/**
+	 * Resizes all rendering buffers, used to change resolution.
+	 *
+	 * @param p_ScreenWidth the new resolution width in pixels
+	 * @param p_ScreenHeight the resolution height in pixels
+	 */
+	virtual void resize(unsigned int p_ScreenWidth, unsigned int p_ScreenHeight) = 0;
+
+	/**
 	 * Clear sub resources allocated by the graphics API and delete the pointer. 
 	 */
 	__declspec(dllexport) static void deleteGraphics(IGraphics *p_Graphics);
