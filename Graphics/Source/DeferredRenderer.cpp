@@ -142,55 +142,11 @@ void DeferredRenderer::initialize(ID3D11Device* p_Device, ID3D11DeviceContext* p
 	m_ScreenWidth = (float)p_ScreenWidth;
 	m_ScreenHeight = (float)p_ScreenHeight;
 
-	//Create render targets with the size of screen width and screen height
-	D3D11_TEXTURE2D_DESC desc;
-	ZeroMemory( &desc, sizeof(desc) );
-	desc.Width				= p_ScreenWidth;
-	desc.Height				= p_ScreenHeight;
-	desc.MipLevels			= 1;
-	desc.ArraySize			= 1;
-	desc.Format				= DXGI_FORMAT_R32G32B32A32_FLOAT;
-	desc.SampleDesc.Count	= 1;
-	desc.Usage				= D3D11_USAGE_DEFAULT;
-	desc.BindFlags			= D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-
 	if(!m_Device || !m_DeviceContext)
 		throw DeferredRenderException("Failed to initialize deferred renderer, nullpointers not allowed",
 		__LINE__, __FILE__);
-	
-	//DXGI_FORMAT_R32G32B32A32_FLOAT 
-	m_RT[IGraphics::RenderTarget::W_POSITION] = createRenderTarget(desc);
-	m_SRV["WPosition"] = createShaderResourceView(desc, m_RT[IGraphics::RenderTarget::W_POSITION]);
-	//Shadow map
-	m_ShadowBigSize = 20000.0f;
-	m_ShadowSmallSize = 3000.0f;
-	float percentage = m_ShadowSmallSize/m_ShadowBigSize;
-	percentage = percentage * 0.5f;
-	percentage = 0.5f - percentage;
-	m_ShadowMapBorder = percentage;
-	UINT resolution = m_ShadowMapResolution; //size of Shadow Map
-	if(m_ShadowMap)
-		initializeShadowMap(resolution, resolution);	
 
-	//DXGI_FORMAT_R16G16B16A16_FLOAT
-	desc.Format	= DXGI_FORMAT_R16G16B16A16_FLOAT;
-	m_RT[IGraphics::RenderTarget::DIFFUSE] = createRenderTarget(desc);
-	m_SRV["Diffuse"] = createShaderResourceView(desc, m_RT[IGraphics::RenderTarget::DIFFUSE]);
-
-	m_RT[IGraphics::RenderTarget::NORMAL] = createRenderTarget(desc);
-	m_SRV["Normal"] = createShaderResourceView(desc, m_RT[IGraphics::RenderTarget::NORMAL]);
-
-	m_RT[IGraphics::RenderTarget::LIGHT] = createRenderTarget(desc);
-	m_SRV["Light"] = createShaderResourceView(desc, m_RT[IGraphics::RenderTarget::LIGHT]);
-
-	m_SSAO_ResolutionScale = 1.0f;
-
-	desc.Width	= (UINT)(p_ScreenWidth * m_SSAO_ResolutionScale);
-	desc.Height	= (UINT)(p_ScreenHeight * m_SSAO_ResolutionScale);
-	m_RT[IGraphics::RenderTarget::SSAO] = createRenderTarget(desc);
-	m_SRV["SSAO"] = createShaderResourceView(desc, m_RT[IGraphics::RenderTarget::SSAO]);
-	m_RT[IGraphics::RenderTarget::SSAOPing] = createRenderTarget(desc);
-	m_SRV["SSAOPing"] = createShaderResourceView(desc, m_RT[IGraphics::RenderTarget::SSAOPing]);
+	createAllRenderTargets();
 	
 	createRandomTexture(256);
 	
@@ -206,6 +162,15 @@ void DeferredRenderer::initialize(ID3D11Device* p_Device, ID3D11DeviceContext* p
 	createBuffers();
 
 	registerTweakSettings();
+}
+
+void DeferredRenderer::resize(unsigned int p_ScreenWidth, unsigned int p_ScreenHeight, ID3D11DepthStencilView *p_DepthStencilView)
+{
+	m_DepthStencilView = p_DepthStencilView;
+	m_ScreenWidth = (float)p_ScreenWidth;
+	m_ScreenHeight = (float)p_ScreenHeight;
+
+	createAllRenderTargets();
 }
 
 void DeferredRenderer::initializeShadowMap(UINT width, UINT height)
@@ -236,6 +201,7 @@ void DeferredRenderer::initializeShadowMap(UINT width, UINT height)
     dsvDesc.Format = DXGI_FORMAT_D32_FLOAT;
     dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
     dsvDesc.Texture2D.MipSlice = 0;
+	SAFE_RELEASE(m_DepthMapDSV);
     hr = m_Device->CreateDepthStencilView(depthMap, &dsvDesc, &m_DepthMapDSV);
 	
 	//render to backbuffert from the camera
@@ -244,6 +210,7 @@ void DeferredRenderer::initializeShadowMap(UINT width, UINT height)
     srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
     srvDesc.Texture2D.MipLevels = texDesc.MipLevels;
     srvDesc.Texture2D.MostDetailedMip = 0;
+	SAFE_RELEASE(m_SRV["CSM"]);
 	hr =  m_Device->CreateShaderResourceView(depthMap, &srvDesc, &m_SRV["CSM"]);
 
 	//viewport that  matches the shadow map dimensions.
@@ -262,6 +229,13 @@ void DeferredRenderer::renderDeferred()
 {
 	// Clear render targets.
 	clearRenderTargets();
+		
+	if(m_FOVIsUpdated)
+	{
+		updateSSAO_VarConstantBuffer();
+		m_FOVIsUpdated = false;
+	}
+	updateConstantBuffer(*m_ViewMatrix, *m_ProjectionMatrix);
 
 	// Update constant buffer and render
 	if(m_Objects.size() > 0)
@@ -271,15 +245,6 @@ void DeferredRenderer::renderDeferred()
 		ID3D11RenderTargetView *rtv[] = {
 		m_RT[IGraphics::RenderTarget::DIFFUSE], m_RT[IGraphics::RenderTarget::NORMAL], m_RT[IGraphics::RenderTarget::W_POSITION]
 		};
-		
-		if(m_FOVIsUpdated)
-		{
-			updateSSAO_VarConstantBuffer();
-			m_FOVIsUpdated = false;
-		}
-
-		updateConstantBuffer(*m_ViewMatrix, *m_ProjectionMatrix);
-		unsigned int one = 1;
 
 		std::vector<std::vector<Renderable>> instancedModels;
 		std::vector<Renderable> animatedOrSingle;
@@ -305,9 +270,13 @@ void DeferredRenderer::renderDeferred()
 
 		m_Objects.clear();
 	}
-	m_RenderSkyDome = false;
+	
+	if (m_SkyDome && m_RenderSkyDome)
+	{
+		renderSkyDomeImpl();
+		m_RenderSkyDome = false;
+	}
 }
-
 
 void DeferredRenderer::renderGeometry(ID3D11DepthStencilView* p_DepthStencilView, unsigned int nrRT, ID3D11RenderTargetView* rtv[],
 									  const std::vector<std::vector<Renderable>> &p_InstancedModels, 
@@ -516,13 +485,35 @@ void DeferredRenderer::renderLighting(const std::vector<std::vector<Renderable>>
 
 	m_Buffer["DefaultConstant"]->unsetBuffer(0);
 
-	m_DeviceContext->OMSetBlendState(m_BlendState2, blendFactor, sampleMask);
-	if(m_SkyDome && m_RenderSkyDome)
-		m_SkyDome->RenderSkyDome(m_RT[IGraphics::RenderTarget::DIFFUSE], m_DepthStencilView, m_Buffer["DefaultConstant"]);
-
 	ID3D11SamplerState* const nullSamplerState = nullptr;
 	m_DeviceContext->PSSetSamplers(0, 1, &nullSamplerState);
 
+	m_DeviceContext->PSSetShaderResources(0, 5, nullsrvs);
+	m_DeviceContext->OMSetRenderTargets(0, 0, 0);
+	m_DeviceContext->RSSetState(previousRasterState);
+	m_DeviceContext->OMSetDepthStencilState(previousDepthState,0);
+	m_DeviceContext->OMSetBlendState(0, blendFactor, sampleMask);
+	SAFE_RELEASE(previousRasterState);
+	SAFE_RELEASE(previousDepthState);
+}
+
+void DeferredRenderer::renderSkyDomeImpl()
+{
+	ID3D11RasterizerState *previousRasterState;
+	ID3D11DepthStencilState *previousDepthState;
+	m_DeviceContext->RSGetState(&previousRasterState);
+	m_DeviceContext->OMGetDepthStencilState(&previousDepthState,0);
+
+	float blendFactor[] = {0.0f, 0.0f, 0.0f, 0.0f};
+	UINT sampleMask = 0xffffffff;
+	m_DeviceContext->OMSetBlendState(m_BlendState2, blendFactor, sampleMask);
+
+	m_SkyDome->RenderSkyDome(m_RT[IGraphics::RenderTarget::DIFFUSE], m_DepthStencilView, m_Buffer["DefaultConstant"]);
+
+	ID3D11SamplerState* const nullSamplerState = nullptr;
+	m_DeviceContext->PSSetSamplers(0, 1, &nullSamplerState);
+	
+	ID3D11ShaderResourceView *nullsrvs[] = {0,0,0,0,0};
 	m_DeviceContext->PSSetShaderResources(0, 5, nullsrvs);
 	m_DeviceContext->OMSetRenderTargets(0, 0, 0);
 	m_DeviceContext->RSSetState(previousRasterState);
@@ -606,6 +597,69 @@ void DeferredRenderer::updateLightBuffer(bool p_Big, bool p_ShadowMapped)
 	cb.big = p_Big; 
 	cb.shadowMapped = p_ShadowMapped;
 	m_DeviceContext->UpdateSubresource(m_Buffer["LightViewProj"]->getBufferPointer(), NULL, NULL, &cb, NULL, NULL);
+}
+
+void DeferredRenderer::createAllRenderTargets()
+{
+	//Create render targets with the size of screen width and screen height
+	D3D11_TEXTURE2D_DESC desc;
+	ZeroMemory( &desc, sizeof(desc) );
+	desc.Width				= (UINT)m_ScreenWidth;
+	desc.Height				= (UINT)m_ScreenHeight;
+	desc.MipLevels			= 1;
+	desc.ArraySize			= 1;
+	desc.Format				= DXGI_FORMAT_R32G32B32A32_FLOAT;
+	desc.SampleDesc.Count	= 1;
+	desc.Usage				= D3D11_USAGE_DEFAULT;
+	desc.BindFlags			= D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	
+	//DXGI_FORMAT_R32G32B32A32_FLOAT 
+	SAFE_RELEASE(m_RT[IGraphics::RenderTarget::W_POSITION]);
+	m_RT[IGraphics::RenderTarget::W_POSITION] = createRenderTarget(desc);
+
+	SAFE_RELEASE(m_SRV["WPosition"]);
+	m_SRV["WPosition"] = createShaderResourceView(desc, m_RT[IGraphics::RenderTarget::W_POSITION]);
+	//Shadow map
+	m_ShadowBigSize = 20000.0f;
+	m_ShadowSmallSize = 3000.0f;
+	float percentage = m_ShadowSmallSize/m_ShadowBigSize;
+	percentage = percentage * 0.5f;
+	percentage = 0.5f - percentage;
+	m_ShadowMapBorder = percentage;
+	UINT resolution = m_ShadowMapResolution; //size of Shadow Map
+	if(m_ShadowMap)
+		initializeShadowMap(resolution, resolution);	
+
+	//DXGI_FORMAT_R16G16B16A16_FLOAT
+	desc.Format	= DXGI_FORMAT_R16G16B16A16_FLOAT;
+	SAFE_RELEASE(m_RT[IGraphics::RenderTarget::DIFFUSE]);
+	m_RT[IGraphics::RenderTarget::DIFFUSE] = createRenderTarget(desc);
+	SAFE_RELEASE(m_SRV["Diffuse"]);
+	m_SRV["Diffuse"] = createShaderResourceView(desc, m_RT[IGraphics::RenderTarget::DIFFUSE]);
+	
+	SAFE_RELEASE(m_RT[IGraphics::RenderTarget::NORMAL]);
+	m_RT[IGraphics::RenderTarget::NORMAL] = createRenderTarget(desc);
+	SAFE_RELEASE(m_SRV["Normal"]);
+	m_SRV["Normal"] = createShaderResourceView(desc, m_RT[IGraphics::RenderTarget::NORMAL]);
+	
+	SAFE_RELEASE(m_RT[IGraphics::RenderTarget::LIGHT]);
+	m_RT[IGraphics::RenderTarget::LIGHT] = createRenderTarget(desc);
+	SAFE_RELEASE(m_SRV["Light"]);
+	m_SRV["Light"] = createShaderResourceView(desc, m_RT[IGraphics::RenderTarget::LIGHT]);
+
+	m_SSAO_ResolutionScale = 1.0f;
+
+	desc.Width	= (UINT)(m_ScreenWidth * m_SSAO_ResolutionScale);
+	desc.Height	= (UINT)(m_ScreenHeight * m_SSAO_ResolutionScale);
+	
+	SAFE_RELEASE(m_RT[IGraphics::RenderTarget::SSAO]);
+	m_RT[IGraphics::RenderTarget::SSAO] = createRenderTarget(desc);
+	SAFE_RELEASE(m_SRV["SSAO"]);
+	m_SRV["SSAO"] = createShaderResourceView(desc, m_RT[IGraphics::RenderTarget::SSAO]);
+	SAFE_RELEASE(m_RT[IGraphics::RenderTarget::SSAOPing]);
+	m_RT[IGraphics::RenderTarget::SSAOPing] = createRenderTarget(desc);
+	SAFE_RELEASE(m_SRV["SSAOPing"]);
+	m_SRV["SSAOPing"] = createShaderResourceView(desc, m_RT[IGraphics::RenderTarget::SSAOPing]);
 }
 
 ID3D11RenderTargetView *DeferredRenderer::createRenderTarget(D3D11_TEXTURE2D_DESC &desc)

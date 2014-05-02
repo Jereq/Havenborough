@@ -45,6 +45,14 @@ public:
 		DirectX::XMFLOAT4X4 *p_ProjectionMatrix, ID3D11DepthStencilView* p_DepthStencilView,
 		ID3D11RenderTargetView *p_RenderTarget);
 
+	/**
+	 * Resizes all rendering buffers, used to change resolution.
+	 *
+	 * @param p_DepthStencilView the default depth stencil view
+	 * @param p_RenderTarget the default render target
+	 */
+	void resize(ID3D11DepthStencilView* p_DepthStencilView, ID3D11RenderTargetView *p_RenderTarget);
+
 	/*
 	 * Add models to the list of objects to be rendered with deferred rendering.
 	 *
