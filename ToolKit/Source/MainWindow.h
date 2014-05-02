@@ -41,6 +41,8 @@ private slots:
 
     void on_actionAdd_Object_triggered();
 
+    void on_m_ObjectTree_itemSelectionChanged();
+
 signals:
     void setCameraPositionSignal(Vector3 p_CameraPosition);
 };

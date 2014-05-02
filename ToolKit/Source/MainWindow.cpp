@@ -18,6 +18,19 @@ MainWindow::MainWindow(QWidget *parent) :
     setCorner(Qt::TopRightCorner, Qt::RightDockWidgetArea);
     setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
 
+    //Hide Position Scale Rotation by default
+    ui->PositionBox->hide();
+    ui->ScaleBox->hide();
+    ui->RotationBox->hide();
+
+    //Signals and slots for connecting the camera to the camerabox values
+    QObject::connect(ui->m_RenderWidget, SIGNAL(CameraPositionChanged(Vector3)), this, SLOT(splitCameraPosition(Vector3)));
+    QObject::connect(ui->m_CameraPositionXBox, SIGNAL(editingFinished()), this, SLOT(setCameraPosition()));
+    QObject::connect(ui->m_CameraPositionYBox, SIGNAL(editingFinished()), this, SLOT(setCameraPosition()));
+    QObject::connect(ui->m_CameraPositionZBox, SIGNAL(editingFinished()), this, SLOT(setCameraPosition()));
+    QObject::connect(this, SIGNAL(setCameraPositionSignal(Vector3)), ui->m_RenderWidget, SLOT(CameraPositionSet(Vector3)));
+
+
     //Test Objects & ObjectTree Test code
 	TreeItem *item1 = new TreeItem("Object1");
     TreeItem *item2 = new TreeItem("Object2");
@@ -38,7 +51,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     //Tablewidget test code
-    QIcon icon(":/Icons/Assets/Filter.png");
+    QIcon icon(":/Icons/Assets/object.png");
     QTableWidgetItem *item = new QTableWidgetItem();
     item->setIcon(icon);
     item->setText("Object");
@@ -47,12 +60,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->m_ObjectTable->setItem(0,0,item);
     ui->m_ObjectTable->resizeColumnsToContents();
     ui->m_ObjectTable->resizeRowsToContents();
-
-    QObject::connect(ui->m_RenderWidget, SIGNAL(CameraPositionChanged(Vector3)), this, SLOT(splitCameraPosition(Vector3)));
-    QObject::connect(ui->m_CameraPositionXBox, SIGNAL(editingFinished()), this, SLOT(setCameraPosition()));
-    QObject::connect(ui->m_CameraPositionYBox, SIGNAL(editingFinished()), this, SLOT(setCameraPosition()));
-    QObject::connect(ui->m_CameraPositionZBox, SIGNAL(editingFinished()), this, SLOT(setCameraPosition()));
-    QObject::connect(this, SIGNAL(setCameraPositionSignal(Vector3)), ui->m_RenderWidget, SLOT(CameraPositionSet(Vector3)));
 }
 
 MainWindow::~MainWindow()
@@ -151,4 +158,24 @@ void MainWindow::on_actionProperties_triggered()
 void MainWindow::on_actionAdd_Object_triggered()
 {
     ui->m_ObjectTableDockableWidget->show();
+}
+
+void MainWindow::on_m_ObjectTree_itemSelectionChanged()
+{
+    QTreeWidgetItem *currItem = ui->m_ObjectTree->currentItem();
+
+    TreeFilter *cFilter = dynamic_cast<TreeFilter*>(currItem);
+
+    if(cFilter)
+    {
+        ui->PositionBox->hide();
+        ui->ScaleBox->hide();
+        ui->RotationBox->hide();
+    }
+    else
+    {
+        ui->PositionBox->show();
+        ui->ScaleBox->show();
+        ui->RotationBox->show();
+    }
 }
