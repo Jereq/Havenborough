@@ -63,10 +63,18 @@ public:
 
 	void updateStep(float p_DeltaTime)
 	{
+        Vector3 previousCameraPosition = m_Camera.getPosition();
+
 		Vector3 direction = m_Camera.getForward() * m_Move
 			+ m_Camera.getRight() * m_Strafe
 			+ Vector3(0.f, 1.f, 0.f) * m_Lift;
 		m_Camera.translate(direction * p_DeltaTime * m_MovementSpeed);
+
+        Vector3 currentCameraPosition = m_Camera.getPosition();
+        if(previousCameraPosition.x != currentCameraPosition.x ||
+            previousCameraPosition.y != currentCameraPosition.y ||
+            previousCameraPosition.z != currentCameraPosition.z)
+            emit CameraPositionChanged(currentCameraPosition);
 	}
 
 protected:
@@ -312,4 +320,11 @@ protected:
 		//zoomCamera(1.f - (e->delta() / WHEEL_DELTA) * 0.125f);
 		update();
 	}
+signals:
+    void CameraPositionChanged( Vector3 value );
+private slots:
+    void CameraPositionSet(Vector3 value)
+    {
+        m_Camera.setPosition(value);
+    }
 };
