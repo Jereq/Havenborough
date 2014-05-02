@@ -30,10 +30,13 @@ MainWindow::MainWindow(QWidget *parent) :
     TreeFilter *filter1 = new TreeFilter("Filter1");
     ui->m_ObjectTree->addTopLevelItem(filter1);
 
+    //Timer
 	m_Timer.setInterval(1000 / 60);
 	m_Timer.setSingleShot(false);
 	QObject::connect(&m_Timer, SIGNAL(timeout()), this, SLOT(idle()));
 	m_Timer.start();
+
+
     //Tablewidget test code
     QIcon icon(":/Icons/Assets/Filter.png");
     QTableWidgetItem *item = new QTableWidgetItem();
@@ -44,6 +47,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->m_ObjectTable->setItem(0,0,item);
     ui->m_ObjectTable->resizeColumnsToContents();
     ui->m_ObjectTable->resizeRowsToContents();
+
+    QObject::connect(ui->m_RenderWidget, SIGNAL(CameraPositionChanged(Vector3)), this, SLOT(splitCameraPosition(Vector3)));
+    QObject::connect(ui->spinBox, SIGNAL(editingFinished()), this, SLOT(setCameraPosition()));
+    QObject::connect(ui->spinBox_2, SIGNAL(editingFinished()), this, SLOT(setCameraPosition()));
+    QObject::connect(ui->spinBox_3, SIGNAL(editingFinished()), this, SLOT(setCameraPosition()));
+    QObject::connect(this, SIGNAL(setCameraPositionSignal(Vector3)), ui->m_RenderWidget, SLOT(CameraPositionSet(Vector3)));
 }
 
 MainWindow::~MainWindow()
@@ -75,8 +84,25 @@ void MainWindow::on_m_ObjectTreeAddButton_clicked()
 
 void MainWindow::on_m_ObjectTreeRemoveButton_clicked()
 {
-	QTreeWidgetItem * currItem = ui->m_ObjectTree->currentItem();
-	delete currItem;
+    QTreeWidgetItem *currItem = ui->m_ObjectTree->currentItem();
+
+    removeChild(currItem);
+}
+
+void MainWindow::removeChild(QTreeWidgetItem* currItem)
+{
+    for (int i = 0; i < currItem->childCount(); i++)
+    {
+        QTreeWidgetItem *currChild = currItem->takeChild(i);
+        if (currChild->childCount() != 0)
+        {
+            removeChild(currChild);
+        }
+        else
+            delete currChild;
+    }
+
+    delete currItem;
 }
 
 void MainWindow::on_actionObject_Tree_triggered()
@@ -103,4 +129,16 @@ void MainWindow::on_actionOpen_triggered()
 void MainWindow::on_actionSave_triggered()
 {
     QFileDialog::getSaveFileName(this, tr("Save Level As..."), "/home/ME", tr("Level Files (*.xml"));
+}
+
+void MainWindow::splitCameraPosition(Vector3 p_cameraPosition)
+{
+	ui->spinBox->setValue(p_cameraPosition.x);
+	ui->spinBox_2->setValue(p_cameraPosition.y);
+	ui->spinBox_3->setValue(p_cameraPosition.z);
+}
+
+void MainWindow::setCameraPosition()
+{
+    emit setCameraPositionSignal(Vector3(ui->spinBox->value(), ui->spinBox_2->value(), ui->spinBox_3->value()));
 }
