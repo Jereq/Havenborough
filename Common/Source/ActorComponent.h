@@ -46,7 +46,7 @@ public:
 	 *
 	 * @param p_DeltaTime the time in seconds since previous update.
 	 */
-	virtual void onUpdate(float p_DeltaTime) {}
+	virtual void onUpdate(float p_DeltaTime) { (void)p_DeltaTime; }
 
 	/**
 	 * Get the components type id.
@@ -67,14 +67,14 @@ public:
 	 *
 	 * @param p_Position the owning actors new position
 	 */
-	virtual void setPosition(Vector3 p_Position) {}
+	virtual void setPosition(Vector3 p_Position) { (void)p_Position; }
 
 	/**
 	 * Update the rotation of the component, given the actors new rotation.
 	 *
 	 * @param p_Rotation the new rotation of the owning actor, in (yaw, pitch, roll), left-handed
 	 */
-	virtual void setRotation(Vector3 p_Rotation) {}
+	virtual void setRotation(Vector3 p_Rotation) { (void)p_Rotation; }
 
 private:
 	friend class ActorFactory;

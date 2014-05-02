@@ -11,7 +11,10 @@
 #include "Camera.h"
 #include "FlyControl.h"
 #include "KeyboardControl.h"
+
+#ifndef Q_MOC_RUN
 #include "ObjectManager.h"
+#endif
 
 class DXWidget : public QWidget
 {
