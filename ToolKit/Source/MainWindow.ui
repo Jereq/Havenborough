@@ -20,9 +20,9 @@
    <widget class="QWidget" name="m_RenderWidget" native="true">
     <property name="geometry">
      <rect>
-      <x>70</x>
+      <x>20</x>
       <y>20</y>
-      <width>61</width>
+      <width>791</width>
       <height>401</height>
      </rect>
     </property>
@@ -358,8 +358,6 @@
        </item>
       </layout>
      </widget>
-     <zorder>spinBox_3</zorder>
-     <zorder>gridLayoutWidget</zorder>
     </widget>
    </widget>
   </widget>
