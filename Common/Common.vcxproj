@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3rd party\tinyxml2\tinyxml2.h" />
+    <ClInclude Include="Source\Level.h" />
     <ClInclude Include="Source\SoundComponent.h" />
     <ClInclude Include="Source\PlayerBodyComponent.h" />
     <ClInclude Include="Source\ActorList.h" />
@@ -57,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3rd party\tinyxml2\tinyxml2.cpp" />
+    <ClCompile Include="Source\Level.cpp" />
     <ClCompile Include="Source\PlayerBodyComponent.cpp" />
     <ClCompile Include="Source\ActorList.cpp" />
     <ClCompile Include="Source\Animation.cpp" />

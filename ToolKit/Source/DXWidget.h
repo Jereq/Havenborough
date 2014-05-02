@@ -6,15 +6,21 @@
 #include <qvector3d.h>
 #include <qwidget.h>
 
+#include <EventManager.h>
+
 #include "Camera.h"
 #include "FlyControl.h"
 #include "KeyboardControl.h"
+#include "ObjectManager.h"
 
 class DXWidget : public QWidget
 {
 	Q_OBJECT
 
 protected:
+	EventManager m_EventManager;
+	ResourceManager m_ResourceManager;
+	std::unique_ptr<ObjectManager> m_ObjectManager;
 	Camera m_Camera;
 	KeyboardControl m_Control;
 	FlyControl m_FlyControl;
@@ -49,9 +55,16 @@ public:
 	virtual void render() {}
 	virtual void present() {}
 
-	void updateStep(float p_DeltaTime)
+	virtual void updateStep(float p_DeltaTime)
 	{
+		m_EventManager.processEvents();
 		m_FlyControl.update(p_DeltaTime);
+		m_ObjectManager->update(p_DeltaTime);
+	}
+
+	void loadLevel(const std::string& p_Filename)
+	{
+		m_ObjectManager->loadLevel(p_Filename);
 	}
 
 protected:

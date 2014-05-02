@@ -28,6 +28,10 @@ INCLUDEPATH += "$(SolutionDir)Graphics/include"
 debug: LIBS += -L"$(SolutionDir)Graphics/Test"
 release: LIBS += -L"$(SolutionDir)Graphics/Bin"
 
+INCLUDEPATH += "$(SolutionDir)Physics/include"
+debug: LIBS += -L"$(SolutionDir)Physics/Test"
+release: LIBS += -L"$(SolutionDir)Physics/Bin"
+
 INCLUDEPATH += "$(SolutionDir)Common/3rd party"
 INCLUDEPATH += "$(BOOST_INC_DIR)"
 LIBS += -L"$(BOOST_LIB_DIR)"
@@ -38,7 +42,8 @@ SOURCES += Source/main.cpp\
     Source/TreeFilter.cpp \
     Source/Camera.cpp \
     Source/KeyboardControl.cpp \
-    Source/FlyControl.cpp
+    Source/FlyControl.cpp \
+    Source/ObjectManager.cpp
 
 HEADERS  += Source/MainWindow.h \
     Source/TreeItem.h \
@@ -48,7 +53,8 @@ HEADERS  += Source/MainWindow.h \
     Source/MyDX11Widget.h \
     Source/Camera.h \
     Source/KeyboardControl.h \
-    Source/FlyControl.h
+    Source/FlyControl.h \
+    Source/ObjectManager.h
 
 FORMS    += Source/MainWindow.ui
 

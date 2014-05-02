@@ -19,7 +19,6 @@
     <ClCompile Include="Source\Settings.cpp" />
     <ClCompile Include="Source\EdgeCollisionResponse.cpp" />
     <ClCompile Include="Source\GameLogic.cpp" />
-    <ClCompile Include="Source\Level.cpp" />
     <ClCompile Include="Source\Player.cpp" />
     <ClCompile Include="Source\RAMInfo.cpp" />
     <ClCompile Include="Source\BaseGameApp.cpp" />
@@ -70,7 +69,6 @@
     <ClInclude Include="Source\EdgeCollisionResponse.h" />
     <ClInclude Include="Source\RAMInfo.h" />
     <ClInclude Include="Source\GameLogic.h" />
-    <ClInclude Include="Source\Level.h" />
     <ClInclude Include="Source\Player.h" />
     <ClInclude Include="Source\BaseGameApp.h" />
     <ClInclude Include="Source\Input\Input.h" />
