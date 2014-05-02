@@ -49,9 +49,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->m_ObjectTable->resizeRowsToContents();
 
     QObject::connect(ui->m_RenderWidget, SIGNAL(CameraPositionChanged(Vector3)), this, SLOT(splitCameraPosition(Vector3)));
-    QObject::connect(ui->spinBox, SIGNAL(editingFinished()), this, SLOT(setCameraPosition()));
-    QObject::connect(ui->spinBox_2, SIGNAL(editingFinished()), this, SLOT(setCameraPosition()));
-    QObject::connect(ui->spinBox_3, SIGNAL(editingFinished()), this, SLOT(setCameraPosition()));
+    QObject::connect(ui->m_CameraPositionXBox, SIGNAL(editingFinished()), this, SLOT(setCameraPosition()));
+    QObject::connect(ui->m_CameraPositionYBox, SIGNAL(editingFinished()), this, SLOT(setCameraPosition()));
+    QObject::connect(ui->m_CameraPositionZBox, SIGNAL(editingFinished()), this, SLOT(setCameraPosition()));
     QObject::connect(this, SIGNAL(setCameraPositionSignal(Vector3)), ui->m_RenderWidget, SLOT(CameraPositionSet(Vector3)));
 }
 
@@ -133,12 +133,12 @@ void MainWindow::on_actionSave_triggered()
 
 void MainWindow::splitCameraPosition(Vector3 p_cameraPosition)
 {
-	ui->spinBox->setValue(p_cameraPosition.x);
-	ui->spinBox_2->setValue(p_cameraPosition.y);
-	ui->spinBox_3->setValue(p_cameraPosition.z);
+    ui->m_CameraPositionXBox->setValue(p_cameraPosition.x);
+    ui->m_CameraPositionYBox->setValue(p_cameraPosition.y);
+    ui->m_CameraPositionZBox->setValue(p_cameraPosition.z);
 }
 
 void MainWindow::setCameraPosition()
 {
-    emit setCameraPositionSignal(Vector3(ui->spinBox->value(), ui->spinBox_2->value(), ui->spinBox_3->value()));
+    emit setCameraPositionSignal(Vector3(ui->m_CameraPositionXBox->value(), ui->m_CameraPositionYBox->value(), ui->m_CameraPositionZBox->value()));
 }
