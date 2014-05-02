@@ -41,7 +41,7 @@ SOURCES += Source/main.cpp\
 HEADERS  += Source/MainWindow.h \
     Source/TreeItem.h \
     Source/TreeFilter.h \
-    Source/extendedtablewidget.h
+    Source/extendedtablewidget.h \
     Source/DXWidget.h \
     Source/MyDX11Widget.h \
     Source/Camera.h
