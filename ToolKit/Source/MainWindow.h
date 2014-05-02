@@ -37,6 +37,10 @@ private slots:
 	
 	void splitCameraPosition(Vector3 p_cameraPosition);
     void setCameraPosition();
+    void on_actionProperties_triggered();
+
+    void on_actionAdd_Object_triggered();
+
 signals:
     void setCameraPositionSignal(Vector3 p_CameraPosition);
 };

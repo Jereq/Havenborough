@@ -142,3 +142,13 @@ void MainWindow::setCameraPosition()
 {
     emit setCameraPositionSignal(Vector3(ui->m_CameraPositionXBox->value(), ui->m_CameraPositionYBox->value(), ui->m_CameraPositionZBox->value()));
 }
+
+void MainWindow::on_actionProperties_triggered()
+{
+    ui->m_PropertiesDockableWidget->show();
+}
+
+void MainWindow::on_actionAdd_Object_triggered()
+{
+    ui->m_ObjectTableDockableWidget->show();
+}
