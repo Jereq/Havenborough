@@ -234,22 +234,12 @@
        </attribute>
        <row>
         <property name="text">
-         <string>Cell1</string>
+         <string>Row</string>
         </property>
        </row>
        <column>
         <property name="text">
-         <string>Col1</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Col2</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Col3</string>
+         <string>Column</string>
         </property>
        </column>
       </widget>

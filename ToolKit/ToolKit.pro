@@ -43,7 +43,8 @@ SOURCES += Source/main.cpp\
     Source/Camera.cpp \
     Source/KeyboardControl.cpp \
     Source/FlyControl.cpp \
-    Source/ObjectManager.cpp
+    Source/ObjectManager.cpp \
+    Source/TableItem.cpp
 
 HEADERS  += Source/MainWindow.h \
     Source/TreeItem.h \
@@ -54,7 +55,8 @@ HEADERS  += Source/MainWindow.h \
     Source/Camera.h \
     Source/KeyboardControl.h \
     Source/FlyControl.h \
-    Source/ObjectManager.h
+    Source/ObjectManager.h \
+    Source/TableItem.h
 
 FORMS    += Source/MainWindow.ui
 
