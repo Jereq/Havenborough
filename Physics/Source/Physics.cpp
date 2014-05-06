@@ -866,8 +866,13 @@ BodyHandle Physics::rayCast(const XMFLOAT4 &p_RayDirection, const XMFLOAT4 &p_Ra
 		if(b.getIsEdge())
 			continue;
 		
+		float tempDist;
+		if(b.getVolume()->getType() == BoundingVolume::Type::HULL)
+			tempDist = Collision::rayTriangleIntersect((Hull&)*b.getVolume(), p_RayDirection, p_RayOrigin);
+		//else if(b.getVolume(0)->getType() == BoundingVolume::Type::SPHERE)
+		//	tempDist = Collision::raySphereIntersect((Sphere&)*b.getVolume(0), p_RayDirection, p_RayOrigin);
 
-		float tempDist = Collision::raySphereIntersect(*b.getSurroundingSphere(), p_RayDirection, rayOriginConv);
+		
 		if(tempDist > 0.f && tempDist < dist)
 		{
 			dist = tempDist;

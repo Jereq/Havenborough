@@ -99,8 +99,15 @@ public:
 	 * @returns true if there an intersection otherwise false
 	 */
 	static float raySphereIntersect(const Sphere &p_Sphere, const DirectX::XMFLOAT4 &p_RayDirection, const DirectX::XMFLOAT4 &p_RayOrigin);
-
-	//static bool raySphereIntersect(const DirectX::XMFLOAT2 &p_MousePos, const DirectX::XMFLOAT2 &p_WindowSize ,const Sphere &p_Sphere, const DirectX::XMFLOAT4X4 &p_Projection, const DirectX::XMFLOAT4X4 &p_View);
+	
+	/**
+	 * Check if a ray intersects with a body.
+	 * @param, p_Hull the hull representing the body to test against
+	 * @param, p_RayDir direction of the ray in world space
+	 * @param, p_RayOrigin origin of the ray in world space
+	 * @returns true if there an intersection otherwise false
+	 */
+	static float Collision::rayTriangleIntersect(const Hull &p_Hull, const DirectX::XMFLOAT4 &p_RayDirection, const DirectX::XMFLOAT4 &p_RayOrigin);
 
 private:
 	static HitData SATBoxVsBox(OBB const &p_OBB, BoundingVolume const &p_vol);
