@@ -6,38 +6,35 @@
 #include <qvector3d.h>
 #include <qwidget.h>
 
+#include <EventManager.h>
+
 #include "Camera.h"
+#include "FlyControl.h"
+#include "KeyboardControl.h"
+
+#ifndef Q_MOC_RUN
+#include "ObjectManager.h"
+#endif
 
 class DXWidget : public QWidget
 {
 	Q_OBJECT
 
 protected:
+	EventManager m_EventManager;
+	ResourceManager m_ResourceManager;
+	std::unique_ptr<ObjectManager> m_ObjectManager;
 	Camera m_Camera;
+	KeyboardControl m_Control;
+	FlyControl m_FlyControl;
 	bool m_StandBy;
 	double m_LastRendered;
 	QPointF m_PrevMousePos;
-	float m_MoveLeft, m_MoveRight, m_Strafe;
-	float m_MoveForward, m_MoveBackward, m_Move;
-	float m_MoveUp, m_MoveDown, m_Lift;
-
-	static const int normalMovementSpeed = 1000;
-	static const int slowMovementSpeed = 100;
-	float m_MovementSpeed;
 
 public:
 	DXWidget(QWidget* parent = nullptr, Qt::WindowFlags flags = 0)
 		: QWidget(parent, flags),
-		m_MoveLeft(0.f),
-		m_MoveRight(0.f),
-		m_Strafe(0.f),
-		m_MoveForward(0.f),
-		m_MoveBackward(0.f),
-		m_Move(0.f),
-		m_MoveUp(0.f),
-		m_MoveDown(0.f),
-		m_Lift(0.f),
-		m_MovementSpeed(normalMovementSpeed)
+		m_FlyControl(&m_Camera, &m_Control)
 	{
 		setAttribute(Qt::WA_PaintOnScreen);
 		setAttribute(Qt::WA_NoSystemBackground);
@@ -61,20 +58,25 @@ public:
 	virtual void render() {}
 	virtual void present() {}
 
-	void updateStep(float p_DeltaTime)
+	virtual void updateStep(float p_DeltaTime)
 	{
-        Vector3 previousCameraPosition = m_Camera.getPosition();
+        	Vector3 previousCameraPosition = m_Camera.getPosition();
 
-		Vector3 direction = m_Camera.getForward() * m_Move
-			+ m_Camera.getRight() * m_Strafe
-			+ Vector3(0.f, 1.f, 0.f) * m_Lift;
-		m_Camera.translate(direction * p_DeltaTime * m_MovementSpeed);
+		m_EventManager.processEvents();
+		m_FlyControl.update(p_DeltaTime);
+		m_ObjectManager->update(p_DeltaTime);
+		
+		Vector3 currentCameraPosition = m_Camera.getPosition();
+        	if(previousCameraPosition.x != currentCameraPosition.x ||
+            		previousCameraPosition.y != currentCameraPosition.y ||
+            		previousCameraPosition.z != currentCameraPosition.z)
+            	emit CameraPositionChanged(currentCameraPosition);
 
-        Vector3 currentCameraPosition = m_Camera.getPosition();
-        if(previousCameraPosition.x != currentCameraPosition.x ||
-            previousCameraPosition.y != currentCameraPosition.y ||
-            previousCameraPosition.z != currentCameraPosition.z)
-            emit CameraPositionChanged(currentCameraPosition);
+	}
+
+	void loadLevel(const std::string& p_Filename)
+	{
+		m_ObjectManager->loadLevel(p_Filename);
 	}
 
 protected:
@@ -98,150 +100,26 @@ protected:
 		onResize(newSize.width(), newSize.height());
 	}
 
-	void startMoveForward()
-	{
-		m_MoveForward = 1.f;
-		m_Move = m_MoveForward - m_MoveBackward;
-	}
-
-	void startMoveBackward()
-	{
-		m_MoveBackward = 1.f;
-		m_Move = m_MoveForward - m_MoveBackward;
-	}
-
-	void startMoveLeft()
-	{
-		m_MoveLeft = 1.f;
-		m_Strafe = m_MoveRight - m_MoveLeft;
-	}
-
-	void startMoveRight()
-	{
-		m_MoveRight = 1.f;
-		m_Strafe = m_MoveRight - m_MoveLeft;
-	}
-
-	void startMoveUp()
-	{
-		m_MoveUp = 1.f;
-		m_Lift = m_MoveUp - m_MoveDown;
-	}
-
-	void startMoveDown()
-	{
-		m_MoveDown = 1.f;
-		m_Lift = m_MoveUp - m_MoveDown;
-	}
-
-	void stopMoveForward()
-	{
-		m_MoveForward = 0.f;
-		m_Move = m_MoveForward - m_MoveBackward;
-	}
-
-	void stopMoveBackward()
-	{
-		m_MoveBackward = 0.f;
-		m_Move = m_MoveForward - m_MoveBackward;
-	}
-
-	void stopMoveLeft()
-	{
-		m_MoveLeft = 0.f;
-		m_Strafe = m_MoveRight - m_MoveLeft;
-	}
-
-	void stopMoveRight()
-	{
-		m_MoveRight = 0.f;
-		m_Strafe = m_MoveRight - m_MoveLeft;
-	}
-
-	void stopMoveUp()
-	{
-		m_MoveUp = 0.f;
-		m_Lift = m_MoveUp - m_MoveDown;
-	}
-
-	void stopMoveDown()
-	{
-		m_MoveDown = 0.f;
-		m_Lift = m_MoveUp - m_MoveDown;
-	}
-
 	void keyPressEvent(QKeyEvent* e) override
 	{
-		switch (e->key())
-		{
-		case Qt::Key::Key_W:
-			startMoveForward();
-			break;
+		if (m_Control.keyPressEvent(e))
+			return;
 
-		case Qt::Key::Key_S:
-			startMoveBackward();
-			break;
+		if (m_FlyControl.keyPressEvent(e))
+			return;
 
-		case Qt::Key::Key_A:
-			startMoveLeft();
-			break;
-
-		case Qt::Key::Key_D:
-			startMoveRight();
-			break;
-
-		case Qt::Key::Key_Space:
-			startMoveUp();
-			break;
-
-		case Qt::Key::Key_Shift:
-			startMoveDown();
-			break;
-
-		case Qt::Key::Key_Control:
-			m_MovementSpeed = slowMovementSpeed;
-			break;
-
-		default:
-			QWidget::keyPressEvent(e);
-		}
+		QWidget::keyPressEvent(e);
 	}
 
 	void keyReleaseEvent(QKeyEvent* e) override
 	{
-		switch (e->key())
-		{
-		case Qt::Key::Key_W:
-			stopMoveForward();
-			break;
+		if (m_Control.keyReleaseEvent(e))
+			return;
 
-		case Qt::Key::Key_S:
-			stopMoveBackward();
-			break;
+		if (m_FlyControl.keyReleaseEvent(e))
+			return;
 
-		case Qt::Key::Key_A:
-			stopMoveLeft();
-			break;
-
-		case Qt::Key::Key_D:
-			stopMoveRight();
-			break;
-
-		case Qt::Key::Key_Space:
-			stopMoveUp();
-			break;
-
-		case Qt::Key::Key_Shift:
-			stopMoveDown();
-			break;
-
-		case Qt::Key::Key_Control:
-			m_MovementSpeed = normalMovementSpeed;
-			break;
-
-		default:
-			QWidget::keyReleaseEvent(e);
-		}
+		QWidget::keyReleaseEvent(e);
 	}
 
 	static bool isCameraOperation(QMouseEvent* e)
