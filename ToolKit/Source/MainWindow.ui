@@ -1006,9 +1006,6 @@
    <extends>QWidget</extends>
    <header>MyDX11Widget.h</header>
    <container>1</container>
-   <slots>
-    <slot>addObject(QTableWidgetItem*)</slot>
-   </slots>
   </customwidget>
   <customwidget>
    <class>ExtendedTableWidget</class>
@@ -1021,7 +1018,7 @@
   <connection>
    <sender>m_ObjectTable</sender>
    <signal>itemDoubleClicked(QTableWidgetItem*)</signal>
-   <receiver>m_RenderWidget</receiver>
+   <receiver>MainWindow</receiver>
    <slot>addObject(QTableWidgetItem*)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1035,4 +1032,7 @@
    </hints>
   </connection>
  </connections>
+ <slots>
+  <slot>addObject(QTableWidgetItem*)</slot>
+ </slots>
 </ui>

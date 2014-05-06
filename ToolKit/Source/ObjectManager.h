@@ -4,8 +4,9 @@
 #include <string>
 
 #include <ActorFactory.h>
-#include <EventManager.h>
-#include <ResourceManager.h>
+
+class EventManager;
+class ResourceManager;
 
 #include <QObject>
 

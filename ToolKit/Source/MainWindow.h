@@ -1,11 +1,24 @@
 #pragma once
 
-#include <QMainWindow>
-#include <QTimer>
 #include <map>
 
-#include "Utilities\XMFloatUtil.h"
-#include <QTreeWidgetItem>
+#include <QMainWindow>
+#include <QTimer>
+
+#include <EventManager.h>
+#include <Utilities\XMFloatUtil.h>
+
+#ifndef Q_MOC_RUN
+#include <ResourceManager.h>
+#endif
+
+class QTableWidgetItem;
+class QTreeWidget;
+class QTreeWidgetItem;
+
+class IGraphics;
+class IPhysics;
+class ObjectManager;
 
 namespace Ui {
 class MainWindow;
@@ -19,6 +32,12 @@ private:
 	Ui::MainWindow *ui;
 	QTimer m_Timer;
 	QIcon m_DefaultObjectIcon;
+
+	EventManager m_EventManager;
+	ResourceManager m_ResourceManager;
+	std::unique_ptr<ObjectManager> m_ObjectManager;
+	IGraphics* m_Graphics;
+	IPhysics* m_Physics;
 
 	std::map<std::string, int> m_ObjectCount;
 
@@ -88,10 +107,18 @@ private slots:
 
     void setObjectPosition();
 
+	void addObject(QTableWidgetItem* p_ObjectItem);
+
 signals:
     void setCameraPositionSignal(Vector3 p_CameraPosition);
 
 private:
 	void createSimpleObjectDescription(const std::string& p_ModelName);
 	void addSimpleObjectType(const std::string& p_ModelName);
+	void onFrame(float p_DeltaTime);
+	void loadLevel(const std::string& p_Filename);
+	void registerObjectDescription(const std::string& p_ObjectName, const std::string& p_Description);
+
+	void initializeSystems();
+	void uninitializeSystems();
 };

@@ -44,7 +44,9 @@ SOURCES += Source/main.cpp\
     Source/KeyboardControl.cpp \
     Source/FlyControl.cpp \
     Source/ObjectManager.cpp \
-    Source/TableItem.cpp
+    Source/TableItem.cpp \
+    Source/DXWidget.cpp \
+    Source/MyDX11Widget.cpp
 
 HEADERS  += Source/MainWindow.h \
     Source/TreeItem.h \

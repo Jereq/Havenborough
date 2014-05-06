@@ -1,5 +1,7 @@
 #include "KeyboardControl.h"
 
+#include <qevent.h>
+
 KeyboardControl::KeyboardControl()
 	:	m_MoveLeft(0.f),
 		m_MoveRight(0.f),

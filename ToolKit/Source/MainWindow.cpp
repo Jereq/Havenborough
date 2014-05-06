@@ -1,18 +1,36 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
 
+#ifdef _DEBUG
+#pragma comment(lib, "Commond.lib")
+#pragma comment(lib, "Graphicsd.lib")
+#pragma comment(lib, "Physicsd.lib")
+#else
+#pragma comment(lib, "Common.lib")
+#pragma comment(lib, "Graphics.lib")
+#pragma comment(lib, "Physics.lib")
+#endif
+#pragma comment(lib, "d3d11.lib")
+
+#include <QFileDialog>
+
+#include <ActorFactory.h>
+#include <TweakSettings.h>
+
+#include "ObjectManager.h"
 #include "TreeItem.h"
 #include "TreeFilter.h"
 #include "TableItem.h"
 
-#include <QFileDialog>
-
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
 	ui(new Ui::MainWindow),
-	m_DefaultObjectIcon(":/Icons/Assets/object.png")
+	m_DefaultObjectIcon(":/Icons/Assets/object.png"),
+	m_Physics(nullptr)
 {
 	ui->setupUi(this);
+
+	initializeSystems();
 
     //Layout setup
     setCorner(Qt::TopLeftCorner, Qt::LeftDockWidgetArea);
@@ -34,9 +52,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QObject::connect(this, SIGNAL(setCameraPositionSignal(Vector3)), ui->m_RenderWidget, SLOT(CameraPositionSet(Vector3)));
 
-	QObject::connect(ui->m_RenderWidget->getObjectManager(), SIGNAL(meshCreated(std::string, int)), this, SLOT(on_meshCreated_triggered(std::string, int)));
-	QObject::connect(ui->m_RenderWidget->getObjectManager(), SIGNAL(lightCreated(std::string, int)), this, SLOT(on_lightCreated_triggered(std::string, int)));
-	QObject::connect(ui->m_RenderWidget->getObjectManager(), SIGNAL(particleCreated(std::string, int)), this, SLOT(on_particleCreated_triggered(std::string, int)));
+	QObject::connect(m_ObjectManager.get(), SIGNAL(meshCreated(std::string, int)), this, SLOT(on_meshCreated_triggered(std::string, int)));
+	QObject::connect(m_ObjectManager.get(), SIGNAL(lightCreated(std::string, int)), this, SLOT(on_lightCreated_triggered(std::string, int)));
+	QObject::connect(m_ObjectManager.get(), SIGNAL(particleCreated(std::string, int)), this, SLOT(on_particleCreated_triggered(std::string, int)));
 
     QObject::connect(ui->m_ObjectScaleXBox, SIGNAL(editingFinished()), this, SLOT(setObjectScale()));
     QObject::connect(ui->m_ObjectScaleYBox, SIGNAL(editingFinished()), this, SLOT(setObjectScale()));
@@ -59,6 +77,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	m_Timer.setSingleShot(false);
 	QObject::connect(&m_Timer, SIGNAL(timeout()), this, SLOT(idle()));
 	m_Timer.start();
+
 	addSimpleObjectType("Barrel1");
 	addSimpleObjectType("House1");
 	addSimpleObjectType("Island1");
@@ -67,6 +86,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+	uninitializeSystems();
 	delete ui;
 }
 
@@ -136,7 +156,9 @@ void MainWindow::on_actionObject_Tree_triggered()
 
 void MainWindow::idle()
 {
-	ui->m_RenderWidget->updateStep(m_Timer.interval() / 1000.f);
+	float deltaTime = m_Timer.interval() / 1000.f;
+	onFrame(deltaTime);
+	ui->m_RenderWidget->onFrame(deltaTime);
 	ui->m_RenderWidget->update();
 }
 
@@ -152,8 +174,8 @@ void MainWindow::on_actionOpen_triggered()
 	{
 		m_ObjectCount.clear();
 		ui->m_ObjectTree->clear();
-
-		ui->m_RenderWidget->loadLevel(fullFilePath.toStdString());
+		
+		loadLevel(fullFilePath.toStdString());
 	}
 }
 
@@ -212,7 +234,7 @@ void MainWindow::on_m_ObjectTree_itemSelectionChanged()
             ui->ScaleBox->show();
             ui->RotationBox->show();
 
-            Actor::ptr actor = ui->m_RenderWidget->getObjectManager()->getActor(cItem->getActorId());
+			Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
             std::weak_ptr<ModelComponent> pmodel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
             std::shared_ptr<ModelComponent> spmodel = pmodel.lock();
 
@@ -319,7 +341,7 @@ void MainWindow::setObjectScale()
 
 		if(currItem->isSelected() && cItem)
         {
-			Actor::ptr actor = ui->m_RenderWidget->getObjectManager()->getActor(cItem->getActorId());
+			Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
 			std::weak_ptr<ModelComponent> pmodel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
             std::shared_ptr<ModelComponent> spmodel = pmodel.lock();
 
@@ -340,7 +362,7 @@ void MainWindow::setObjectPosition()
 
         if(currItem->isSelected() && cItem)
         {
-            Actor::ptr actor = ui->m_RenderWidget->getObjectManager()->getActor(cItem->getActorId());
+			Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
             std::weak_ptr<ModelComponent> pmodel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
             std::shared_ptr<ModelComponent> spmodel = pmodel.lock();
 
@@ -362,7 +384,7 @@ void MainWindow::setObjectRotation()
 
         if(currItem->isSelected() && cItem)
         {
-            Actor::ptr actor = ui->m_RenderWidget->getObjectManager()->getActor(cItem->getActorId());
+			Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
             std::weak_ptr<ModelComponent> pmodel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
             std::shared_ptr<ModelComponent> spmodel = pmodel.lock();
 
@@ -390,7 +412,7 @@ void MainWindow::createSimpleObjectDescription(const std::string& p_ModelName)
 
 	std::vector<ActorFactory::InstanceEdgeBox> edges;
 
-	ui->m_RenderWidget->registerObjectDescription(p_ModelName, ActorFactory::getInstanceActorDescription(model, volumes, edges));
+	registerObjectDescription(p_ModelName, ActorFactory::getInstanceActorDescription(model, volumes, edges));
 }
 
 void MainWindow::addSimpleObjectType(const std::string& p_ModelName)
@@ -404,4 +426,91 @@ void MainWindow::addSimpleObjectType(const std::string& p_ModelName)
 	ui->m_ObjectTable->insertColumn(column);
 	ui->m_ObjectTable->setItem(0, column, item);
 	createSimpleObjectDescription(p_ModelName);
+}
+
+void MainWindow::onFrame(float p_DeltaTime)
+{
+	m_EventManager.processEvents();
+	
+	m_ObjectManager->update(p_DeltaTime);
+}
+
+void MainWindow::loadLevel(const std::string& p_Filename)
+{
+	m_ObjectManager->loadLevel(p_Filename);
+}
+
+void MainWindow::registerObjectDescription(const std::string& p_ObjectName, const std::string& p_Description)
+{
+	m_ObjectManager->registerObjectDescription(p_ObjectName, p_Description);
+}
+
+void MainWindow::addObject(QTableWidgetItem* p_ObjectItem)
+{
+	m_ObjectManager->addObject(p_ObjectItem->text().toStdString(), Vector3(rand() % 1000, rand() % 1000, rand() % 1000));
+}
+
+void MainWindow::initializeSystems()
+{
+	TweakSettings::initializeMaster();
+
+	m_Physics = IPhysics::createPhysics();
+	m_Physics->initialize(false, 1.f / 60.f);
+
+	m_Graphics = IGraphics::createGraphics();
+	m_Graphics->setTweaker(TweakSettings::getInstance());
+	m_Graphics->setShadowMapResolution(1024);
+	m_Graphics->enableShadowMap(true);
+	m_Graphics->initialize((HWND)ui->m_RenderWidget->winId(), width(), height(), false, 60.f);
+
+	m_Graphics->setLoadModelTextureCallBack(&ResourceManager::loadModelTexture, &m_ResourceManager);
+	m_Graphics->setReleaseModelTextureCallBack(&ResourceManager::releaseModelTexture, &m_ResourceManager);
+
+	using std::placeholders::_1;
+	using std::placeholders::_2;
+	m_ResourceManager.registerFunction("model",
+		std::bind(&IGraphics::createModel, m_Graphics, _1, _2),
+		std::bind(&IGraphics::releaseModel, m_Graphics, _1) );
+	m_ResourceManager.registerFunction("texture",
+		std::bind(&IGraphics::createTexture, m_Graphics, _1, _2),
+		std::bind(&IGraphics::releaseTexture, m_Graphics, _1));
+	m_ResourceManager.registerFunction("volume",
+		std::bind(&IPhysics::createBV, m_Physics, _1, _2),
+		std::bind(&IPhysics::releaseBV, m_Physics, _1));
+	m_ResourceManager.registerFunction("particleSystem",
+		std::bind(&IGraphics::createParticleEffectDefinition, m_Graphics, _1, _2),
+		std::bind(&IGraphics::releaseParticleEffectDefinition, m_Graphics, _1));
+	m_ResourceManager.loadDataFromFile("assets/Resources.xml");
+
+	ActorFactory::ptr actorFactory(new ActorFactory(0));
+	actorFactory->setPhysics(m_Physics);
+	actorFactory->setEventManager(&m_EventManager);
+	actorFactory->setResourceManager(&m_ResourceManager);
+	m_ObjectManager.reset(new ObjectManager(actorFactory, &m_EventManager, &m_ResourceManager));
+
+	ui->m_RenderWidget->initialize(&m_EventManager, &m_ResourceManager, m_Graphics);
+}
+
+void MainWindow::uninitializeSystems()
+{
+	m_ResourceManager.setReleaseImmediately(true);
+
+	m_ObjectManager.reset();
+
+	ui->m_RenderWidget->uninitialize();
+
+	m_ResourceManager.unregisterResourceType("model");
+	m_ResourceManager.unregisterResourceType("texture");
+
+	if (m_Graphics)
+	{
+		IGraphics::deleteGraphics(m_Graphics);
+		m_Graphics = nullptr;
+	}
+
+	if (m_Physics)
+	{
+		IPhysics::deletePhysics(m_Physics);
+		m_Physics = nullptr;
+	}
 }

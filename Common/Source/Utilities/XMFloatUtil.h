@@ -60,6 +60,11 @@ struct Vector3 : public DirectX::XMFLOAT3
 	{
 		return x == p_Right.x && y == p_Right.y && z == p_Right.z;
 	}
+
+	bool operator!=(const Vector3& p_Right) const
+	{
+		return !operator==(p_Right);
+	}
 };
 
 struct Vector4 : public DirectX::XMFLOAT4
