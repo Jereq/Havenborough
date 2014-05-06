@@ -97,7 +97,11 @@ void MainWindow::on_actionExit_triggered()
 
 void MainWindow::on_actionOpen_triggered()
 {
-    QString fullFilePath = QFileDialog::getOpenFileName(this, tr("Open Level"), "/home/ME", tr("Level Files (*.xml)"));
+	QString fullFilePath = QFileDialog::getOpenFileName(this, tr("Open Level"), "/home/ME", tr("Level Files (*.xml *.btxl)"));
+	if (!fullFilePath.isNull())
+	{
+		ui->m_RenderWidget->loadLevel(fullFilePath.toStdString());
+	}
 }
 
 void MainWindow::on_actionSave_triggered()
