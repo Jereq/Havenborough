@@ -386,6 +386,21 @@ Actor::ptr ActorFactory::createInstanceActor(
 		const std::vector<InstanceBoundingVolume>& p_BoundingVolumes,
 		const std::vector<InstanceEdgeBox>& p_Edges)
 {
+	std::string desc = getInstanceActorDescription(p_Model, p_BoundingVolumes, p_Edges);
+
+	tinyxml2::XMLDocument doc;
+	doc.Parse(desc.c_str());
+
+	Actor::ptr actor = createActor(doc.FirstChildElement("Object"));
+
+	return actor;
+}
+
+std::string ActorFactory::getInstanceActorDescription(
+		const InstanceModel& p_Model,
+		const std::vector<InstanceBoundingVolume>& p_BoundingVolumes,
+		const std::vector<InstanceEdgeBox>& p_Edges)
+{
 	tinyxml2::XMLPrinter printer;
 	printer.OpenElement("Object");
 	pushVector(printer, p_Model.position);
@@ -401,12 +416,7 @@ Actor::ptr ActorFactory::createInstanceActor(
 	}
 	printer.CloseElement();
 
-	tinyxml2::XMLDocument doc;
-	doc.Parse(printer.CStr());
-
-	Actor::ptr actor = createActor(doc.FirstChildElement("Object"));
-
-	return actor;
+	return std::string(printer.CStr(), printer.CStrSize());
 }
 
 Actor::ptr ActorFactory::createSpell(const std::string& p_Spell, Actor::Id p_CasterId, Vector3 p_Direction, Vector3 p_StartPosition)

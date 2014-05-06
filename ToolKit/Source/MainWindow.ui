@@ -228,22 +228,19 @@
        <property name="cornerButtonEnabled">
         <bool>false</bool>
        </property>
+       <property name="rowCount">
+        <number>1</number>
+       </property>
+       <property name="columnCount">
+        <number>0</number>
+       </property>
        <attribute name="horizontalHeaderVisible">
         <bool>false</bool>
        </attribute>
        <attribute name="verticalHeaderVisible">
         <bool>false</bool>
        </attribute>
-       <row>
-        <property name="text">
-         <string>Row</string>
-        </property>
-       </row>
-       <column>
-        <property name="text">
-         <string>Column</string>
-        </property>
-       </column>
+       <row/>
       </widget>
      </item>
     </layout>
@@ -1009,6 +1006,9 @@
    <extends>QWidget</extends>
    <header>MyDX11Widget.h</header>
    <container>1</container>
+   <slots>
+    <slot>addObject(QTableWidgetItem*)</slot>
+   </slots>
   </customwidget>
   <customwidget>
    <class>ExtendedTableWidget</class>
@@ -1017,5 +1017,22 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>m_ObjectTable</sender>
+   <signal>itemDoubleClicked(QTableWidgetItem*)</signal>
+   <receiver>m_RenderWidget</receiver>
+   <slot>addObject(QTableWidgetItem*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>639</x>
+     <y>594</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>672</x>
+     <y>243</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

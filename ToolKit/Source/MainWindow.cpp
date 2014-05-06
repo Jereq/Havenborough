@@ -9,7 +9,8 @@
 
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
-	ui(new Ui::MainWindow)
+	ui(new Ui::MainWindow),
+	m_DefaultObjectIcon(":/Icons/Assets/object.png")
 {
 	ui->setupUi(this);
 
@@ -58,6 +59,10 @@ MainWindow::MainWindow(QWidget *parent) :
 	m_Timer.setSingleShot(false);
 	QObject::connect(&m_Timer, SIGNAL(timeout()), this, SLOT(idle()));
 	m_Timer.start();
+	addSimpleObjectType("Barrel1");
+	addSimpleObjectType("House1");
+	addSimpleObjectType("Island1");
+	addSimpleObjectType("Top1");
 }
 
 MainWindow::~MainWindow()
@@ -367,4 +372,36 @@ void MainWindow::setObjectRotation()
             }
         }
     }
+}
+
+void MainWindow::createSimpleObjectDescription(const std::string& p_ModelName)
+{
+	ActorFactory::InstanceModel model;
+	model.meshName = p_ModelName;
+	model.position = Vector3();
+	model.rotation = Vector3();
+	model.scale = Vector3(1.f, 1.f, 1.f);
+
+	std::vector<ActorFactory::InstanceBoundingVolume> volumes;
+	ActorFactory::InstanceBoundingVolume volume;
+	volume.meshName = p_ModelName;
+	volume.scale = Vector3(1.f, 1.f, 1.f);
+	volumes.push_back(volume);
+
+	std::vector<ActorFactory::InstanceEdgeBox> edges;
+
+	ui->m_RenderWidget->registerObjectDescription(p_ModelName, ActorFactory::getInstanceActorDescription(model, volumes, edges));
+}
+
+void MainWindow::addSimpleObjectType(const std::string& p_ModelName)
+{
+    QTableWidgetItem *item = new QTableWidgetItem();
+	item->setIcon(m_DefaultObjectIcon);
+	item->setText(QString::fromStdString(p_ModelName));
+    item->setTextAlignment(Qt::AlignBottom | Qt::AlignCenter);
+
+	int column = ui->m_ObjectTable->columnCount();
+	ui->m_ObjectTable->insertColumn(column);
+	ui->m_ObjectTable->setItem(0, column, item);
+	createSimpleObjectDescription(p_ModelName);
 }

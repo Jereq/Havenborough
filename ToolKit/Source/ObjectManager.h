@@ -1,5 +1,8 @@
 #pragma once
 
+#include <map>
+#include <string>
+
 #include <ActorFactory.h>
 #include <EventManager.h>
 #include <ResourceManager.h>
@@ -18,6 +21,7 @@ private:
 	ActorList m_ActorList;
 	EventManager* m_EventManager;
 	ResourceManager* m_ResourceManager;
+	std::map<std::string, std::string> m_ObjectDescriptions;
 
 public:
 	ObjectManager(ActorFactory::ptr p_ActorFactory, EventManager* p_EventManager, ResourceManager* p_ResourceManager);
@@ -26,6 +30,8 @@ public:
 	void update(float p_DeltaTime);
 
 	void loadLevel(const std::string& p_Filename);
+	void addObject(const std::string& p_ObjectName, const Vector3& p_Position);
+	void registerObjectDescription(const std::string& p_ObjectName, const std::string& p_Description);
 
 	Actor::ptr getActor(Actor::Id p_Id);
 

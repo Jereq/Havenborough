@@ -3,6 +3,7 @@
 #include <qevent.h>
 #include <qmainwindow.h>
 #include <qstatusbar.h>
+#include <QTableWidgetItem>
 #include <qvector3d.h>
 #include <qwidget.h>
 
@@ -77,6 +78,11 @@ public:
 	void loadLevel(const std::string& p_Filename)
 	{
 		m_ObjectManager->loadLevel(p_Filename);
+	}
+
+	void registerObjectDescription(const std::string& p_ObjectName, const std::string& p_Description)
+	{
+		m_ObjectManager->registerObjectDescription(p_ObjectName, p_Description);
 	}
 
 protected:
@@ -205,4 +211,8 @@ private slots:
     {
         m_Camera.setPosition(value);
     }
+	void addObject(QTableWidgetItem* p_ObjectItem)
+	{
+		m_ObjectManager->addObject(p_ObjectItem->text().toStdString(), Vector3(rand() % 1000, rand() % 1000, rand() % 1000));
+	}
 };

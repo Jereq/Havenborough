@@ -18,6 +18,7 @@ class MainWindow : public QMainWindow
 private:
 	Ui::MainWindow *ui;
 	QTimer m_Timer;
+	QIcon m_DefaultObjectIcon;
 
 	std::map<std::string, int> m_ObjectCount;
 
@@ -89,4 +90,8 @@ private slots:
 
 signals:
     void setCameraPositionSignal(Vector3 p_CameraPosition);
+
+private:
+	void createSimpleObjectDescription(const std::string& p_ModelName);
+	void addSimpleObjectType(const std::string& p_ModelName);
 };
