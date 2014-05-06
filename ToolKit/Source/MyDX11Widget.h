@@ -28,6 +28,9 @@ private:
 	std::vector<int> m_ResourceIDs;
 	std::vector<LightClass> m_Lights;
 
+	bool m_PowerPieActive;
+	std::map<std::string, int> m_GUI;
+
 	struct ReachIK
 	{
 		std::string group;
@@ -121,6 +124,10 @@ public:
 		m_EventManager.addListener(EventListenerDelegate(this, &MyDX11Widget::updateParticleBaseColor), UpdateParticleBaseColorEventData::sk_EventType);
 
 		m_ResourceIDs.push_back(m_ResourceManager.loadResource("particleSystem", "TestParticle"));
+
+		preLoadModels();
+
+		m_PowerPieActive = true;
 	}
 
 	void uninitialize() override
@@ -128,6 +135,8 @@ public:
 		m_ResourceManager.setReleaseImmediately(true);
 
 		m_ObjectManager.reset();
+
+		releasePreLoadedModels();
 
 		for (int res : m_ResourceIDs)
 		{
@@ -171,6 +180,8 @@ public:
 		//}
 		
 		m_Graphics->updateCamera(m_Camera.getPosition(), m_Camera.getForward(), m_Camera.getUp());
+		
+		m_Graphics->render2D_Object(m_GUI["PowerPie"]);
 
 		for (auto& mesh : m_Models)
 		{
@@ -425,5 +436,47 @@ public:
 		{
 			m_Graphics->setParticleEffectBaseColor(it->second.instance, data->getBaseColor());
 		}
+	}
+
+	void activatePowerPie(IEventData::Ptr p_Data)
+	{
+		std::shared_ptr<MouseEventDataPie> pie = std::static_pointer_cast<MouseEventDataPie>(p_Data);
+		//m_Graphics->set2D_ObjectPosition(m_GUI["PowerPie"], Vector3(data->getMousePos().x, data->getMousePos().y, 0.f));
+
+		m_PowerPieActive = pie->getPieStatus();
+	}
+
+
+	void createPowerPieElement()
+	{
+		Vector4 color(0.9101f, 0.8632f, 0.0937f, 1.f);
+		Vector3 position(0.f, 0.f, 0.f);
+		Vector3 scale(1.f, 1.f, 1.f);
+
+		m_GUI.insert(std::pair<std::string, int>("PowerPie", m_Graphics->create2D_Object(position, Vector2(128.f, 128.f), scale, 0.f, "PowerPie")));
+		m_Graphics->set2D_ObjectColor(m_GUI["PowerPie"], color);
+	}
+
+	void preLoadModels()
+	{
+		static const std::string preloadedTextures[] =
+		{
+			"PowerPie",
+		};
+		for (const std::string &texture : preloadedTextures)
+		{
+			m_ResourceIDs.push_back(m_ResourceManager.loadResource("texture", texture));
+		}
+
+		createPowerPieElement();
+	}
+
+	void releasePreLoadedModels()
+	{
+		for(auto id : m_GUI)
+		{
+			m_Graphics->release2D_Model(id.second);
+		}
+		m_GUI.clear();
 	}
 };

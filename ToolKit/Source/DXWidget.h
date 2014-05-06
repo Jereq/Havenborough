@@ -7,6 +7,7 @@
 #include <qwidget.h>
 
 #include <EventManager.h>
+#include <EventData.h>
 
 #include "Camera.h"
 #include "FlyControl.h"
@@ -146,7 +147,8 @@ protected:
 			else if ((e->buttons() & Qt::RightButton) && !(e->buttons() & Qt::LeftButton))
 			{
 				//showStatus(tr("Dolly Tool: RMB Drag: Use mouse to dolly"));
-				setCursor(Qt::CrossCursor);
+				
+				setCursor(Qt::BlankCursor);
 
 				m_MouseStartPos = e->localPos();
 				m_MouseDir = QPointF(0, 0);
