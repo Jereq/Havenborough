@@ -20,6 +20,7 @@
 
 class MyDX11Widget : public DXWidget
 {
+	Q_OBJECT
 private:
 	IGraphics* m_Graphics;
 	IPhysics* m_Physics;
@@ -48,6 +49,10 @@ private:
 		IGraphics::InstanceId instance;
 	};
 	std::map<unsigned int, ParticleBinding> m_Particles;
+
+public: 
+signals:
+	void meshCreated(std::string p_MeshName);
 
 public:
 	explicit MyDX11Widget(QWidget* parent = nullptr, Qt::WindowFlags flags = 0)
@@ -274,6 +279,8 @@ public:
 		m_Graphics->setModelStyle(mesh.modelId, meshData->getStyle().c_str());
 	
 		m_Models.push_back(mesh);
+
+		emit meshCreated(meshData->getMeshName());
 	}
 
 	void removeMesh(IEventData::Ptr p_Data)
