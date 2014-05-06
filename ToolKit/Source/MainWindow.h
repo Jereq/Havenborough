@@ -18,7 +18,6 @@ class MainWindow : public QMainWindow
 private:
 	Ui::MainWindow *ui;
 	QTimer m_Timer;
-    void removeChild(QTreeWidgetItem* currItem);
 
 	std::map<std::string, int> m_ObjectCount;
 
@@ -37,6 +36,10 @@ private:
 public:
 	explicit MainWindow(QWidget *parent = 0);
 	~MainWindow();
+
+private:
+    void removeChild(QTreeWidgetItem* currItem);
+	void addFilter(QTreeWidget* tree);
 
 private slots:
     void on_m_ObjectTreeAddButton_clicked();
@@ -61,6 +64,18 @@ private slots:
     void on_m_ObjectTree_itemSelectionChanged();
 
 	void on_meshCreated_triggered(std::string p_MeshName);
+
+    void on_actionParticle_Tree_triggered();
+
+    void on_actionLight_Tree_triggered();
+
+    void on_m_LightTreeAddButton_clicked();
+
+    void on_m_ParticleTreeAddButton_clicked();
+
+    void on_m_LightTreeRemoveButton_clicked();
+
+    void on_m_ParticleTreeRemoveButton_4_clicked();
 
 signals:
     void setCameraPositionSignal(Vector3 p_CameraPosition);

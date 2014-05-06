@@ -32,6 +32,10 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(this, SIGNAL(setCameraPositionSignal(Vector3)), ui->m_RenderWidget, SLOT(CameraPositionSet(Vector3)));
     QObject::connect(ui->m_RenderWidget, SIGNAL(meshCreated(std::string)), this, SLOT(on_meshCreated_triggered(std::string)));
 
+    // Nest dock widgets.
+    tabifyDockWidget(ui->m_ParticleTreeDockableWidget, ui->m_LightTreeDockableWidget);
+    tabifyDockWidget(ui->m_ParticleTreeDockableWidget, ui->m_ObjectDockableWidget);
+
     //Timer
 	m_Timer.setInterval(1000 / 60);
 	m_Timer.setSingleShot(false);
@@ -46,24 +50,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_m_ObjectTreeAddButton_clicked()
 {
-    TreeFilter *newFilter = new TreeFilter("NewFilter");
-
-    QTreeWidgetItem *currItem = ui->m_ObjectTree->currentItem();
-    QTreeWidgetItem *currItemParent = currItem->parent();
-
-    TreeFilter *cFilter = dynamic_cast<TreeFilter*>(currItem);
-
-    if(cFilter)
-    {
-        currItem->addChild(newFilter);
-    }
-    else
-    {
-        if(currItemParent)
-            currItemParent->addChild(newFilter);
-        else
-            ui->m_ObjectTree->addTopLevelItem(newFilter);
-    }
+	addFilter(ui->m_ObjectTree);
 }
 
 void MainWindow::on_m_ObjectTreeRemoveButton_clicked()
@@ -75,18 +62,49 @@ void MainWindow::on_m_ObjectTreeRemoveButton_clicked()
 
 void MainWindow::removeChild(QTreeWidgetItem* currItem)
 {
-    for (int i = 0; i < currItem->childCount(); i++)
-    {
-        QTreeWidgetItem *currChild = currItem->takeChild(i);
-        if (currChild->childCount() != 0)
-        {
-            removeChild(currChild);
-        }
-        else
-            delete currChild;
-    }
+	if(currItem)
+	{
+		for (int i = 0; i < currItem->childCount(); i++)
+		{
+			QTreeWidgetItem *currChild = currItem->takeChild(i);
+			if (currChild->childCount() != 0)
+			{
+				removeChild(currChild);
+			}
+			else
+				delete currChild;
+		}
 
-    delete currItem;
+		delete currItem;
+	}
+}
+
+void MainWindow::addFilter(QTreeWidget* tree)
+{
+    TreeFilter *newFilter = new TreeFilter("NewFilter");
+
+    QTreeWidgetItem *currItem = tree->currentItem();
+	if(currItem)
+	{
+		QTreeWidgetItem *currItemParent = currItem->parent();
+		TreeFilter *cFilter = dynamic_cast<TreeFilter*>(currItem);
+
+		if(cFilter)
+		{
+			currItem->addChild(newFilter);
+		}
+		else
+		{
+			if(currItemParent)
+				currItemParent->addChild(newFilter);
+			else
+				tree->addTopLevelItem(newFilter);
+		}
+	}
+	else
+	{
+		tree->addTopLevelItem(newFilter);
+	}
 }
 
 void MainWindow::on_actionObject_Tree_triggered()
@@ -144,6 +162,16 @@ void MainWindow::on_actionAdd_Object_triggered()
     ui->m_ObjectTableDockableWidget->show();
 }
 
+void MainWindow::on_actionParticle_Tree_triggered()
+{
+    ui->m_ParticleTreeDockableWidget->show();
+}
+
+void MainWindow::on_actionLight_Tree_triggered()
+{
+    ui->m_LightTreeDockableWidget->show();
+}
+
 void MainWindow::on_m_ObjectTree_itemSelectionChanged()
 {
     QTreeWidgetItem *currItem = ui->m_ObjectTree->currentItem();
@@ -191,4 +219,26 @@ void MainWindow::on_meshCreated_triggered(std::string p_MeshName)
 	}
 
 	ui->m_ObjectTree->addTopLevelItem(new TreeItem(p_MeshName + "_" + std::to_string(m_ObjectCount.at(p_MeshName))));
+}
+
+void MainWindow::on_m_LightTreeAddButton_clicked()
+{
+	addFilter(ui->m_LightTree);
+}
+
+void MainWindow::on_m_ParticleTreeAddButton_clicked()
+{
+	addFilter(ui->m_ParticleTree);
+}
+
+void MainWindow::on_m_LightTreeRemoveButton_clicked()
+{
+    QTreeWidgetItem *currItem = ui->m_LightTree->currentItem();
+    removeChild(currItem);
+}
+
+void MainWindow::on_m_ParticleTreeRemoveButton_4_clicked()
+{
+    QTreeWidgetItem *currItem = ui->m_ParticleTree->currentItem();
+    removeChild(currItem);
 }
