@@ -550,6 +550,9 @@
          <property name="maximum">
           <double>999999.000000000000000</double>
          </property>
+         <property name="value">
+          <double>1.000000000000000</double>
+         </property>
         </widget>
        </item>
        <item row="1" column="1">
@@ -566,6 +569,9 @@
          <property name="maximum">
           <double>999999.000000000000000</double>
          </property>
+         <property name="value">
+          <double>1.000000000000000</double>
+         </property>
         </widget>
        </item>
        <item row="2" column="1">
@@ -581,6 +587,9 @@
          </property>
          <property name="maximum">
           <double>999999.000000000000000</double>
+         </property>
+         <property name="value">
+          <double>1.000000000000000</double>
          </property>
         </widget>
        </item>
@@ -818,8 +827,6 @@
       </layout>
      </item>
     </layout>
-    <zorder>m_LightTree</zorder>
-    <zorder>layoutWidget</zorder>
    </widget>
   </widget>
   <widget class="QDockWidget" name="m_ParticleTreeDockableWidget">
