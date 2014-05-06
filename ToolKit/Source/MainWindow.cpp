@@ -30,7 +30,12 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->m_CameraPositionYBox, SIGNAL(editingFinished()), this, SLOT(setCameraPosition()));
     QObject::connect(ui->m_CameraPositionZBox, SIGNAL(editingFinished()), this, SLOT(setCameraPosition()));
     QObject::connect(this, SIGNAL(setCameraPositionSignal(Vector3)), ui->m_RenderWidget, SLOT(CameraPositionSet(Vector3)));
-    QObject::connect(ui->m_RenderWidget, SIGNAL(meshCreated(std::string)), this, SLOT(on_meshCreated_triggered(std::string)));
+	QObject::connect(ui->m_RenderWidget->getObjectManager(), SIGNAL(meshCreated(std::string, int)), this, SLOT(on_meshCreated_triggered(std::string, int)));
+	QObject::connect(ui->m_RenderWidget->getObjectManager(), SIGNAL(lightCreated(std::string, int)), this, SLOT(on_lightCreated_triggered(std::string, int)));
+	QObject::connect(ui->m_RenderWidget->getObjectManager(), SIGNAL(particleCreated(std::string, int)), this, SLOT(on_particleCreated_triggered(std::string, int)));
+    QObject::connect(ui->m_ObjectScaleXBox, SIGNAL(editingFinished()), this, SLOT(setObjectScale()));
+    QObject::connect(ui->m_ObjectScaleYBox, SIGNAL(editingFinished()), this, SLOT(setObjectScale()));
+    QObject::connect(ui->m_ObjectScaleZBox, SIGNAL(editingFinished()), this, SLOT(setObjectScale()));
 
     // Nest dock widgets.
     tabifyDockWidget(ui->m_ParticleTreeDockableWidget, ui->m_LightTreeDockableWidget);
@@ -175,21 +180,45 @@ void MainWindow::on_actionLight_Tree_triggered()
 void MainWindow::on_m_ObjectTree_itemSelectionChanged()
 {
     QTreeWidgetItem *currItem = ui->m_ObjectTree->currentItem();
-    TreeFilter *cFilter = dynamic_cast<TreeFilter*>(currItem);
+
 
 	ui->PositionBox->hide();
     ui->ScaleBox->hide();
     ui->RotationBox->hide();
 
-	if(currItem && currItem->isSelected() && !cFilter)
+    if(currItem && currItem->isSelected())
 	{
-		ui->PositionBox->show();
-        ui->ScaleBox->show();
-        ui->RotationBox->show();
+        TreeItem *cItem = dynamic_cast<TreeItem*>(currItem);
+        if(cItem)
+        {
+            ui->PositionBox->show();
+            ui->ScaleBox->show();
+            ui->RotationBox->show();
+
+            Actor::ptr actor = ui->m_RenderWidget->getObjectManager()->getActor(cItem->getActorId());
+            std::weak_ptr<ModelComponent> pmodel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
+            std::shared_ptr<ModelComponent> spmodel = pmodel.lock();
+
+            Vector3 scale = spmodel->getScale();
+            Vector3 position = spmodel->getPosition();
+            Vector3 rotation = spmodel->getRotation();
+
+            ui->m_ObjectScaleXBox->setValue(scale.x);
+            ui->m_ObjectScaleYBox->setValue(scale.y);
+            ui->m_ObjectScaleZBox->setValue(scale.z);
+
+            ui->m_ObjectPositionXBox->setValue(position.x);
+            ui->m_ObjectPositionYBox->setValue(position.y);
+            ui->m_ObjectPositionZBox->setValue(position.z);
+
+            ui->m_ObjectRotationXBox->setValue(rotation.x);
+            ui->m_ObjectRotationYBox->setValue(rotation.y);
+            ui->m_ObjectRotationZBox->setValue(rotation.z);
+        }
 	}
 }
 
-void MainWindow::on_meshCreated_triggered(std::string p_MeshName)
+void MainWindow::on_meshCreated_triggered(std::string p_MeshName, int p_ActorId)
 {
 	if(m_ObjectCount.count(p_MeshName) > 0)
 		m_ObjectCount.at(p_MeshName)++;
@@ -215,7 +244,31 @@ void MainWindow::on_meshCreated_triggered(std::string p_MeshName)
         ui->m_ObjectTable->resizeRowsToContents();
 	}
 
-	ui->m_ObjectTree->addTopLevelItem(new TreeItem(p_MeshName + "_" + std::to_string(m_ObjectCount.at(p_MeshName))));
+	ui->m_ObjectTree->addTopLevelItem(new TreeItem(p_MeshName + "_" + std::to_string(m_ObjectCount.at(p_MeshName)), p_ActorId));
+}
+
+void MainWindow::on_lightCreated_triggered(std::string p_MeshName, int p_ActorId)
+{
+	if(m_ObjectCount.count(p_MeshName) > 0)
+		m_ObjectCount.at(p_MeshName)++;
+	else
+	{
+		m_ObjectCount.insert(std::pair<std::string, int>(p_MeshName, 0));
+	}
+
+	ui->m_LightTree->addTopLevelItem(new TreeItem(p_MeshName + "_" + std::to_string(m_ObjectCount.at(p_MeshName)), p_ActorId));
+}
+
+void MainWindow::on_particleCreated_triggered(std::string p_MeshName, int p_ActorId)
+{
+	if(m_ObjectCount.count(p_MeshName) > 0)
+		m_ObjectCount.at(p_MeshName)++;
+	else
+	{
+		m_ObjectCount.insert(std::pair<std::string, int>(p_MeshName, 0));
+	}
+
+	ui->m_ParticleTree->addTopLevelItem(new TreeItem(p_MeshName + "_" + std::to_string(m_ObjectCount.at(p_MeshName)), p_ActorId));
 }
 
 void MainWindow::on_m_LightTreeAddButton_clicked()
@@ -238,4 +291,22 @@ void MainWindow::on_m_ParticleTreeRemoveButton_4_clicked()
 {
     QTreeWidgetItem *currItem = ui->m_ParticleTree->currentItem();
     removeChild(currItem);
+}
+
+void MainWindow::setObjectScale()
+{
+    QTreeWidgetItem *currItem = ui->m_ObjectTree->currentItem();
+	if(currItem)
+	{
+		TreeItem *cItem = dynamic_cast<TreeItem*>(currItem);
+
+		if(currItem->isSelected() && cItem)
+        {
+			Actor::ptr actor = ui->m_RenderWidget->getObjectManager()->getActor(cItem->getActorId());
+			std::weak_ptr<ModelComponent> pmodel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
+            std::shared_ptr<ModelComponent> spmodel = pmodel.lock();
+
+			spmodel->setScale(Vector3(ui->m_ObjectScaleXBox->value(),ui->m_ObjectScaleYBox->value(),ui->m_ObjectScaleZBox->value()));
+		}
+	}
 }

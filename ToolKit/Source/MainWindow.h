@@ -63,7 +63,11 @@ private slots:
 
     void on_m_ObjectTree_itemSelectionChanged();
 
-	void on_meshCreated_triggered(std::string p_MeshName);
+	void on_meshCreated_triggered(std::string p_MeshName, int p_ActorId);
+
+	void on_lightCreated_triggered(std::string p_LightName, int p_ActorId);
+
+	void on_particleCreated_triggered(std::string p_ParticleName, int p_ActorId);
 
     void on_actionParticle_Tree_triggered();
 
@@ -76,6 +80,8 @@ private slots:
     void on_m_LightTreeRemoveButton_clicked();
 
     void on_m_ParticleTreeRemoveButton_4_clicked();
+
+    void setObjectScale();
 
 signals:
     void setCameraPositionSignal(Vector3 p_CameraPosition);
