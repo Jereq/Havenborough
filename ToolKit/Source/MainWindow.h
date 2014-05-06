@@ -83,6 +83,10 @@ private slots:
 
     void setObjectScale();
 
+    void setObjectRotation();
+
+    void setObjectPosition();
+
 signals:
     void setCameraPositionSignal(Vector3 p_CameraPosition);
 };

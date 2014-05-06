@@ -26,16 +26,28 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //Signals and slots for connecting the camera to the camerabox values
     QObject::connect(ui->m_RenderWidget, SIGNAL(CameraPositionChanged(Vector3)), this, SLOT(splitCameraPosition(Vector3)));
+
     QObject::connect(ui->m_CameraPositionXBox, SIGNAL(editingFinished()), this, SLOT(setCameraPosition()));
     QObject::connect(ui->m_CameraPositionYBox, SIGNAL(editingFinished()), this, SLOT(setCameraPosition()));
     QObject::connect(ui->m_CameraPositionZBox, SIGNAL(editingFinished()), this, SLOT(setCameraPosition()));
+
     QObject::connect(this, SIGNAL(setCameraPositionSignal(Vector3)), ui->m_RenderWidget, SLOT(CameraPositionSet(Vector3)));
+
 	QObject::connect(ui->m_RenderWidget->getObjectManager(), SIGNAL(meshCreated(std::string, int)), this, SLOT(on_meshCreated_triggered(std::string, int)));
 	QObject::connect(ui->m_RenderWidget->getObjectManager(), SIGNAL(lightCreated(std::string, int)), this, SLOT(on_lightCreated_triggered(std::string, int)));
 	QObject::connect(ui->m_RenderWidget->getObjectManager(), SIGNAL(particleCreated(std::string, int)), this, SLOT(on_particleCreated_triggered(std::string, int)));
+
     QObject::connect(ui->m_ObjectScaleXBox, SIGNAL(editingFinished()), this, SLOT(setObjectScale()));
     QObject::connect(ui->m_ObjectScaleYBox, SIGNAL(editingFinished()), this, SLOT(setObjectScale()));
     QObject::connect(ui->m_ObjectScaleZBox, SIGNAL(editingFinished()), this, SLOT(setObjectScale()));
+
+    QObject::connect(ui->m_ObjectRotationXBox, SIGNAL(editingFinished()), this, SLOT(setObjectRotation()));
+    QObject::connect(ui->m_ObjectRotationYBox, SIGNAL(editingFinished()), this, SLOT(setObjectRotation()));
+    QObject::connect(ui->m_ObjectRotationZBox, SIGNAL(editingFinished()), this, SLOT(setObjectRotation()));
+
+    QObject::connect(ui->m_ObjectPositionXBox, SIGNAL(editingFinished()), this, SLOT(setObjectPosition()));
+    QObject::connect(ui->m_ObjectPositionYBox, SIGNAL(editingFinished()), this, SLOT(setObjectPosition()));
+    QObject::connect(ui->m_ObjectPositionZBox, SIGNAL(editingFinished()), this, SLOT(setObjectPosition()));
 
     // Nest dock widgets.
     tabifyDockWidget(ui->m_ParticleTreeDockableWidget, ui->m_LightTreeDockableWidget);
@@ -306,7 +318,53 @@ void MainWindow::setObjectScale()
 			std::weak_ptr<ModelComponent> pmodel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
             std::shared_ptr<ModelComponent> spmodel = pmodel.lock();
 
-			spmodel->setScale(Vector3(ui->m_ObjectScaleXBox->value(),ui->m_ObjectScaleYBox->value(),ui->m_ObjectScaleZBox->value()));
+            if(spmodel)
+            {
+                spmodel->setScale(Vector3(ui->m_ObjectScaleXBox->value(),ui->m_ObjectScaleYBox->value(),ui->m_ObjectScaleZBox->value()));
+            }
 		}
 	}
+}
+
+void MainWindow::setObjectPosition()
+{
+    QTreeWidgetItem *currItem = ui->m_ObjectTree->currentItem();
+    if(currItem)
+    {
+        TreeItem *cItem = dynamic_cast<TreeItem*>(currItem);
+
+        if(currItem->isSelected() && cItem)
+        {
+            Actor::ptr actor = ui->m_RenderWidget->getObjectManager()->getActor(cItem->getActorId());
+            std::weak_ptr<ModelComponent> pmodel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
+            std::shared_ptr<ModelComponent> spmodel = pmodel.lock();
+
+            if(spmodel)
+            {
+                spmodel->setPosition(Vector3(ui->m_ObjectPositionXBox->value(),ui->m_ObjectPositionYBox->value(),ui->m_ObjectPositionZBox->value()));
+
+            }
+        }
+    }
+}
+
+void MainWindow::setObjectRotation()
+{
+    QTreeWidgetItem *currItem = ui->m_ObjectTree->currentItem();
+    if(currItem)
+    {
+        TreeItem *cItem = dynamic_cast<TreeItem*>(currItem);
+
+        if(currItem->isSelected() && cItem)
+        {
+            Actor::ptr actor = ui->m_RenderWidget->getObjectManager()->getActor(cItem->getActorId());
+            std::weak_ptr<ModelComponent> pmodel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
+            std::shared_ptr<ModelComponent> spmodel = pmodel.lock();
+
+            if(spmodel)
+            {
+                spmodel->setRotation(Vector3(ui->m_ObjectRotationXBox->value(),ui->m_ObjectRotationYBox->value(),ui->m_ObjectRotationZBox->value()));
+            }
+        }
+    }
 }
