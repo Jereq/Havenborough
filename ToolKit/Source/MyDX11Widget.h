@@ -183,6 +183,7 @@ public:
 		
 		m_Graphics->render2D_Object(m_GUI["PowerPie"]);
 
+
 		for (auto& mesh : m_Models)
 		{
 			m_Graphics->renderModel(mesh.modelId);
@@ -451,7 +452,7 @@ public:
 	{
 		Vector4 color(0.9101f, 0.8632f, 0.0937f, 1.f);
 		Vector3 position(0.f, 0.f, 0.f);
-		Vector3 scale(1.f, 1.f, 1.f);
+		Vector3 scale(0.1f, 0.1f, 1.f);
 
 		m_GUI.insert(std::pair<std::string, int>("PowerPie", m_Graphics->create2D_Object(position, Vector2(128.f, 128.f), scale, 0.f, "PowerPie")));
 		m_Graphics->set2D_ObjectColor(m_GUI["PowerPie"], color);

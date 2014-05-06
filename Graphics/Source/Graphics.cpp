@@ -312,15 +312,17 @@ void Graphics::resize(unsigned int p_ScreenWidth, unsigned int p_ScreenHeight)
 	
 	float nearZ = 8.0f;
 	float farZ = 100000.0f;
+
+	float tempX = (float)p_ScreenWidth / (float)m_ScreenWidth;
+	float tempY = (float)p_ScreenHeight / (float)m_ScreenHeight;
+
+
 	initializeMatrices(p_ScreenWidth, p_ScreenHeight, nearZ, farZ);
 
 	m_DeferredRender->resize(p_ScreenWidth, p_ScreenHeight, m_DepthStencilView);
 	m_ForwardRenderer->resize(m_DepthStencilView, m_RenderTargetView);
 	m_ScreenRenderer->resize(m_DepthStencilView, m_RenderTargetView);
 	m_TextRenderer->resize(m_RenderTargetView);
-
-	m_ScreenWidth = p_ScreenWidth;
-	m_ScreenHeight = p_ScreenHeight;
 
 	XMStoreFloat4x4(&m_ProjectionMatrix, XMMatrixTranspose(XMMatrixPerspectiveFovLH(m_FOV,
 		(float)m_ScreenWidth / (float)m_ScreenHeight, m_NearZ, m_FarZ)));
@@ -686,7 +688,7 @@ IGraphics::Object2D_Id Graphics::create2D_Object(Vector3 p_Position, Vector3 p_S
 IGraphics::Object2D_Id Graphics::create2D_Object(Vector3 p_Position, Vector3 p_Scale, float p_Rotation,
 	const char *p_ModelDefinition)
 {
-	ModelDefinition *defintion = nullptr;
+ 	ModelDefinition *defintion = nullptr;
 	for(auto &model : m_ModelList)
 	{
 		if(model.first == string(p_ModelDefinition))

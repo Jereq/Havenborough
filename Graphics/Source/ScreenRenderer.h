@@ -15,7 +15,6 @@ private:
 	DirectX::XMFLOAT4X4	*m_ViewMatrix;
 	DirectX::XMFLOAT4X4	m_OrthoMatrix;
 
-
 	std::vector<Renderable2D> m_2D_Objects;
 	Buffer *m_ConstantBuffer;
 	Buffer *m_ObjectConstantBuffer;

@@ -50,6 +50,7 @@ private:
 
 	int m_ScreenHeight;
 	int m_ScreenWidth;
+
 	float m_FOV;
 	float m_FarZ;
 	float m_NearZ;

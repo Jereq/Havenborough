@@ -188,9 +188,9 @@ void GameScene::onFrame(float p_DeltaTime, int* p_IsCurrentScene)
 
 void GameScene::onFocus()
 {
-	std::shared_ptr<MouseEventDataShow> showMouse(new MouseEventDataShow(false));
+	std::shared_ptr<MouseEventDataShow> showMouse(new MouseEventDataShow(true));
 	m_EventManager->queueEvent(showMouse);
-	std::shared_ptr<MouseEventDataLock> lockMouse(new MouseEventDataLock(true));
+	std::shared_ptr<MouseEventDataLock> lockMouse(new MouseEventDataLock(false));
 	m_EventManager->queueEvent(lockMouse);
 }
 
