@@ -4,8 +4,15 @@
 #include <EventManager.h>
 #include <ResourceManager.h>
 
-class ObjectManager
+#include <QObject>
+
+#include "Components.h"
+
+
+class ObjectManager : public QObject
 {
+	Q_OBJECT
+
 private:
 	ActorFactory::ptr m_ActorFactory;
 	ActorList m_ActorList;
@@ -19,4 +26,12 @@ public:
 	void update(float p_DeltaTime);
 
 	void loadLevel(const std::string& p_Filename);
+
+	Actor::ptr getActor(Actor::Id p_Id);
+
+public:
+signals:
+	void meshCreated(std::string p_MeshName, int p_ActorId);
+	void lightCreated(std::string p_LightName, int p_ActorId);
+	void particleCreated(std::string p_ParticleName, int p_ActorId);
 };
