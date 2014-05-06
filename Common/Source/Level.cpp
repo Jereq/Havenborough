@@ -2,7 +2,7 @@
 #include "InstanceBinaryLoader.h"
 #include "boost\filesystem.hpp"
 #include "EventData.h"
-#include <XMLHelper.h>
+#include "XMLHelper.h"
 
 Level::Level(ResourceManager* p_Resources, ActorFactory* p_ActorFactory, EventManager* p_EventManager)
 {

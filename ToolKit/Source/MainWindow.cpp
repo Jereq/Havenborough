@@ -18,6 +18,19 @@ MainWindow::MainWindow(QWidget *parent) :
     setCorner(Qt::TopRightCorner, Qt::RightDockWidgetArea);
     setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
 
+    //Hide Position Scale Rotation by default
+    ui->PositionBox->hide();
+    ui->ScaleBox->hide();
+    ui->RotationBox->hide();
+
+    //Signals and slots for connecting the camera to the camerabox values
+    QObject::connect(ui->m_RenderWidget, SIGNAL(CameraPositionChanged(Vector3)), this, SLOT(splitCameraPosition(Vector3)));
+    QObject::connect(ui->m_CameraPositionXBox, SIGNAL(editingFinished()), this, SLOT(setCameraPosition()));
+    QObject::connect(ui->m_CameraPositionYBox, SIGNAL(editingFinished()), this, SLOT(setCameraPosition()));
+    QObject::connect(ui->m_CameraPositionZBox, SIGNAL(editingFinished()), this, SLOT(setCameraPosition()));
+    QObject::connect(this, SIGNAL(setCameraPositionSignal(Vector3)), ui->m_RenderWidget, SLOT(CameraPositionSet(Vector3)));
+
+
     //Test Objects & ObjectTree Test code
 	TreeItem *item1 = new TreeItem("Object1");
     TreeItem *item2 = new TreeItem("Object2");
@@ -30,12 +43,15 @@ MainWindow::MainWindow(QWidget *parent) :
     TreeFilter *filter1 = new TreeFilter("Filter1");
     ui->m_ObjectTree->addTopLevelItem(filter1);
 
+    //Timer
 	m_Timer.setInterval(1000 / 60);
 	m_Timer.setSingleShot(false);
 	QObject::connect(&m_Timer, SIGNAL(timeout()), this, SLOT(idle()));
 	m_Timer.start();
+
+
     //Tablewidget test code
-    QIcon icon(":/Icons/Assets/Filter.png");
+    QIcon icon(":/Icons/Assets/object.png");
     QTableWidgetItem *item = new QTableWidgetItem();
     item->setIcon(icon);
     item->setText("Object");
@@ -75,8 +91,25 @@ void MainWindow::on_m_ObjectTreeAddButton_clicked()
 
 void MainWindow::on_m_ObjectTreeRemoveButton_clicked()
 {
-	QTreeWidgetItem * currItem = ui->m_ObjectTree->currentItem();
-	delete currItem;
+    QTreeWidgetItem *currItem = ui->m_ObjectTree->currentItem();
+
+    removeChild(currItem);
+}
+
+void MainWindow::removeChild(QTreeWidgetItem* currItem)
+{
+    for (int i = 0; i < currItem->childCount(); i++)
+    {
+        QTreeWidgetItem *currChild = currItem->takeChild(i);
+        if (currChild->childCount() != 0)
+        {
+            removeChild(currChild);
+        }
+        else
+            delete currChild;
+    }
+
+    delete currItem;
 }
 
 void MainWindow::on_actionObject_Tree_triggered()
@@ -97,10 +130,56 @@ void MainWindow::on_actionExit_triggered()
 
 void MainWindow::on_actionOpen_triggered()
 {
-    QString fullFilePath = QFileDialog::getOpenFileName(this, tr("Open Level"), "/home/ME", tr("Level Files (*.xml)"));
+	QString fullFilePath = QFileDialog::getOpenFileName(this, tr("Open Level"), "/home/ME", tr("Level Files (*.xml *.btxl)"));
+	if (!fullFilePath.isNull())
+	{
+		ui->m_RenderWidget->loadLevel(fullFilePath.toStdString());
+	}
 }
 
 void MainWindow::on_actionSave_triggered()
 {
     QFileDialog::getSaveFileName(this, tr("Save Level As..."), "/home/ME", tr("Level Files (*.xml"));
+}
+
+void MainWindow::splitCameraPosition(Vector3 p_cameraPosition)
+{
+    ui->m_CameraPositionXBox->setValue(p_cameraPosition.x);
+    ui->m_CameraPositionYBox->setValue(p_cameraPosition.y);
+    ui->m_CameraPositionZBox->setValue(p_cameraPosition.z);
+}
+
+void MainWindow::setCameraPosition()
+{
+    emit setCameraPositionSignal(Vector3(ui->m_CameraPositionXBox->value(), ui->m_CameraPositionYBox->value(), ui->m_CameraPositionZBox->value()));
+}
+
+void MainWindow::on_actionProperties_triggered()
+{
+    ui->m_PropertiesDockableWidget->show();
+}
+
+void MainWindow::on_actionAdd_Object_triggered()
+{
+    ui->m_ObjectTableDockableWidget->show();
+}
+
+void MainWindow::on_m_ObjectTree_itemSelectionChanged()
+{
+    QTreeWidgetItem *currItem = ui->m_ObjectTree->currentItem();
+
+    TreeFilter *cFilter = dynamic_cast<TreeFilter*>(currItem);
+
+    if(cFilter)
+    {
+        ui->PositionBox->hide();
+        ui->ScaleBox->hide();
+        ui->RotationBox->hide();
+    }
+    else
+    {
+        ui->PositionBox->show();
+        ui->ScaleBox->show();
+        ui->RotationBox->show();
+    }
 }

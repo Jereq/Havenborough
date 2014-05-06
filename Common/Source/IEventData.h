@@ -63,5 +63,6 @@ public:
 
 	virtual void serialize(std::ostream &p_Out) const override
 	{
+		(void)p_Out;
 	}
 };
