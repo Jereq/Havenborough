@@ -7,9 +7,13 @@ class TreeItem : public QTreeWidgetItem
 {
   public:
     explicit TreeItem();
-    TreeItem(std::string p_ItemName);
+    TreeItem(std::string p_ItemName, int p_ActorId);
+
+	int getActorId() const;
 
   private:
+	  std::string m_ItemName;
+	  int m_ActorId;
 
 };
 
