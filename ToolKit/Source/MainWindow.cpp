@@ -62,7 +62,7 @@ void MainWindow::on_m_ObjectTreeRemoveButton_clicked()
 
 void MainWindow::removeChild(QTreeWidgetItem* currItem)
 {
-	if(currItem)
+	if(currItem && currItem->isSelected())
 	{
 		for (int i = 0; i < currItem->childCount(); i++)
 		{
@@ -175,21 +175,18 @@ void MainWindow::on_actionLight_Tree_triggered()
 void MainWindow::on_m_ObjectTree_itemSelectionChanged()
 {
     QTreeWidgetItem *currItem = ui->m_ObjectTree->currentItem();
-
     TreeFilter *cFilter = dynamic_cast<TreeFilter*>(currItem);
 
-    if(cFilter)
-    {
-        ui->PositionBox->hide();
-        ui->ScaleBox->hide();
-        ui->RotationBox->hide();
-    }
-    else
-    {
-        ui->PositionBox->show();
+	ui->PositionBox->hide();
+    ui->ScaleBox->hide();
+    ui->RotationBox->hide();
+
+	if(currItem && currItem->isSelected() && !cFilter)
+	{
+		ui->PositionBox->show();
         ui->ScaleBox->show();
         ui->RotationBox->show();
-    }
+	}
 }
 
 void MainWindow::on_meshCreated_triggered(std::string p_MeshName)
