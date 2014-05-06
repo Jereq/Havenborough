@@ -799,7 +799,6 @@ void GameScene::preLoadModels()
 	//DO NOT MAKE ANY CALLS TO GRAPHICS IN HERE!
 	m_ResourceIDs.push_back(m_ResourceManager->loadResource("particleSystem", "TestParticle"));
 	m_ResourceIDs.push_back(m_ResourceManager->loadResource("model", "Pivot1"));
-
 }
 
 void GameScene::releasePreLoadedModels()
@@ -816,20 +815,25 @@ void GameScene::createAndTransformRay(const DirectX::XMFLOAT2 &p_MousePos)
 {
 	XMFLOAT4X4 fView = m_Graphics->getView();
 	XMFLOAT4X4 fProj = m_Graphics->getProj();
+	
 
+	XMMATRIX mWorld = XMMatrixIdentity();
 	XMMATRIX mView = XMLoadFloat4x4(&fView);
 	XMMATRIX mProj = XMLoadFloat4x4(&fProj);
-	XMVECTOR cursorScreenSpace = XMVectorSet(p_MousePos.x, p_MousePos.y, 0.f, 0.f);
-	XMVECTOR unprojectedCursor = XMVector3Unproject(cursorScreenSpace, 0.f, 0.f, m_WindowSize.x, m_WindowSize.y, 0.f, 1.f, mProj, mView, XMMatrixIdentity());
-	XMVECTOR vRayOrigin = XMVectorSet(	fView._41,
-										fView._42, 
-										fView._43,
-										1.0f);
+	
+	mView = XMMatrixTranspose(mView);
+	mProj = XMMatrixTranspose(mProj);
+
+	XMVECTOR cursorScreenSpace = XMVectorSet(p_MousePos.x + m_WindowSize.x / 2.f, p_MousePos.y + m_WindowSize.y / 2.f, 0.f, 1.f);
+	XMVECTOR unprojectedCursor = XMVector3Unproject(cursorScreenSpace, 0.f, 0.f, m_WindowSize.x, m_WindowSize.y, 0.f, 1.f, mProj, mView, mWorld);
+
+	XMMATRIX invView = XMMatrixInverse(nullptr, mView);
+	XMVECTOR vRayOrigin =  invView.r[3];
 
 	XMVECTOR direction = unprojectedCursor - vRayOrigin;
 	direction = XMVector3Normalize(direction);
 
-	XMFLOAT4 fRayDir, fRayOrigin;
+ 	XMFLOAT4 fRayDir, fRayOrigin;
 	XMStoreFloat4(&fRayDir, direction);
 	XMStoreFloat4(&fRayOrigin, vRayOrigin);
 

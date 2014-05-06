@@ -847,26 +847,43 @@ void Physics::setBodyForceCollisionNormal(BodyHandle p_Body, BodyHandle p_BodyVi
 }
 
 
-BodyHandle Physics::rayCast(const Vector3 &p_RayDirection, const Vector3 &p_RayOrigin)
+BodyHandle Physics::rayCast(const XMFLOAT4 &p_RayDirection, const XMFLOAT4 &p_RayOrigin)
 {
 	//Transfrom ray to meters instead of cm
-	Vector3 RayOrigConvToM = p_RayOrigin * 0.01f;
+	XMFLOAT4 rayOriginConv = p_RayOrigin;
+	rayOriginConv.x *= 0.01f;
+	rayOriginConv.y *= 0.01f;
+	rayOriginConv.z *= 0.01f;
 
-	XMFLOAT4 rayDir = Vector3ToXMFLOAT4(&p_RayDirection, 0.f);
-	XMFLOAT4 rayOrigin = Vector3ToXMFLOAT4(&RayOrigConvToM, 1.f);
+	float dist = FLT_MAX;
+	BodyHandle body = 0;
+
 	for(unsigned int i = 1; i < m_Bodies.size(); i++)
 	{
 		Body &b = m_Bodies[i];
 		if(!b.getIsImmovable())
 			continue;
+		if(b.getIsEdge())
+			continue;
+		
 
-		if(Collision::raySphereIntersect(*b.getSurroundingSphere(), rayDir, rayOrigin))
+		float tempDist = Collision::raySphereIntersect(*b.getSurroundingSphere(), p_RayDirection, rayOriginConv);
+		if(tempDist > 0.f && tempDist < dist)
 		{
-			return m_Bodies[i].getHandle();
+			dist = tempDist;
+			body = b.getHandle();
 		}
 	}
 
-	return 0;
+	Body *b = findBody(body);
+	if(!body)
+	{
+		return 0;
+	}
+	XMMATRIX rot = XMMatrixRotationY(g_XMPi.f[0]/2.f);
+	b->setRotation(rot);
+
+	return body;
 }
 
 bool Physics::validBody(BodyHandle p_BodyHandle)

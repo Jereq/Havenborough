@@ -969,71 +969,47 @@ bool Collision::checkCollision(XMVECTOR p_Axis, float p_TriangleProjection0, flo
 	return true;
 }
 
-bool Collision::raySphereIntersect(const Sphere &p_Sphere, const XMFLOAT4 &p_RayDirection, const XMFLOAT4 &p_RayOrigin)
+float Collision::raySphereIntersect(const Sphere &p_Sphere, const XMFLOAT4 &p_RayDirection, const XMFLOAT4 &p_RayOrigin)
 {
 
 	//Intersection test starts
 
-	//Transfrom to object space?
+	//Transform to object space?
 	const XMVECTOR spherePos = XMLoadFloat4(&p_Sphere.getPosition());
 	const XMVECTOR rayDir = XMLoadFloat4(&p_RayDirection);
 	const XMVECTOR rayOrigin = XMLoadFloat4(&p_RayOrigin);
 
-	//const XMVECTOR length = spherePos - rayOrigin;
+	const XMVECTOR length = spherePos - rayOrigin;
 	////projection of lenght onto ray direction
-	//float s = XMVector3Dot(length, rayDir).m128_f32[0];
+	float s = XMVector3Dot(length, rayDir).m128_f32[0];
 
-	//float lengthSquared = XMVector3Dot(length, length).m128_f32[0];
-	//float radiusSquared = p_Sphere.getSqrRadius();
+	float lengthSquared = XMVector3Dot(length, length).m128_f32[0];
+	float radiusSquared = p_Sphere.getSqrRadius();
 
-	//if(s < 0 && lengthSquared > radiusSquared)
-	//	return false; //miss
+	if(s < 0 && lengthSquared > radiusSquared)
+		return -1.f; //miss
 
 	////squared distance from sphere center to projection
-	//float m = lengthSquared - (s*s);
+	float m = lengthSquared - (s*s);
 
-	//if(m > radiusSquared)
-	//	return false; //miss
+	if(m > radiusSquared)
+		return -1.f; //miss
 	//
-	//float q = radiusSquared - m;
-	//q = XMVectorSqrt(XMVectorSet(q, q, q, q)).m128_f32[0];
+	float q = radiusSquared - m;
+	q = sqrtf(q);
 
-	//float t;
-	//if(lengthSquared > radiusSquared)
-	//{
-	//	t = s - q;
-	//}
-	//else
-	//{
-	//	t = s + q;
-	//}
-
-	////t should be returned somehow if it's gonna be used.
-	//return true;
-
-
-
-	XMVECTOR m = rayOrigin - spherePos;
-	float b = XMVector3Dot(m, rayDir).m128_f32[0];
-	float c = XMVector3Dot(m,m).m128_f32[0] - p_Sphere.getRadius() * p_Sphere.getRadius();
-
-	//Exit if the ray's origin is outside sphere(c > 0) and ray pointing away from sphere(b > 0)
-	if(c > 0.f && b > 0.f)
-		return false;
-	//A negative dicsriminant corresponds to ray missing sphere
-	float discr = b*b - c;
-	if(discr < 0.f)
-		return false;
-	
-	float t = -b - sqrtf(discr);
-	//If t is negative, ray started insided the pshere so clamp t to zero
-	if(t < 0.f)
+	float t;
+	if(lengthSquared > radiusSquared)
 	{
-		t = 0.f;
-		PhysicsLogger::log(PhysicsLogger::Level::INFO, "Inside sphere hit");
-		return true;
+		t = s - q;
+		PhysicsLogger::log(PhysicsLogger::Level::INFO, "HIT");
 	}
-	PhysicsLogger::log(PhysicsLogger::Level::INFO, "Outside sphere hit");
-	return true;
+	else
+	{
+		PhysicsLogger::log(PhysicsLogger::Level::INFO, "Inside HIT");
+		t = s + q;
+	}
+
+	return t;
 }
 

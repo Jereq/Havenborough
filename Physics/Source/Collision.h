@@ -98,7 +98,7 @@ public:
 	 * @param, p_RayOrigin origin of the ray in world space
 	 * @returns true if there an intersection otherwise false
 	 */
-	static bool raySphereIntersect(const Sphere &p_Sphere, const DirectX::XMFLOAT4 &p_RayDirection, const DirectX::XMFLOAT4 &p_RayOrigin);
+	static float raySphereIntersect(const Sphere &p_Sphere, const DirectX::XMFLOAT4 &p_RayDirection, const DirectX::XMFLOAT4 &p_RayOrigin);
 
 	//static bool raySphereIntersect(const DirectX::XMFLOAT2 &p_MousePos, const DirectX::XMFLOAT2 &p_WindowSize ,const Sphere &p_Sphere, const DirectX::XMFLOAT4X4 &p_Projection, const DirectX::XMFLOAT4X4 &p_View);
 
