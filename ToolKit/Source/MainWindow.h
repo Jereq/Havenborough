@@ -2,6 +2,8 @@
 
 #include <QMainWindow>
 #include <QTimer>
+#include <map>
+
 #include "Utilities\XMFloatUtil.h"
 #include <QTreeWidgetItem>
 
@@ -17,6 +19,21 @@ private:
 	Ui::MainWindow *ui;
 	QTimer m_Timer;
     void removeChild(QTreeWidgetItem* currItem);
+
+	std::map<std::string, int> m_ObjectCount;
+
+	struct intVec2
+	{
+		unsigned int x;
+		unsigned int y;
+
+		intVec2()
+		{
+			x = y = 0;
+		}
+	};
+	intVec2 m_TableIndex;
+
 public:
 	explicit MainWindow(QWidget *parent = 0);
 	~MainWindow();
@@ -42,6 +59,8 @@ private slots:
     void on_actionAdd_Object_triggered();
 
     void on_m_ObjectTree_itemSelectionChanged();
+
+	void on_meshCreated_triggered(std::string p_MeshName);
 
 signals:
     void setCameraPositionSignal(Vector3 p_CameraPosition);

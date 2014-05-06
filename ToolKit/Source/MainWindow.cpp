@@ -3,6 +3,7 @@
 
 #include "TreeItem.h"
 #include "TreeFilter.h"
+#include "TableItem.h"
 
 #include <QFileDialog>
 
@@ -29,37 +30,13 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->m_CameraPositionYBox, SIGNAL(editingFinished()), this, SLOT(setCameraPosition()));
     QObject::connect(ui->m_CameraPositionZBox, SIGNAL(editingFinished()), this, SLOT(setCameraPosition()));
     QObject::connect(this, SIGNAL(setCameraPositionSignal(Vector3)), ui->m_RenderWidget, SLOT(CameraPositionSet(Vector3)));
-
-
-    //Test Objects & ObjectTree Test code
-	TreeItem *item1 = new TreeItem("Object1");
-    TreeItem *item2 = new TreeItem("Object2");
-    TreeItem *item3 = new TreeItem("Object3");
-
-    ui->m_ObjectTree->addTopLevelItem(item1);
-    ui->m_ObjectTree->addTopLevelItem(item2);
-    ui->m_ObjectTree->addTopLevelItem(item3);
-
-    TreeFilter *filter1 = new TreeFilter("Filter1");
-    ui->m_ObjectTree->addTopLevelItem(filter1);
+    QObject::connect(ui->m_RenderWidget, SIGNAL(meshCreated(std::string)), this, SLOT(on_meshCreated_triggered(std::string)));
 
     //Timer
 	m_Timer.setInterval(1000 / 60);
 	m_Timer.setSingleShot(false);
 	QObject::connect(&m_Timer, SIGNAL(timeout()), this, SLOT(idle()));
 	m_Timer.start();
-
-
-    //Tablewidget test code
-    QIcon icon(":/Icons/Assets/object.png");
-    QTableWidgetItem *item = new QTableWidgetItem();
-    item->setIcon(icon);
-    item->setText("Object");
-    item->setTextAlignment(Qt::AlignBottom | Qt::AlignCenter);
-
-    ui->m_ObjectTable->setItem(0,0,item);
-    ui->m_ObjectTable->resizeColumnsToContents();
-    ui->m_ObjectTable->resizeRowsToContents();
 }
 
 MainWindow::~MainWindow()
@@ -133,6 +110,9 @@ void MainWindow::on_actionOpen_triggered()
 	QString fullFilePath = QFileDialog::getOpenFileName(this, tr("Open Level"), "/home/ME", tr("Level Files (*.xml *.btxl)"));
 	if (!fullFilePath.isNull())
 	{
+		m_ObjectCount.clear();
+		ui->m_ObjectTree->clear();
+
 		ui->m_RenderWidget->loadLevel(fullFilePath.toStdString());
 	}
 }
@@ -182,4 +162,33 @@ void MainWindow::on_m_ObjectTree_itemSelectionChanged()
         ui->ScaleBox->show();
         ui->RotationBox->show();
     }
+}
+
+void MainWindow::on_meshCreated_triggered(std::string p_MeshName)
+{
+	if(m_ObjectCount.count(p_MeshName) > 0)
+		m_ObjectCount.at(p_MeshName)++;
+	else
+	{
+		m_ObjectCount.insert(std::pair<std::string, int>(p_MeshName, 0));
+
+        ui->m_ObjectTable->setItem(m_TableIndex.y, m_TableIndex.x, new TableItem(p_MeshName));
+        
+        m_TableIndex.x++;
+
+		if(m_TableIndex.x > 17)
+		{
+			ui->m_ObjectTable->insertRow(ui->m_ObjectTable->rowCount());
+			m_TableIndex.x = 0;
+			m_TableIndex.y++;
+		}
+		
+		if(m_TableIndex.y == 0 && m_TableIndex.x <= 17)
+			ui->m_ObjectTable->insertColumn(ui->m_ObjectTable->columnCount());
+
+		ui->m_ObjectTable->resizeColumnsToContents();
+        ui->m_ObjectTable->resizeRowsToContents();
+	}
+
+	ui->m_ObjectTree->addTopLevelItem(new TreeItem(p_MeshName + "_" + std::to_string(m_ObjectCount.at(p_MeshName))));
 }
