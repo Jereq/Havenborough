@@ -1019,7 +1019,6 @@ float Collision::rayTriangleIntersect(const Hull &p_Hull, const XMFLOAT4 &p_RayD
 
 	for(unsigned int i = 0; i < p_Hull.getTriangleListSize(); i++)
 	{
-		Triangle tri = p_Hull.getTriangleAt(i);
 		float tempDist = 0.f;
 		//Triangle Vertices 
 		Triangle triangle = p_Hull.getTriangleInWorldCoord(i);
