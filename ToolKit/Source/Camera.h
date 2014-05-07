@@ -16,6 +16,8 @@ public:
 	const Vector3& getUp() const;
 	Vector3 getRight() const;
 
+    void setPosition(const Vector3& p_Position);
+
 	void translate(const Vector3& p_Offset);
 	void rotate(float p_Yaw, float p_Pitch, float p_Roll);
 };

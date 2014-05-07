@@ -34,6 +34,11 @@ Vector3 Camera::getRight() const
 	return vRight;
 }
 
+void Camera::setPosition(const Vector3 &p_Position)
+{
+    m_Position = p_Position;
+}
+
 void Camera::translate(const Vector3& p_Offset)
 {
 	m_Position = m_Position + p_Offset;

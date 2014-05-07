@@ -43,18 +43,25 @@ SOURCES += Source/main.cpp\
     Source/Camera.cpp \
     Source/KeyboardControl.cpp \
     Source/FlyControl.cpp \
-    Source/ObjectManager.cpp
+    Source/ObjectManager.cpp \
+    Source/TableItem.cpp \
+    Source/DXWidget.cpp \
+    Source/MyDX11Widget.cpp \
+    Source/Tree.cpp \
+    Source/Table.cpp
 
 HEADERS  += Source/MainWindow.h \
     Source/TreeItem.h \
     Source/TreeFilter.h \
-    Source/extendedtablewidget.h \
     Source/DXWidget.h \
     Source/MyDX11Widget.h \
     Source/Camera.h \
     Source/KeyboardControl.h \
     Source/FlyControl.h \
-    Source/ObjectManager.h
+    Source/ObjectManager.h \
+    Source/TableItem.h \
+    Source/Tree.h \
+    Source/Table.h
 
 FORMS    += Source/MainWindow.ui
 

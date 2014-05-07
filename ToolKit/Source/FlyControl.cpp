@@ -1,9 +1,11 @@
 #include "FlyControl.h"
 
+#include <qevent.h>
+
 FlyControl::FlyControl(Camera* p_Camera, KeyboardControl* p_Control)
 	: m_Camera(p_Camera),
 	  m_Control(p_Control),
-	  m_MovementSpeed(normalMovementSpeed)
+	  m_MovementSpeed((float)normalMovementSpeed)
 {
 }
 

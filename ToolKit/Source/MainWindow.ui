@@ -31,7 +31,14 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="MyDX11Widget" name="m_RenderWidget" native="true"/>
+     <widget class="MyDX11Widget" name="m_RenderWidget" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -79,6 +86,10 @@
      <string>Window</string>
     </property>
     <addaction name="actionObject_Tree"/>
+    <addaction name="actionLight_Tree"/>
+    <addaction name="actionParticle_Tree"/>
+    <addaction name="actionProperties"/>
+    <addaction name="actionAdd_Object"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -112,8 +123,29 @@
      <property name="spacing">
       <number>0</number>
      </property>
+     <item row="1" column="0">
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QPushButton" name="m_ObjectTreeAddButton">
+         <property name="toolTip">
+          <string>Add a new filter</string>
+         </property>
+         <property name="text">
+          <string>Add Filter</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="m_ObjectTreeRemoveButton">
+         <property name="text">
+          <string>Remove</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
      <item row="0" column="0">
-      <widget class="QTreeWidget" name="m_ObjectTree">
+      <widget class="Tree" name="m_ObjectTree">
        <property name="styleSheet">
         <string notr="true"> QTreeView::branch:has-siblings:!adjoins-item {
      border-image: url(:/Pictures/Assets/stylesheet-vline.png) 0;
@@ -151,6 +183,9 @@
        <property name="dragDropMode">
         <enum>QAbstractItemView::InternalMove</enum>
        </property>
+       <property name="selectionMode">
+        <enum>QAbstractItemView::ExtendedSelection</enum>
+       </property>
        <attribute name="headerVisible">
         <bool>false</bool>
        </attribute>
@@ -160,24 +195,6 @@
         </property>
        </column>
       </widget>
-     </item>
-     <item row="1" column="0">
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <widget class="QPushButton" name="m_ObjectTreeAddButton">
-         <property name="text">
-          <string>Add Filter</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="m_ObjectTreeRemoveButton">
-         <property name="text">
-          <string>Remove</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
      </item>
     </layout>
    </widget>
@@ -195,7 +212,13 @@
    <widget class="QWidget" name="dockWidgetContents_3">
     <layout class="QGridLayout" name="gridLayout_3">
      <item row="0" column="0">
-      <widget class="ExtendedTableWidget" name="m_ObjectTable">
+      <widget class="Table" name="m_ObjectTable">
+       <property name="editTriggers">
+        <set>QAbstractItemView::NoEditTriggers</set>
+       </property>
+       <property name="selectionMode">
+        <enum>QAbstractItemView::ExtendedSelection</enum>
+       </property>
        <property name="showGrid">
         <bool>false</bool>
        </property>
@@ -205,42 +228,35 @@
        <property name="cornerButtonEnabled">
         <bool>false</bool>
        </property>
+       <property name="rowCount">
+        <number>1</number>
+       </property>
+       <property name="columnCount">
+        <number>0</number>
+       </property>
        <attribute name="horizontalHeaderVisible">
         <bool>false</bool>
        </attribute>
        <attribute name="verticalHeaderVisible">
         <bool>false</bool>
        </attribute>
-       <row>
-        <property name="text">
-         <string>Cell1</string>
-        </property>
-       </row>
-       <column>
-        <property name="text">
-         <string>Col1</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Col2</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Col3</string>
-        </property>
-       </column>
+       <row/>
       </widget>
      </item>
     </layout>
    </widget>
   </widget>
   <widget class="QDockWidget" name="m_PropertiesDockableWidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <property name="minimumSize">
     <size>
      <width>190</width>
-     <height>38</height>
+     <height>204</height>
     </size>
    </property>
    <property name="windowTitle">
@@ -250,59 +266,142 @@
     <number>2</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_4">
-    <widget class="Line" name="line">
+    <widget class="QGroupBox" name="CameraPositionBox">
      <property name="geometry">
       <rect>
-       <x>7</x>
-       <y>110</y>
-       <width>161</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-    <widget class="QGroupBox" name="groupBox">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>0</y>
+       <x>9</x>
+       <y>9</y>
        <width>171</width>
-       <height>111</height>
+       <height>107</height>
       </rect>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
      <property name="title">
       <string>Camera Position</string>
      </property>
-     <widget class="QWidget" name="gridLayoutWidget">
+     <layout class="QGridLayout" name="gridLayout_4">
+      <item row="0" column="0">
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_3">
+          <property name="text">
+           <string>Y</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>Z</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>X</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QDoubleSpinBox" name="m_CameraPositionXBox">
+          <property name="frame">
+           <bool>true</bool>
+          </property>
+          <property name="buttonSymbols">
+           <enum>QAbstractSpinBox::NoButtons</enum>
+          </property>
+          <property name="decimals">
+           <number>4</number>
+          </property>
+          <property name="minimum">
+           <double>-999999.000000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>999999.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QDoubleSpinBox" name="m_CameraPositionYBox">
+          <property name="frame">
+           <bool>true</bool>
+          </property>
+          <property name="buttonSymbols">
+           <enum>QAbstractSpinBox::NoButtons</enum>
+          </property>
+          <property name="decimals">
+           <number>4</number>
+          </property>
+          <property name="minimum">
+           <double>-999999.000000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>999999.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QDoubleSpinBox" name="m_CameraPositionZBox">
+          <property name="frame">
+           <bool>true</bool>
+          </property>
+          <property name="buttonSymbols">
+           <enum>QAbstractSpinBox::NoButtons</enum>
+          </property>
+          <property name="decimals">
+           <number>4</number>
+          </property>
+          <property name="minimum">
+           <double>-999999.000000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>999999.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QGroupBox" name="PositionBox">
+     <property name="geometry">
+      <rect>
+       <x>9</x>
+       <y>122</y>
+       <width>172</width>
+       <height>111</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Object Position</string>
+     </property>
+     <widget class="QWidget" name="gridLayoutWidget_2">
       <property name="geometry">
        <rect>
-        <x>50</x>
+        <x>10</x>
         <y>20</y>
-        <width>91</width>
-        <height>81</height>
+        <width>151</width>
+        <height>80</height>
        </rect>
       </property>
-      <layout class="QGridLayout" name="gridLayout_2">
-       <item row="0" column="1">
-        <widget class="QSpinBox" name="spinBox">
-         <property name="frame">
-          <bool>true</bool>
-         </property>
-         <property name="buttonSymbols">
-          <enum>QAbstractSpinBox::NoButtons</enum>
-         </property>
-         <property name="minimum">
-          <number>-999999</number>
-         </property>
-         <property name="maximum">
-          <number>999999</number>
-         </property>
-        </widget>
-       </item>
+      <layout class="QGridLayout" name="gridLayout_5">
        <item row="1" column="0">
-        <widget class="QLabel" name="label_3">
+        <widget class="QLabel" name="label_5">
          <property name="text">
           <string>Y</string>
          </property>
@@ -312,7 +411,7 @@
         </widget>
        </item>
        <item row="2" column="0">
-        <widget class="QLabel" name="label_2">
+        <widget class="QLabel" name="label_6">
          <property name="text">
           <string>Z</string>
          </property>
@@ -321,40 +420,8 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="1">
-        <widget class="QSpinBox" name="spinBox_3">
-         <property name="frame">
-          <bool>true</bool>
-         </property>
-         <property name="buttonSymbols">
-          <enum>QAbstractSpinBox::NoButtons</enum>
-         </property>
-         <property name="minimum">
-          <number>-999999</number>
-         </property>
-         <property name="maximum">
-          <number>999999</number>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QSpinBox" name="spinBox_2">
-         <property name="frame">
-          <bool>true</bool>
-         </property>
-         <property name="buttonSymbols">
-          <enum>QAbstractSpinBox::NoButtons</enum>
-         </property>
-         <property name="minimum">
-          <number>-999999</number>
-         </property>
-         <property name="maximum">
-          <number>999999</number>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="0">
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="label_4">
          <property name="text">
           <string>X</string>
          </property>
@@ -363,9 +430,500 @@
          </property>
         </widget>
        </item>
+       <item row="0" column="1">
+        <widget class="QDoubleSpinBox" name="m_ObjectPositionXBox">
+         <property name="buttonSymbols">
+          <enum>QAbstractSpinBox::NoButtons</enum>
+         </property>
+         <property name="decimals">
+          <number>4</number>
+         </property>
+         <property name="minimum">
+          <double>-999999.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>999999.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QDoubleSpinBox" name="m_ObjectPositionYBox">
+         <property name="buttonSymbols">
+          <enum>QAbstractSpinBox::NoButtons</enum>
+         </property>
+         <property name="decimals">
+          <number>4</number>
+         </property>
+         <property name="minimum">
+          <double>-999999.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>999999.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QDoubleSpinBox" name="m_ObjectPositionZBox">
+         <property name="buttonSymbols">
+          <enum>QAbstractSpinBox::NoButtons</enum>
+         </property>
+         <property name="decimals">
+          <number>4</number>
+         </property>
+         <property name="minimum">
+          <double>-999999.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>999999.000000000000000</double>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
     </widget>
+    <widget class="QGroupBox" name="ScaleBox">
+     <property name="geometry">
+      <rect>
+       <x>9</x>
+       <y>230</y>
+       <width>172</width>
+       <height>111</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Object Scale</string>
+     </property>
+     <widget class="QWidget" name="gridLayoutWidget_3">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>151</width>
+        <height>80</height>
+       </rect>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_6">
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_7">
+         <property name="text">
+          <string>Y</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_8">
+         <property name="text">
+          <string>Z</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_9">
+         <property name="text">
+          <string>X</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QDoubleSpinBox" name="m_ObjectScaleXBox">
+         <property name="buttonSymbols">
+          <enum>QAbstractSpinBox::NoButtons</enum>
+         </property>
+         <property name="decimals">
+          <number>4</number>
+         </property>
+         <property name="minimum">
+          <double>-999999.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>999999.000000000000000</double>
+         </property>
+         <property name="value">
+          <double>1.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QDoubleSpinBox" name="m_ObjectScaleYBox">
+         <property name="buttonSymbols">
+          <enum>QAbstractSpinBox::NoButtons</enum>
+         </property>
+         <property name="decimals">
+          <number>4</number>
+         </property>
+         <property name="minimum">
+          <double>-999999.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>999999.000000000000000</double>
+         </property>
+         <property name="value">
+          <double>1.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QDoubleSpinBox" name="m_ObjectScaleZBox">
+         <property name="buttonSymbols">
+          <enum>QAbstractSpinBox::NoButtons</enum>
+         </property>
+         <property name="decimals">
+          <number>4</number>
+         </property>
+         <property name="minimum">
+          <double>-999999.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>999999.000000000000000</double>
+         </property>
+         <property name="value">
+          <double>1.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="RotationBox">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>340</y>
+       <width>172</width>
+       <height>111</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Object Rotation</string>
+     </property>
+     <widget class="QWidget" name="gridLayoutWidget_4">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>151</width>
+        <height>80</height>
+       </rect>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_7">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_10">
+         <property name="text">
+          <string>X</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_11">
+         <property name="text">
+          <string>Y</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_12">
+         <property name="text">
+          <string>Z</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QDoubleSpinBox" name="m_ObjectRotationXBox">
+         <property name="frame">
+          <bool>true</bool>
+         </property>
+         <property name="buttonSymbols">
+          <enum>QAbstractSpinBox::NoButtons</enum>
+         </property>
+         <property name="decimals">
+          <number>4</number>
+         </property>
+         <property name="minimum">
+          <double>-360.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>360.000000000000000</double>
+         </property>
+         <property name="value">
+          <double>0.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QDoubleSpinBox" name="m_ObjectRotationYBox">
+         <property name="buttonSymbols">
+          <enum>QAbstractSpinBox::NoButtons</enum>
+         </property>
+         <property name="decimals">
+          <number>4</number>
+         </property>
+         <property name="minimum">
+          <double>-360.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>360.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QDoubleSpinBox" name="m_ObjectRotationZBox">
+         <property name="buttonSymbols">
+          <enum>QAbstractSpinBox::NoButtons</enum>
+         </property>
+         <property name="decimals">
+          <number>4</number>
+         </property>
+         <property name="minimum">
+          <double>-360.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>360.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+    <widget class="Line" name="line">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>110</y>
+       <width>171</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="m_LightTreeDockableWidget">
+   <property name="windowTitle">
+    <string>Light Tree</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_6">
+    <layout class="QGridLayout" name="gridLayout_10">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <item row="0" column="0">
+      <widget class="Tree" name="m_LightTree">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"> QTreeView::branch:has-siblings:!adjoins-item {
+     border-image: url(:/Pictures/Assets/stylesheet-vline.png) 0;
+ }
+
+ QTreeView::branch:has-siblings:adjoins-item {
+     border-image:url(:/Pictures/Assets/stylesheet-branch-more.png) 0;
+ }
+
+ QTreeView::branch:!has-children:!has-siblings:adjoins-item {
+     border-image: url(:/Pictures/Assets/stylesheet-branch-end.png) 0;
+ }
+
+ QTreeView::branch:has-children:!has-siblings:closed,
+ QTreeView::branch:closed:has-children:has-siblings {
+         border-image: none;
+         image:url(:/Pictures/Assets/stylesheet-branch-closed.png);
+ }
+
+ QTreeView::branch:open:has-children:!has-siblings,
+ QTreeView::branch:open:has-children:has-siblings  {
+         border-image: none;
+         image:url(:/Pictures/Assets/stylesheet-branch-open.png);
+ }</string>
+       </property>
+       <property name="verticalScrollBarPolicy">
+        <enum>Qt::ScrollBarAsNeeded</enum>
+       </property>
+       <property name="horizontalScrollBarPolicy">
+        <enum>Qt::ScrollBarAsNeeded</enum>
+       </property>
+       <property name="dragEnabled">
+        <bool>true</bool>
+       </property>
+       <property name="dragDropMode">
+        <enum>QAbstractItemView::InternalMove</enum>
+       </property>
+       <property name="selectionMode">
+        <enum>QAbstractItemView::ExtendedSelection</enum>
+       </property>
+       <attribute name="headerVisible">
+        <bool>false</bool>
+       </attribute>
+       <column>
+        <property name="text">
+         <string notr="true">1</string>
+        </property>
+       </column>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QPushButton" name="m_LightTreeAddButton">
+         <property name="toolTip">
+          <string>Add a new filter</string>
+         </property>
+         <property name="text">
+          <string>Add Filter</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="m_LightTreeRemoveButton">
+         <property name="text">
+          <string>Remove</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="m_ParticleTreeDockableWidget">
+   <property name="windowTitle">
+    <string>Particle Tree</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_14">
+    <layout class="QGridLayout" name="gridLayout_9">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <item row="0" column="0">
+      <widget class="Tree" name="m_ParticleTree">
+       <property name="styleSheet">
+        <string notr="true"> QTreeView::branch:has-siblings:!adjoins-item {
+     border-image: url(:/Pictures/Assets/stylesheet-vline.png) 0;
+ }
+
+ QTreeView::branch:has-siblings:adjoins-item {
+     border-image:url(:/Pictures/Assets/stylesheet-branch-more.png) 0;
+ }
+
+ QTreeView::branch:!has-children:!has-siblings:adjoins-item {
+     border-image: url(:/Pictures/Assets/stylesheet-branch-end.png) 0;
+ }
+
+ QTreeView::branch:has-children:!has-siblings:closed,
+ QTreeView::branch:closed:has-children:has-siblings {
+         border-image: none;
+         image:url(:/Pictures/Assets/stylesheet-branch-closed.png);
+ }
+
+ QTreeView::branch:open:has-children:!has-siblings,
+ QTreeView::branch:open:has-children:has-siblings  {
+         border-image: none;
+         image:url(:/Pictures/Assets/stylesheet-branch-open.png);
+ }</string>
+       </property>
+       <property name="verticalScrollBarPolicy">
+        <enum>Qt::ScrollBarAsNeeded</enum>
+       </property>
+       <property name="horizontalScrollBarPolicy">
+        <enum>Qt::ScrollBarAsNeeded</enum>
+       </property>
+       <property name="dragEnabled">
+        <bool>true</bool>
+       </property>
+       <property name="dragDropMode">
+        <enum>QAbstractItemView::InternalMove</enum>
+       </property>
+       <property name="selectionMode">
+        <enum>QAbstractItemView::ExtendedSelection</enum>
+       </property>
+       <attribute name="headerVisible">
+        <bool>false</bool>
+       </attribute>
+       <column>
+        <property name="text">
+         <string notr="true">1</string>
+        </property>
+       </column>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <item>
+        <widget class="QPushButton" name="m_ParticleTreeAddButton">
+         <property name="toolTip">
+          <string>Add a new filter</string>
+         </property>
+         <property name="text">
+          <string>Add Filter</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="m_ParticleTreeRemoveButton">
+         <property name="text">
+          <string>Remove</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
    </widget>
   </widget>
   <action name="actionOpen">
@@ -397,7 +955,7 @@
     <string>Object Tree</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+T</string>
+    <string>Ctrl+Shift+O</string>
    </property>
   </action>
   <action name="actionSave_2">
@@ -406,6 +964,38 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionProperties">
+   <property name="text">
+    <string>Properties</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+P</string>
+   </property>
+  </action>
+  <action name="actionAdd_Object">
+   <property name="text">
+    <string>Add Object</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
+   </property>
+  </action>
+  <action name="actionParticle_Tree">
+   <property name="text">
+    <string>Particle Tree</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+P</string>
+   </property>
+  </action>
+  <action name="actionLight_Tree">
+   <property name="text">
+    <string>Light Tree</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+L</string>
    </property>
   </action>
  </widget>
@@ -418,11 +1008,36 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>ExtendedTableWidget</class>
+   <class>Tree</class>
+   <extends>QTreeWidget</extends>
+   <header>tree.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Table</class>
    <extends>QTableWidget</extends>
-   <header>extendedtablewidget.h</header>
+   <header>table.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>m_ObjectTable</sender>
+   <signal>itemDoubleClicked(QTableWidgetItem*)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>addObject(QTableWidgetItem*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>639</x>
+     <y>594</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>672</x>
+     <y>243</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>addObject(QTableWidgetItem*)</slot>
+ </slots>
 </ui>

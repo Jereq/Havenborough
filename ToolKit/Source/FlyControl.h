@@ -1,9 +1,9 @@
 #pragma once
 
-#include <qevent.h>
-
 #include "Camera.h"
 #include "KeyboardControl.h"
+
+class QKeyEvent;
 
 class FlyControl
 {

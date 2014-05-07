@@ -623,6 +623,8 @@ private:
 	std::string m_Style;
 	std::vector<std::pair<std::string, Vector3>> m_AppliedScales;
 
+	Vector3 m_Scale;
+
 public:
 	~ModelComponent() override
 	{
@@ -651,6 +653,7 @@ public:
 			scale->QueryFloatAttribute("y", &m_BaseScale.y);
 			scale->QueryFloatAttribute("z", &m_BaseScale.z);
 		}
+		m_Scale = m_BaseScale;
 
 		m_ColorTone = Vector3(1.f, 1.f, 1.f);
 		const tinyxml2::XMLElement* tone = p_Data->FirstChildElement("ColorTone");
@@ -711,6 +714,27 @@ public:
 	void setRotation(Vector3 p_Rotation) override
 	{
 		m_Owner->getEventManager()->queueEvent(IEventData::Ptr(new UpdateModelRotationEventData(m_Id, p_Rotation)));
+	}
+
+	void setScale(Vector3 p_Scale)
+	{
+		m_Owner->getEventManager()->queueEvent(IEventData::Ptr(new UpdateModelScaleEventData(m_Id, p_Scale)));
+		m_Scale = p_Scale;
+	}
+
+	Vector3 getPosition()
+	{
+		return m_Owner->getPosition();
+	}
+
+	Vector3 getRotation()
+	{
+		return m_Owner->getRotation();
+	}
+
+	Vector3 getScale()
+	{
+		return m_Scale;
 	}
 
 	void updateScale(const std::string& p_CompName, Vector3 p_Scale) override
@@ -1264,6 +1288,11 @@ public:
 	{
 		m_Light.id = p_Id;
 	}
+
+	const LightClass::Type getType() const
+	{
+		return m_Light.type;
+	}
 };
 
 class LookInterface : public ActorComponent
@@ -1382,6 +1411,11 @@ public:
 	void setId(unsigned int p_Id)
 	{
 		m_ParticleId = p_Id;
+	}
+
+	const std::string& getEffectName() const
+	{
+		return m_EffectName;
 	}
 };
 
