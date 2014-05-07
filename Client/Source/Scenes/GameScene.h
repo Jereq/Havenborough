@@ -153,6 +153,4 @@ private:
 
 	void preLoadModels();
 	void releasePreLoadedModels();
-
-	void createAndTransformRay(const DirectX::XMFLOAT2 &p_MousePos);
 };

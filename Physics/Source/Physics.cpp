@@ -885,8 +885,6 @@ BodyHandle Physics::rayCast(const XMFLOAT4 &p_RayDirection, const XMFLOAT4 &p_Ra
 	{
 		return 0;
 	}
-	XMMATRIX rot = XMMatrixRotationY(g_XMPi.f[0]/2.f);
-	b->setRotation(rot);
 
 	return body;
 }

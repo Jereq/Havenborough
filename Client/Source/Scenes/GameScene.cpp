@@ -343,7 +343,7 @@ void GameScene::registeredInput(std::string p_Action, float p_Value, float p_Pre
 		}
 		else if(p_Action == "spellCast")
 		{
-			createAndTransformRay(XMFLOAT2(0.f,0.f));
+			m_GameLogic->throwSpell("TestSpell");
 		}
 		else if(p_Action == "drawPivots")
 		{
@@ -809,33 +809,4 @@ void GameScene::releasePreLoadedModels()
 		m_ResourceManager->releaseResource(res);
 	}
 	m_ResourceIDs.clear();
-}
-
-void GameScene::createAndTransformRay(const DirectX::XMFLOAT2 &p_MousePos)
-{
-	XMFLOAT4X4 fView = m_Graphics->getView();
-	XMFLOAT4X4 fProj = m_Graphics->getProj();
-	
-
-	XMMATRIX mWorld = XMMatrixIdentity();
-	XMMATRIX mView = XMLoadFloat4x4(&fView);
-	XMMATRIX mProj = XMLoadFloat4x4(&fProj);
-	
-	mView = XMMatrixTranspose(mView);
-	mProj = XMMatrixTranspose(mProj);
-
-	XMVECTOR cursorScreenSpace = XMVectorSet(p_MousePos.x + m_WindowSize.x / 2.f, p_MousePos.y + m_WindowSize.y / 2.f, 0.f, 1.f);
-	XMVECTOR unprojectedCursor = XMVector3Unproject(cursorScreenSpace, 0.f, 0.f, m_WindowSize.x, m_WindowSize.y, 0.f, 1.f, mProj, mView, mWorld);
-
-	XMMATRIX invView = XMMatrixInverse(nullptr, mView);
-	XMVECTOR vRayOrigin =  invView.r[3];
-
-	XMVECTOR direction = unprojectedCursor - vRayOrigin;
-	direction = XMVector3Normalize(direction);
-
- 	XMFLOAT4 fRayDir, fRayOrigin;
-	XMStoreFloat4(&fRayDir, direction);
-	XMStoreFloat4(&fRayOrigin, vRayOrigin);
-
-	m_GameLogic->castRay(fRayDir, fRayOrigin);
 }
