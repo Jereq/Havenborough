@@ -19,7 +19,9 @@ public:
 public slots:
     void addFilter();
 	void removeItem();
-	void objectCreated(std::string p_ObjectName, int p_ActorId);
+	void objectCreated(std::string p_ObjectName, int p_ActorId, int p_Type);
+
+	void changeObjectName(QTreeWidgetItem *p_Item, int p_Column);
 
 signals:
 	void addTableObject(std::string p_ObjectName);

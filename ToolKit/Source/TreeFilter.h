@@ -9,8 +9,10 @@ class TreeFilter : public QTreeWidgetItem
     explicit TreeFilter();
     TreeFilter(std::string p_FilterName);
 
-  private:
+	void setName(std::string p_ObjectName);
 
+  private:
+	  std::string m_Filterame;
 };
 
 #endif // TREEFILTER_H

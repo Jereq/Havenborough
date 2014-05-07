@@ -61,4 +61,13 @@ private:
 	void updateParticlePosition(IEventData::Ptr p_Data);
 	void updateParticleRotation(IEventData::Ptr p_Data);
 	void updateParticleBaseColor(IEventData::Ptr p_Data);
+
+	void updateLightColor(IEventData::Ptr p_Data);
+	void updateLightDirection(IEventData::Ptr p_Data);
+	void updateLightPosition(IEventData::Ptr p_Data);
+	void updateLightAngle(IEventData::Ptr p_Data);
+	void updateLightRange(IEventData::Ptr p_Data);
+	void updateLightIntensity(IEventData::Ptr p_Data);
+
+	LightClass* findLight(int p_Id);
 };

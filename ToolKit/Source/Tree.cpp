@@ -6,6 +6,7 @@
 Tree::Tree(QWidget* parent) 
 	: QTreeWidget(parent)
 {
+	QObject::connect(this, SIGNAL(itemChanged(QTreeWidgetItem *, int)), this, SLOT(changeObjectName(QTreeWidgetItem *, int)));
 }
 
 void Tree::clearTree()
@@ -21,7 +22,7 @@ void Tree::removeItem()
     removeChild(currItem);
 }
 
-void Tree::objectCreated(std::string p_MeshName, int p_ActorId)
+void Tree::objectCreated(std::string p_MeshName, int p_ActorId, int p_Type)
 {
 	if(m_ObjectCount.count(p_MeshName) > 0)
 		m_ObjectCount.at(p_MeshName)++;
@@ -32,7 +33,19 @@ void Tree::objectCreated(std::string p_MeshName, int p_ActorId)
 		emit addTableObject(p_MeshName);
 	}
 
-	addTopLevelItem(new TreeItem(p_MeshName + "_" + std::to_string(m_ObjectCount.at(p_MeshName)), p_ActorId));
+	addTopLevelItem(new TreeItem(p_MeshName + "_" + std::to_string(m_ObjectCount.at(p_MeshName)), p_ActorId, p_Type));
+}
+
+void Tree::changeObjectName(QTreeWidgetItem *p_Item, int p_Column)
+{
+	TreeFilter *filter = dynamic_cast<TreeFilter*>(p_Item);
+	TreeItem *item = dynamic_cast<TreeItem*>(p_Item);
+
+	if(filter)
+		filter->setName(p_Item->text(0).toStdString());
+
+	if(item)
+		item->setName(p_Item->text(0).toStdString());
 }
 
 void Tree::addFilter()

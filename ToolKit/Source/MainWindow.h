@@ -72,8 +72,12 @@ private slots:
     void setObjectRotation();
 
     void setObjectPosition();
+	
+	void setLightPosition();
 
 	void addObject(QTableWidgetItem* p_ObjectItem);
+
+    void on_m_LightTree_itemSelectionChanged();
 
 signals:
     void setCameraPositionSignal(Vector3 p_CameraPosition);

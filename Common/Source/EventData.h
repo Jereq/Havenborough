@@ -1914,4 +1914,262 @@ public:
 		return m_Velocity;
 	}
 };
+
+class UpdateLightPositionEventData : public BaseEventData
+{
+private:
+	int m_Id;
+	Vector3 m_Position;
+public:
+	static const Type sk_EventType = Type(0xf169ae11);
+
+	UpdateLightPositionEventData(int p_Id, Vector3 p_Position)
+		: m_Id(p_Id), m_Position(p_Position)
+	{
+	}
+
+	virtual const Type &getEventType(void) const override
+	{
+		return sk_EventType;
+	}
+
+	virtual Ptr copy(void) const override
+	{
+		return Ptr(new UpdateLightPositionEventData(m_Id, m_Position));
+	}
+
+	virtual void serialize(std::ostream &p_Out) const override
+	{
+	}
+
+	virtual const char *getName(void) const override
+	{
+		return "UpdateLightPosition";
+	}
+
+	const int getId() const
+	{
+		return m_Id;
+	}
+
+	const Vector3 getPosition() const
+	{
+		return m_Position;
+	}
+};
+
+class UpdateLightColorEventData : public BaseEventData
+{
+private:
+	int m_Id;
+	Vector3 m_Color;
+public:
+	static const Type sk_EventType = Type(0xf169ae12);
+
+	UpdateLightColorEventData(int p_Id, Vector3 p_Color)
+		: m_Id(p_Id), m_Color(p_Color)
+	{
+	}
+
+	virtual const Type &getEventType(void) const override
+	{
+		return sk_EventType;
+	}
+
+	virtual Ptr copy(void) const override
+	{
+		return Ptr(new UpdateLightColorEventData(m_Id, m_Color));
+	}
+
+	virtual void serialize(std::ostream &p_Out) const override
+	{
+	}
+
+	virtual const char *getName(void) const override
+	{
+		return "UpdateLightColor";
+	}
+
+	const int getId() const
+	{
+		return m_Id;
+	}
+
+	const Vector3 getColor() const
+	{
+		return m_Color;
+	}
+};
+
+class UpdateLightDirectionEventData : public BaseEventData
+{
+private:
+	int m_Id;
+	Vector3 m_Direction;
+public:
+	static const Type sk_EventType = Type(0xf169ae13);
+
+	UpdateLightDirectionEventData(int p_Id, Vector3 p_Direction)
+		: m_Id(p_Id), m_Direction(p_Direction)
+	{
+	}
+
+	virtual const Type &getEventType(void) const override
+	{
+		return sk_EventType;
+	}
+
+	virtual Ptr copy(void) const override
+	{
+		return Ptr(new UpdateLightDirectionEventData(m_Id, m_Direction));
+	}
+
+	virtual void serialize(std::ostream &p_Out) const override
+	{
+	}
+
+	virtual const char *getName(void) const override
+	{
+		return "UpdateLightColor";
+	}
+
+	const int getId() const
+	{
+		return m_Id;
+	}
+
+	const Vector3 getDirection() const
+	{
+		return m_Direction;
+	}
+};
+
+class UpdateLightAngleEventData : public BaseEventData
+{
+private:
+	int m_Id;
+	Vector2 m_Angle;
+public:
+	static const Type sk_EventType = Type(0xf169ae14);
+
+	UpdateLightAngleEventData(int p_Id, Vector2 p_Angle)
+		: m_Id(p_Id), m_Angle(p_Angle)
+	{
+	}
+
+	virtual const Type &getEventType(void) const override
+	{
+		return sk_EventType;
+	}
+
+	virtual Ptr copy(void) const override
+	{
+		return Ptr(new UpdateLightAngleEventData(m_Id, m_Angle));
+	}
+
+	virtual void serialize(std::ostream &p_Out) const override
+	{
+	}
+
+	virtual const char *getName(void) const override
+	{
+		return "UpdateLightAngle";
+	}
+
+	const int getId() const
+	{
+		return m_Id;
+	}
+
+	const Vector2 getAngle() const
+	{
+		return m_Angle;
+	}
+};
+
+class UpdateLightRangeEventData : public BaseEventData
+{
+private:
+	int m_Id;
+	float m_Range;
+public:
+	static const Type sk_EventType = Type(0xf169ae15);
+
+	UpdateLightRangeEventData(int p_Id, float p_Range)
+		: m_Id(p_Id), m_Range(p_Range)
+	{
+	}
+
+	virtual const Type &getEventType(void) const override
+	{
+		return sk_EventType;
+	}
+
+	virtual Ptr copy(void) const override
+	{
+		return Ptr(new UpdateLightRangeEventData(m_Id, m_Range));
+	}
+
+	virtual void serialize(std::ostream &p_Out) const override
+	{
+	}
+
+	virtual const char *getName(void) const override
+	{
+		return "UpdateLightRange";
+	}
+
+	const int getId() const
+	{
+		return m_Id;
+	}
+
+	const float getRange() const
+	{
+		return m_Range;
+	}
+};
+
+class UpdateLightIntensityEventData : public BaseEventData
+{
+private:
+	int m_Id;
+	float m_Intensity;
+public:
+	static const Type sk_EventType = Type(0xf169ae16);
+
+	UpdateLightIntensityEventData(int p_Id, float p_Intensity)
+		: m_Id(p_Id), m_Intensity(p_Intensity)
+	{
+	}
+
+	virtual const Type &getEventType(void) const override
+	{
+		return sk_EventType;
+	}
+
+	virtual Ptr copy(void) const override
+	{
+		return Ptr(new UpdateLightIntensityEventData(m_Id, m_Intensity));
+	}
+
+	virtual void serialize(std::ostream &p_Out) const override
+	{
+	}
+
+	virtual const char *getName(void) const override
+	{
+		return "UpdateLightIntensity";
+	}
+
+	const int getId() const
+	{
+		return m_Id;
+	}
+
+	const float getIntensity() const
+	{
+		return m_Intensity;
+	}
+};
 #pragma warning(pop)

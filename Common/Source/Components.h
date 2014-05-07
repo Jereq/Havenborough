@@ -1119,6 +1119,8 @@ public:
 
 	void initialize(const tinyxml2::XMLElement* p_Data) override
 	{
+		int tempId = m_Light.id;
+
 		if (p_Data->Attribute("Type", "Point"))
 		{
 			Vector3 position(0.f, 0.f, 0.f);
@@ -1144,6 +1146,7 @@ public:
 			}
 
 			m_Light = LightClass::createPointLight(position, range, color);
+			m_Light.id = tempId;
 		}
 		else if (p_Data->Attribute("Type", "Spot"))
 		{
@@ -1187,6 +1190,7 @@ public:
 			}
 
 			m_Light = LightClass::createSpotLight(position, direction, angles, range, color);
+			m_Light.id = tempId;
 		}
 		else if (p_Data->Attribute("Type", "Directional"))
 		{
@@ -1214,6 +1218,7 @@ public:
 			}
 			
 			m_Light = LightClass::createDirectionalLight(direction, color, intensity);
+			m_Light.id = tempId;
 		}
 		else
 		{

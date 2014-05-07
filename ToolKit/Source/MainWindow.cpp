@@ -39,10 +39,16 @@ MainWindow::MainWindow(QWidget *parent) :
     setCorner(Qt::TopRightCorner, Qt::RightDockWidgetArea);
     setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
 
-    //Hide Position Scale Rotation by default
+    //Hide all value boxes per default
     ui->PositionBox->hide();
     ui->ScaleBox->hide();
     ui->RotationBox->hide();
+
+    ui->ColorBox->hide();
+    ui->DirectionBox->hide();
+    ui->AdditionalBox_1->hide();
+    ui->AdditionalBox_2->hide();
+    ui->AngleBox->hide();
 
 	signalAndSlotsDefinitions();
 
@@ -80,9 +86,9 @@ void MainWindow::signalAndSlotsDefinitions()
     QObject::connect(this, SIGNAL(setCameraPositionSignal(Vector3)), ui->m_RenderWidget, SLOT(CameraPositionSet(Vector3)));
 
     //Signals and slots for connecting the object creation to the trees
-	QObject::connect(m_ObjectManager.get(), SIGNAL(meshCreated(std::string, int)), ui->m_ObjectTree, SLOT(objectCreated(std::string, int)));
-	QObject::connect(m_ObjectManager.get(), SIGNAL(lightCreated(std::string, int)), ui->m_LightTree, SLOT(objectCreated(std::string, int)));
-	QObject::connect(m_ObjectManager.get(), SIGNAL(particleCreated(std::string, int)), ui->m_ParticleTree, SLOT(objectCreated(std::string, int)));
+    QObject::connect(m_ObjectManager.get(), SIGNAL(meshCreated(std::string, int, int)), ui->m_ObjectTree, SLOT(objectCreated(std::string, int, int)));
+    QObject::connect(m_ObjectManager.get(), SIGNAL(lightCreated(std::string, int, int)), ui->m_LightTree, SLOT(objectCreated(std::string, int, int)));
+    QObject::connect(m_ObjectManager.get(), SIGNAL(particleCreated(std::string, int, int)), ui->m_ParticleTree, SLOT(objectCreated(std::string, int, int)));
 
     //Signals and slots for connecting the object scale editing to the object
     QObject::connect(ui->m_ObjectScaleXBox, SIGNAL(editingFinished()), this, SLOT(setObjectScale()));
@@ -113,6 +119,11 @@ void MainWindow::signalAndSlotsDefinitions()
 	QObject::connect(ui->m_ObjectTree, SIGNAL(addTableObject(std::string)), ui->m_ObjectTable, SLOT(addObject(std::string)));
 	QObject::connect(ui->m_LightTree, SIGNAL(addTableObject(std::string)), ui->m_ObjectTable, SLOT(addObject(std::string)));
 	QObject::connect(ui->m_ParticleTree, SIGNAL(addTableObject(std::string)), ui->m_ObjectTable, SLOT(addObject(std::string)));
+
+    //Signals and slots for connecting the light position editing to the light
+    QObject::connect(ui->m_LightPositionXBox, SIGNAL(editingFinished()), this, SLOT(setLightPosition()));
+    QObject::connect(ui->m_LightPositionYBox, SIGNAL(editingFinished()), this, SLOT(setLightPosition()));
+    QObject::connect(ui->m_LightPositionZBox, SIGNAL(editingFinished()), this, SLOT(setLightPosition()));
 }
 
 void MainWindow::on_actionObject_Tree_triggered()
@@ -187,10 +198,15 @@ void MainWindow::on_m_ObjectTree_itemSelectionChanged()
 {
     QTreeWidgetItem *currItem = ui->m_ObjectTree->currentItem();
 
-
 	ui->PositionBox->hide();
     ui->ScaleBox->hide();
     ui->RotationBox->hide();
+
+    ui->ColorBox->hide();
+    ui->DirectionBox->hide();
+    ui->AdditionalBox_1->hide();
+    ui->AdditionalBox_2->hide();
+    ui->AngleBox->hide();
 
     if(currItem && currItem->isSelected())
 	{
@@ -248,21 +264,15 @@ void MainWindow::setObjectScale()
 void MainWindow::setObjectPosition()
 {
     QTreeWidgetItem *currItem = ui->m_ObjectTree->currentItem();
+
     if(currItem)
     {
         TreeItem *cItem = dynamic_cast<TreeItem*>(currItem);
 
-        if(currItem->isSelected() && cItem)
+        if(currItem->isSelected() && cItem && cItem->getType() == TreeItem::TreeItemType::MODEL)
         {
 			Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
-            std::weak_ptr<ModelComponent> pmodel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
-            std::shared_ptr<ModelComponent> spmodel = pmodel.lock();
-
-            if(spmodel)
-            {
-                spmodel->setPosition(Vector3(ui->m_ObjectPositionXBox->value(),ui->m_ObjectPositionYBox->value(),ui->m_ObjectPositionZBox->value()));
-
-            }
+			actor->setPosition(Vector3(ui->m_ObjectPositionXBox->value(),ui->m_ObjectPositionYBox->value(),ui->m_ObjectPositionZBox->value()));
         }
     }
 }
@@ -277,15 +287,27 @@ void MainWindow::setObjectRotation()
         if(currItem->isSelected() && cItem)
         {
 			Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
-            std::weak_ptr<ModelComponent> pmodel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
-            std::shared_ptr<ModelComponent> spmodel = pmodel.lock();
-
-            if(spmodel)
-            {
-                spmodel->setRotation(Vector3(ui->m_ObjectRotationXBox->value(),ui->m_ObjectRotationYBox->value(),ui->m_ObjectRotationZBox->value()));
-            }
+			actor->setRotation(Vector3(ui->m_ObjectRotationXBox->value(),ui->m_ObjectRotationYBox->value(),ui->m_ObjectRotationZBox->value()));
         }
     }
+}
+
+void MainWindow::setLightPosition()
+{
+    QTreeWidgetItem *currItem = ui->m_LightTree->currentItem();
+
+	if(currItem)
+	{
+		TreeItem *cItem = dynamic_cast<TreeItem*>(currItem);
+        if(currItem->isSelected() && cItem)
+		{
+			Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
+			std::weak_ptr<LightComponent> light = actor->getComponent<LightComponent>(LightInterface::m_ComponentId);
+			std::shared_ptr<LightComponent> slight = light.lock();
+
+            m_EventManager.queueEvent(IEventData::Ptr(new UpdateLightPositionEventData(slight->getId(), Vector3(ui->m_LightPositionXBox->value(),ui->m_LightPositionYBox->value(),ui->m_LightPositionZBox->value()))));
+		}
+	}
 }
 
 void MainWindow::createSimpleObjectDescription(const std::string& p_ModelName)
@@ -405,4 +427,46 @@ void MainWindow::uninitializeSystems()
 		IPhysics::deletePhysics(m_Physics);
 		m_Physics = nullptr;
 	}
+}
+
+void MainWindow::on_m_LightTree_itemSelectionChanged()
+{
+    QTreeWidgetItem *currItem = ui->m_LightTree->currentItem();
+
+    ui->PositionBox->hide();
+    ui->ScaleBox->hide();
+    ui->RotationBox->hide();
+
+    ui->ColorBox->hide();
+    ui->DirectionBox->hide();
+    ui->AdditionalBox_1->hide();
+    ui->AdditionalBox_2->hide();
+    ui->AngleBox->hide();
+
+    if(currItem && currItem->isSelected())
+    {
+        TreeItem *cItem = dynamic_cast<TreeItem*>(currItem);
+        if(cItem)
+        {
+            ui->PositionBox->show();
+            ui->ColorBox->show();
+            //ui->ScaleBox->show();
+            //ui->RotationBox->show();
+            TreeItem::TreeItemType type = cItem->getType();
+            if(type == TreeItem::TreeItemType::POINTLIGHT)
+            {
+                ui->AdditionalBox_2->show();
+            }
+            else if(type == TreeItem::TreeItemType::DIRECTIONALLIGHT)
+            {
+                ui->AdditionalBox_1->show();
+            }
+            else
+            {
+                ui->AdditionalBox_2->show();
+                ui->DirectionBox->show();
+                ui->AngleBox->show();
+            }
+        }
+    }
 }

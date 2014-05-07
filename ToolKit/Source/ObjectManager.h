@@ -37,7 +37,7 @@ public:
 
 public:
 signals:
-	void meshCreated(std::string p_MeshName, int p_ActorId);
-	void lightCreated(std::string p_LightName, int p_ActorId);
-	void particleCreated(std::string p_ParticleName, int p_ActorId);
+	void meshCreated(std::string p_MeshName, int p_ActorId, int p_Type);
+	void lightCreated(std::string p_LightName, int p_ActorId, int p_Type);
+	void particleCreated(std::string p_ParticleName, int p_ActorId, int p_Type);
 };

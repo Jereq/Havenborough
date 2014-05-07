@@ -36,7 +36,7 @@ void ObjectManager::loadLevel(const std::string& p_Filename)
 		std::shared_ptr<ModelComponent> smodel = model.lock();
 		if(smodel)
 		{
-			emit meshCreated(smodel->getMeshName(), actor.first);
+            emit meshCreated(smodel->getMeshName(), actor.first, 3);
 		}
 		std::weak_ptr<LightComponent> lmodel = actor.second.get()->getComponent<LightComponent>(LightInterface::m_ComponentId);
 		std::shared_ptr<LightComponent> slmodel = lmodel.lock();
@@ -50,13 +50,13 @@ void ObjectManager::loadLevel(const std::string& p_Filename)
 			case LightClass::Type::POINT: lightype = "Point"; break;
 			}
 
-			emit lightCreated(lightype, actor.first);
+            emit lightCreated(lightype, actor.first, (int)slmodel->getType());
 		}
 		std::weak_ptr<ParticleComponent> pmodel = actor.second.get()->getComponent<ParticleComponent>(ParticleInterface::m_ComponentId);
 		std::shared_ptr<ParticleComponent> spmodel = pmodel.lock();
 		if(spmodel)
 		{
-			emit particleCreated(spmodel->getEffectName(), actor.first);
+            emit particleCreated(spmodel->getEffectName(), actor.first, 4);
 		}
 	}
 }
