@@ -1,0 +1,25 @@
+<ObjectDescription Name="WoodenPlatform3">
+    <Object x="0.000000" y="0.000000" z="0.000000" yaw="0.000000" pitch="0.000000" roll="0.000000">
+        <Model Mesh="WoodenPlatform3">
+            <Scale x="1.000000" y="1.000000" z="1.000000"/>
+        </Model>
+        <MeshPhysics Mesh="WoodenPlatform3">
+            <Scale x="1.000000" y="1.000000" z="1.000000"/>
+        </MeshPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="143.062576" y="5.000000" z="5.000000"/>
+            <OffsetPosition x="-0.000000" y="54.692459" z="-144.104034"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="107.219788" y="5.000000" z="5.000000"/>
+            <OffsetPosition x="144.447769" y="54.692459" z="-34.883656"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="107.219788" y="5.000000" z="5.000000"/>
+            <OffsetPosition x="-144.447769" y="54.692459" z="-34.883656"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+    </Object>
+</ObjectDescription>

@@ -1,0 +1,35 @@
+<ObjectDescription Name="HangingStairCase1">
+    <Object x="0.000000" y="0.000000" z="0.000000" yaw="0.000000" pitch="0.000000" roll="0.000000">
+        <Model Mesh="HangingStairCase1">
+            <Scale x="1.000000" y="1.000000" z="1.000000"/>
+        </Model>
+        <MeshPhysics Mesh="HangingStairCase1">
+            <Scale x="1.000000" y="1.000000" z="1.000000"/>
+        </MeshPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="149.065048" y="5.000000" z="5.000000"/>
+            <OffsetPosition x="427.969391" y="3.953497" z="817.313049"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="144.174362" y="5.000000" z="5.000000"/>
+            <OffsetPosition x="-451.327911" y="352.377411" z="817.313049"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="109.732712" y="5.000000" z="5.000000"/>
+            <OffsetPosition x="-597.805176" y="352.377411" z="708.189209"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="107.373703" y="5.000000" z="5.000000"/>
+            <OffsetPosition x="578.786133" y="3.953497" z="708.189209"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="338.865662" y="5.000000" z="5.000000"/>
+            <OffsetPosition x="-14.159153" y="177.437378" z="817.313049"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.532297"/>
+        </OBBPhysics>
+    </Object>
+</ObjectDescription>

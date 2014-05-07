@@ -1,0 +1,7 @@
+<ObjectDescription Name="MarketBread3">
+    <Object x="0.000000" y="0.000000" z="0.000000" yaw="0.000000" pitch="0.000000" roll="0.000000">
+        <Model Mesh="MarketBread3">
+            <Scale x="1.000000" y="1.000000" z="1.000000"/>
+        </Model>
+    </Object>
+</ObjectDescription>
