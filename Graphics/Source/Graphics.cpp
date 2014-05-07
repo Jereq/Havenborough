@@ -774,7 +774,7 @@ void Graphics::renderModel(InstanceId p_ModelId)
 				Renderable::Type::DEFERRED_OBJECT, modelDef,
 				model.getWorldMatrix(),
 				&model.getFinalTransform(),
-				nullptr,
+				&model.getColorTone(),
 				model.getSelectedMaterialSet()));
 		}
 		else

@@ -11,6 +11,7 @@
 #endif
 
 class QTableWidgetItem;
+class QTreeWidgetItem;
 
 class IGraphics;
 class IPhysics;
@@ -74,6 +75,8 @@ private slots:
     void setObjectPosition();
 
 	void addObject(QTableWidgetItem* p_ObjectItem);
+
+    void on_m_ObjectTree_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
 
 signals:
     void setCameraPositionSignal(Vector3 p_CameraPosition);

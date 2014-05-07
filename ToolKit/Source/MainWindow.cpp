@@ -406,3 +406,29 @@ void MainWindow::uninitializeSystems()
 		m_Physics = nullptr;
 	}
 }
+
+void MainWindow::on_m_ObjectTree_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous)
+{
+    if(current)
+    {
+        TreeItem *cItem = dynamic_cast<TreeItem*>(current);
+        if(cItem)
+        {
+            Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
+            std::weak_ptr<ModelComponent> pmodel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
+            std::shared_ptr<ModelComponent> spmodel = pmodel.lock();
+            spmodel->setColorTone(Vector3(5,5,7));
+        }
+    }
+    if(previous)
+    {
+        TreeItem *cItem = dynamic_cast<TreeItem*>(previous);
+        if(cItem)
+        {
+            Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
+            std::weak_ptr<ModelComponent> pmodel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
+            std::shared_ptr<ModelComponent> spmodel = pmodel.lock();
+            spmodel->setColorTone(Vector3(1,1,1));
+        }
+    }
+}
