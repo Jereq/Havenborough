@@ -222,6 +222,7 @@ public:
 
 	DirectX::XMFLOAT4X4 getView() const override;
 	DirectX::XMFLOAT4X4 getProj() const override;
+	DirectX::XMFLOAT2	getScreenSize() const override;
 
 
 private:
