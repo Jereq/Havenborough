@@ -14,6 +14,23 @@ void Tree::clearTree()
 	m_ObjectCount.clear();
 }
 
+void Tree::selectItem(int p_ActorId)
+{
+	int tempId = p_ActorId;
+	for(int i = 0; i < topLevelItemCount(); i++)
+	{
+		QTreeWidgetItem *currItem = topLevelItem(i);
+		TreeItem *item = dynamic_cast<TreeItem*>(currItem);
+		if(item && item->getActorId() == tempId)
+		{
+			setItemSelected(currItem, true);
+			break;
+		}
+		else
+			selectItemTraverse(currItem, tempId);
+	}
+}
+
 void Tree::removeItem()
 {
 	QTreeWidgetItem *currItem = currentItem();
@@ -79,5 +96,25 @@ void Tree::removeChild(QTreeWidgetItem* currItem)
         }
 
         delete currItem;
+    }
+}
+
+void Tree::selectItemTraverse(QTreeWidgetItem* currItem, int& p_ActorId)
+{
+	if(currItem)
+    {
+        for (int i = 0; i < currItem->childCount(); i++)
+        {
+			QTreeWidgetItem *currChild = currItem->takeChild(i);
+			TreeItem *item = dynamic_cast<TreeItem*>(currChild);
+
+			if(item->getActorId() == p_ActorId)
+			{
+				setItemSelected(currChild, true);
+				break;
+			}
+			else
+				selectItemTraverse(currChild, p_ActorId);
+        }
     }
 }
