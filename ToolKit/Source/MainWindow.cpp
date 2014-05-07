@@ -45,7 +45,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->RotationBox->hide();
 
 	signalAndSlotsDefinitions();
-	QObject::connect(m_ObjectManager.get(), SIGNAL(objectTypeCreated(std::string)), this, SLOT(onObjectTypeCreated(std::string)));
 
     // Nest dock widgets.
     tabifyDockWidget(ui->m_ParticleTreeDockableWidget, ui->m_LightTreeDockableWidget);
@@ -111,6 +110,7 @@ void MainWindow::signalAndSlotsDefinitions()
 	QObject::connect(ui->m_ObjectTree, SIGNAL(addTableObject(std::string)), ui->m_ObjectTable, SLOT(addObject(std::string)));
 	QObject::connect(ui->m_LightTree, SIGNAL(addTableObject(std::string)), ui->m_ObjectTable, SLOT(addObject(std::string)));
 	QObject::connect(ui->m_ParticleTree, SIGNAL(addTableObject(std::string)), ui->m_ObjectTable, SLOT(addObject(std::string)));
+	QObject::connect(m_ObjectManager.get(), SIGNAL(objectTypeCreated(std::string)), ui->m_ObjectTable, SLOT(addObject(std::string)));
 }
 
 void MainWindow::on_actionObject_Tree_triggered()
@@ -226,11 +226,6 @@ void MainWindow::on_m_ObjectTree_itemSelectionChanged()
 	{
 		spmodel->setColorTone(Vector3(1.0f, 1.0f, 1.0f));
 	}
-}
-
-void MainWindow::onObjectTypeCreated(std::string p_ObjectName)
-{
-	ui->m_ObjectTable->addObject(p_ObjectName);
 }
 
 void MainWindow::setObjectScale()

@@ -66,7 +66,6 @@ private slots:
 
     void on_m_ObjectTree_itemSelectionChanged();
 
-	void onObjectTypeCreated(std::string p_ObjectName);
     void on_actionParticle_Tree_triggered();
 
     void on_actionLight_Tree_triggered();
