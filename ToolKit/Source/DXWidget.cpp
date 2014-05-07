@@ -1,6 +1,8 @@
 #include "DXWidget.h"
 
 #include <qevent.h>
+#include <QMainWindow>
+#include <QStatusBar>
 
 DXWidget::DXWidget(QWidget* parent, Qt::WindowFlags flags)
 	: QWidget(parent, flags),
@@ -87,11 +89,13 @@ void DXWidget::mousePressEvent(QMouseEvent* e)
 		else if ((e->buttons() & Qt::RightButton) && !(e->buttons() & Qt::LeftButton))
 		{
 			//showStatus(tr("Dolly Tool: RMB Drag: Use mouse to dolly"));
-			setCursor(Qt::BlankCursor);
+			//setCursor(Qt::ClosedHandCursor);
 
 			m_MouseStartPos = e->localPos();
 			m_MouseDir = QPointF(0, 0);
-			//setCursor(Qt::SizeVerCursor);
+
+			std::shared_ptr<MouseEventDataPie> pie(new MouseEventDataPie(Vector2(m_MouseStartPos.x() - width()*0.5f, -m_MouseStartPos.y() + height()*0.5f), true));
+			m_EventManager->queueEvent(pie);
 		}
 		else if (e->buttons() & Qt::MiddleButton)
 		{
@@ -119,8 +123,24 @@ void DXWidget::mouseMoveEvent(QMouseEvent* e)
 			//moveCamera(0, 0, delta.y());
 
 			m_MouseDir = e->localPos() - m_MouseStartPos;
+
 			qreal dotMouseDir = QPointF::dotProduct(m_MouseDir, m_MouseDir);
+			dotMouseDir = sqrtf(dotMouseDir);
 			m_MouseDir = m_MouseDir / dotMouseDir;
+
+			float a = atan2f(-m_MouseDir.x(), m_MouseDir.y());
+
+			a += DirectX::XM_PI;
+			a += (2 * DirectX::XM_PI) / 16.f;
+			if(a > 2 * DirectX::XM_PI)
+				a -= 2*DirectX::XM_PI;
+
+			a /= (2*DirectX::XM_PI);
+			a *= 8;
+
+			a = floorf(a);
+
+			((QMainWindow*)window())->statusBar()->showMessage("Angle: " + QString::number(a));
 
 			update();
 		}
@@ -134,6 +154,8 @@ void DXWidget::mouseMoveEvent(QMouseEvent* e)
 
 	m_PrevMousePos = e->localPos();
 
+	//((QMainWindow*)window())->statusBar()->showMessage("PosX: " + QString::number(e->localPos().x()) + " PosY: " + QString::number(e->localPos().y()));
+
 	QWidget::mouseMoveEvent(e);
 }
 
@@ -142,6 +164,15 @@ void DXWidget::mouseReleaseEvent(QMouseEvent* e)
 	setCursor(Qt::ArrowCursor);
 	//showStatus("");
 
+	std::shared_ptr<MouseEventDataPie> pie(new MouseEventDataPie(Vector2(0.f, 0.f), false));
+	m_EventManager->queueEvent(pie);
+
+	int x = m_MouseStartPos.x();
+	int y = m_MouseStartPos.y();
+	QPoint temp = mapToGlobal(QPoint(x, y));
+	//QCursor::setPos(temp);
+	
+	
 	QWidget::mouseReleaseEvent(e);
 }
 
