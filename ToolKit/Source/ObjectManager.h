@@ -1,31 +1,30 @@
 #pragma once
 
 #include <map>
+#include <memory>
 #include <string>
-
-#include <ActorFactory.h>
-
-class EventManager;
-class ResourceManager;
 
 #include <QObject>
 
-#include "Components.h"
+#include <ActorList.h>
 
+class ActorFactory;
+class EventManager;
+class ResourceManager;
 
 class ObjectManager : public QObject
 {
 	Q_OBJECT
 
 private:
-	ActorFactory::ptr m_ActorFactory;
+	std::shared_ptr<ActorFactory> m_ActorFactory;
 	ActorList m_ActorList;
 	EventManager* m_EventManager;
 	ResourceManager* m_ResourceManager;
 	std::map<std::string, std::string> m_ObjectDescriptions;
 
 public:
-	ObjectManager(ActorFactory::ptr p_ActorFactory, EventManager* p_EventManager, ResourceManager* p_ResourceManager);
+	ObjectManager(std::shared_ptr<ActorFactory> p_ActorFactory, EventManager* p_EventManager, ResourceManager* p_ResourceManager);
 	~ObjectManager();
 
 	void update(float p_DeltaTime);
