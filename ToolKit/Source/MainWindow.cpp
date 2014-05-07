@@ -355,6 +355,8 @@ void MainWindow::initializeSystems()
 	m_Physics = IPhysics::createPhysics();
 	m_Physics->initialize(false, 1.f / 60.f);
 
+	m_AnimationLoader.reset(new AnimationLoader);
+
 	m_Graphics = IGraphics::createGraphics();
 	m_Graphics->setTweaker(TweakSettings::getInstance());
 	m_Graphics->setShadowMapResolution(1024);
@@ -378,12 +380,16 @@ void MainWindow::initializeSystems()
 	m_ResourceManager.registerFunction("particleSystem",
 		std::bind(&IGraphics::createParticleEffectDefinition, m_Graphics, _1, _2),
 		std::bind(&IGraphics::releaseParticleEffectDefinition, m_Graphics, _1));
+	m_ResourceManager.registerFunction("animation",
+		std::bind(&AnimationLoader::loadAnimationDataResource, m_AnimationLoader.get(), _1, _2),
+		std::bind(&AnimationLoader::releaseAnimationData, m_AnimationLoader.get(), _1));
 	m_ResourceManager.loadDataFromFile("assets/Resources.xml");
 
 	ActorFactory::ptr actorFactory(new ActorFactory(0));
 	actorFactory->setPhysics(m_Physics);
 	actorFactory->setEventManager(&m_EventManager);
 	actorFactory->setResourceManager(&m_ResourceManager);
+	actorFactory->setAnimationLoader(m_AnimationLoader.get());
 	m_ObjectManager.reset(new ObjectManager(actorFactory, &m_EventManager, &m_ResourceManager));
 
 	ui->m_RenderWidget->initialize(&m_EventManager, &m_ResourceManager, m_Graphics);
@@ -397,7 +403,11 @@ void MainWindow::uninitializeSystems()
 
 	ui->m_RenderWidget->uninitialize();
 
+	m_ResourceManager.unregisterResourceType("animation");
+	m_AnimationLoader.reset();
+
 	m_ResourceManager.unregisterResourceType("model");
+	m_ResourceManager.unregisterResourceType("particleSystem");
 	m_ResourceManager.unregisterResourceType("texture");
 
 	if (m_Graphics)
@@ -405,6 +415,8 @@ void MainWindow::uninitializeSystems()
 		IGraphics::deleteGraphics(m_Graphics);
 		m_Graphics = nullptr;
 	}
+
+	m_ResourceManager.unregisterResourceType("volume");
 
 	if (m_Physics)
 	{

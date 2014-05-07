@@ -13,6 +13,7 @@
 class QTableWidgetItem;
 class QTreeWidgetItem;
 
+class AnimationLoader;
 class IGraphics;
 class IPhysics;
 class ObjectManager;
@@ -33,6 +34,7 @@ private:
 	EventManager m_EventManager;
 	ResourceManager m_ResourceManager;
 	std::unique_ptr<ObjectManager> m_ObjectManager;
+	std::unique_ptr<AnimationLoader> m_AnimationLoader;
 	IGraphics* m_Graphics;
 	IPhysics* m_Physics;
 	
