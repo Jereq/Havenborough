@@ -2,7 +2,8 @@
 
 #include <iostream>
 
-#include "Level.h"
+#include <Components.h>
+#include <Level.h>
 
 ObjectManager::ObjectManager(ActorFactory::ptr p_ActorFactory, EventManager* p_EventManager, ResourceManager* p_ResourceManager)
 	: m_ActorFactory(p_ActorFactory),

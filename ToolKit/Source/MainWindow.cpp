@@ -15,6 +15,7 @@
 #include <QFileDialog>
 
 #include <ActorFactory.h>
+#include <Components.h>
 #include <TweakSettings.h>
 
 #include "ObjectManager.h"
