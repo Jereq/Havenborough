@@ -66,6 +66,7 @@ private slots:
 
     void on_m_ObjectTree_itemSelectionChanged();
 
+	void onObjectTypeCreated(std::string p_ObjectName);
     void on_actionParticle_Tree_triggered();
 
     void on_actionLight_Tree_triggered();
@@ -84,11 +85,8 @@ signals:
     void setCameraPositionSignal(Vector3 p_CameraPosition);
 
 private:
-	void createSimpleObjectDescription(const std::string& p_ModelName);
-	void addSimpleObjectType(const std::string& p_ModelName);
 	void onFrame(float p_DeltaTime);
 	void loadLevel(const std::string& p_Filename);
-	void registerObjectDescription(const std::string& p_ObjectName, const std::string& p_Description);
 
 	void initializeSystems();
 	void uninitializeSystems();

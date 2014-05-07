@@ -45,6 +45,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->RotationBox->hide();
 
 	signalAndSlotsDefinitions();
+	QObject::connect(m_ObjectManager.get(), SIGNAL(objectTypeCreated(std::string)), this, SLOT(onObjectTypeCreated(std::string)));
 
     // Nest dock widgets.
     tabifyDockWidget(ui->m_ParticleTreeDockableWidget, ui->m_LightTreeDockableWidget);
@@ -56,10 +57,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	QObject::connect(&m_Timer, SIGNAL(timeout()), this, SLOT(idle()));
 	m_Timer.start();
 
-	addSimpleObjectType("Barrel1");
-	addSimpleObjectType("House1");
-	addSimpleObjectType("Island1");
-	addSimpleObjectType("Top1");
+	m_ObjectManager->loadDescriptionsFromFolder("assets/Objects");
 }
 
 MainWindow::~MainWindow()
@@ -230,6 +228,11 @@ void MainWindow::on_m_ObjectTree_itemSelectionChanged()
 	}
 }
 
+void MainWindow::onObjectTypeCreated(std::string p_ObjectName)
+{
+	ui->m_ObjectTable->addObject(p_ObjectName);
+}
+
 void MainWindow::setObjectScale()
 {
     QTreeWidgetItem *currItem = ui->m_ObjectTree->currentItem();
@@ -294,38 +297,6 @@ void MainWindow::setObjectRotation()
     }
 }
 
-void MainWindow::createSimpleObjectDescription(const std::string& p_ModelName)
-{
-	ActorFactory::InstanceModel model;
-	model.meshName = p_ModelName;
-	model.position = Vector3();
-	model.rotation = Vector3();
-	model.scale = Vector3(1.f, 1.f, 1.f);
-
-	std::vector<ActorFactory::InstanceBoundingVolume> volumes;
-	ActorFactory::InstanceBoundingVolume volume;
-	volume.meshName = p_ModelName;
-	volume.scale = Vector3(1.f, 1.f, 1.f);
-	volumes.push_back(volume);
-
-	std::vector<ActorFactory::InstanceEdgeBox> edges;
-
-	registerObjectDescription(p_ModelName, ActorFactory::getInstanceActorDescription(model, volumes, edges));
-}
-
-void MainWindow::addSimpleObjectType(const std::string& p_ModelName)
-{
-    QTableWidgetItem *item = new QTableWidgetItem();
-	item->setIcon(m_DefaultObjectIcon);
-	item->setText(QString::fromStdString(p_ModelName));
-    item->setTextAlignment(Qt::AlignBottom | Qt::AlignCenter);
-
-	int column = ui->m_ObjectTable->columnCount();
-	ui->m_ObjectTable->insertColumn(column);
-	ui->m_ObjectTable->setItem(0, column, item);
-	createSimpleObjectDescription(p_ModelName);
-}
-
 void MainWindow::onFrame(float p_DeltaTime)
 {
 	m_EventManager.processEvents();
@@ -336,11 +307,6 @@ void MainWindow::onFrame(float p_DeltaTime)
 void MainWindow::loadLevel(const std::string& p_Filename)
 {
 	m_ObjectManager->loadLevel(p_Filename);
-}
-
-void MainWindow::registerObjectDescription(const std::string& p_ObjectName, const std::string& p_Description)
-{
-	m_ObjectManager->registerObjectDescription(p_ObjectName, p_Description);
 }
 
 void MainWindow::addObject(QTableWidgetItem* p_ObjectItem)
