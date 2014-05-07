@@ -66,6 +66,20 @@ Actor::ptr ObjectManager::getActor(Actor::Id p_Id)
 	return m_ActorList.findActor(p_Id);
 }
 
+Actor::ptr ObjectManager::getActorFromBodyHandle(BodyHandle b)
+{
+	for(auto a = m_ActorList.begin(); a != m_ActorList.end(); a++)
+	{
+		if(a->second->getBodyHandles().size() > 0)
+		{
+			if(a->second->getBodyHandles()[0] == b)
+				return a->second;
+		}
+	}
+
+	return nullptr;
+}
+
 void ObjectManager::addObject(const std::string& p_ObjectName, const Vector3& p_Position)
 {
 	if (m_ActorList.begin() == m_ActorList.end())

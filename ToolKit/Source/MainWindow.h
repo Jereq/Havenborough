@@ -87,4 +87,5 @@ private:
 
 	void initializeSystems();
 	void uninitializeSystems();
+	void pick(IEventData::Ptr p_Data);
 };

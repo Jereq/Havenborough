@@ -23,6 +23,9 @@
 #include "TreeFilter.h"
 #include "TableItem.h"
 
+#include <EventData.h>
+
+
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
 	ui(new Ui::MainWindow),
@@ -381,6 +384,8 @@ void MainWindow::initializeSystems()
 	m_ObjectManager.reset(new ObjectManager(actorFactory, &m_EventManager, &m_ResourceManager));
 
 	ui->m_RenderWidget->initialize(&m_EventManager, &m_ResourceManager, m_Graphics);
+
+	m_EventManager.addListener(EventListenerDelegate(this, &MainWindow::pick), CreatePickingEventData::sk_EventType);
 }
 
 void MainWindow::uninitializeSystems()
@@ -405,4 +410,15 @@ void MainWindow::uninitializeSystems()
 		IPhysics::deletePhysics(m_Physics);
 		m_Physics = nullptr;
 	}
+}
+
+void MainWindow::pick(IEventData::Ptr p_Data)
+{
+	std::shared_ptr<CreatePickingEventData> data = std::static_pointer_cast<CreatePickingEventData>(p_Data);
+	BodyHandle b = m_Physics->rayCast(data.get()->getRayDir(), data.get()->getRayOrigin());
+	Actor::ptr actor = m_ObjectManager->getActorFromBodyHandle(b);
+	if(!actor)
+		return;
+
+	ui->m_ObjectTree->selectItem(actor->getId());
 }

@@ -34,6 +34,8 @@ public:
 	void registerObjectDescription(const std::string& p_ObjectName, const std::string& p_Description);
 
 	Actor::ptr getActor(Actor::Id p_Id);
+	Actor::ptr getActorFromBodyHandle(BodyHandle b);
+
 
 public:
 signals:
