@@ -755,7 +755,7 @@ void DeferredRenderer::createBuffers()
 	Buffer::Description instanceWorldDesc;
 	instanceWorldDesc.initData = nullptr;
 	instanceWorldDesc.numOfElements = 1; //Minimum
-	instanceWorldDesc.sizeOfElement = sizeof(DirectX::XMFLOAT4X4);
+	instanceWorldDesc.sizeOfElement = sizeof(cInstanceBuffer);
 	instanceWorldDesc.type = Buffer::Type::VERTEX_BUFFER;
 	instanceWorldDesc.usage = Buffer::Usage::CPU_WRITE_DISCARD;
 	m_Buffer["WorldInstance"] = WrapperFactory::getInstance()->createBuffer(instanceWorldDesc);
@@ -782,6 +782,10 @@ void DeferredRenderer::createBuffers()
 	cbdesc.usage = Buffer::Usage::DEFAULT;
 	m_Buffer["SSAOConstant_Blur"] = WrapperFactory::getInstance()->createBuffer(cbdesc);
 	VRAMInfo::getInstance()->updateUsage(sizeof(cSSAO_BlurBuffer));
+
+	cbdesc.sizeOfElement = sizeof(DirectX::XMFLOAT3);
+	m_ColorShadingConstantBuffer = WrapperFactory::getInstance()->createBuffer(cbdesc);
+	VRAMInfo::getInstance()->updateUsage(sizeof(DirectX::XMFLOAT3));
 }
 
 void DeferredRenderer::buildSSAO_OffsetVectors(cSSAO_Buffer &p_Buffer)
@@ -947,13 +951,27 @@ void DeferredRenderer::createShaders()
 		{"WORLD", 1, Format::R32G32B32A32_FLOAT, 1, 16, D3D10_INPUT_PER_INSTANCE_DATA, 1},
 		{"WORLD", 2, Format::R32G32B32A32_FLOAT, 1, 32, D3D10_INPUT_PER_INSTANCE_DATA, 1},
 		{"WORLD", 3, Format::R32G32B32A32_FLOAT, 1, 48, D3D10_INPUT_PER_INSTANCE_DATA, 1},
+		{"COLOR_TONE", 0, Format::R32G32B32_FLOAT, 1, 64, D3D10_INPUT_PER_INSTANCE_DATA, 1},
+	};
+
+	ShaderInputElementDescription instanceshaderDescSHADOWMAP[] = 
+	{
+		{"POSITION",0, Format::R32G32B32A32_FLOAT, 0, 0,D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"NORMAL",	0, Format::R32G32B32_FLOAT, 0, 16,	D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"COORD",	0, Format::R32G32_FLOAT, 0, 28,		D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TANGENT",	0, Format::R32G32B32_FLOAT, 0, 36,	D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"BINORMAL",0, Format::R32G32B32_FLOAT, 0, 48,	D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"WORLD", 0, Format::R32G32B32A32_FLOAT, 1, 0,	D3D10_INPUT_PER_INSTANCE_DATA, 1},
+		{"WORLD", 1, Format::R32G32B32A32_FLOAT, 1, 16, D3D10_INPUT_PER_INSTANCE_DATA, 1},
+		{"WORLD", 2, Format::R32G32B32A32_FLOAT, 1, 32, D3D10_INPUT_PER_INSTANCE_DATA, 1},
+		{"WORLD", 3, Format::R32G32B32A32_FLOAT, 1, 48, D3D10_INPUT_PER_INSTANCE_DATA, 1},
 	};
 
 	m_Shader["IGeometry"] = WrapperFactory::getInstance()->createShader(L"assets/shaders/GeoInstanceShader.hlsl", nullptr,
-		"VS,PS", "5_0",ShaderType::VERTEX_SHADER | ShaderType::PIXEL_SHADER, instanceshaderDesc, 9);
+		"VS,PS", "5_0",ShaderType::VERTEX_SHADER | ShaderType::PIXEL_SHADER, instanceshaderDesc, 10);
 
 	m_Shader["ShadowMapGeometry"] = WrapperFactory::getInstance()->createShader(L"assets/shaders/ShadowMapGeometry.hlsl", nullptr,
-		"VS,PS", "5_0", ShaderType::VERTEX_SHADER| ShaderType::PIXEL_SHADER, instanceshaderDesc, 9); 
+		"VS,PS", "5_0", ShaderType::VERTEX_SHADER| ShaderType::PIXEL_SHADER, instanceshaderDescSHADOWMAP, 9); 
 
 	m_Shader["SSAO"] = WrapperFactory::getInstance()->createShader(L"assets/shaders/SSAO.hlsl",
 		"VS,PS", "5_0",ShaderType::VERTEX_SHADER | ShaderType::PIXEL_SHADER);
@@ -1166,6 +1184,10 @@ void DeferredRenderer::renderObject(const Renderable &p_Object)
 	}
 
 	m_DeviceContext->UpdateSubresource(m_Buffer["ObjectConstant"]->getBufferPointer(), NULL,NULL, &p_Object.world,NULL,NULL);
+	
+	m_DeviceContext->UpdateSubresource(m_ColorShadingConstantBuffer->getBufferPointer(),
+		NULL,NULL,p_Object.colorTone ,NULL,NULL);
+	m_ColorShadingConstantBuffer->setBuffer(2);
 
 	// Set shader.
 	p_Object.model->shader->setShader();
@@ -1247,12 +1269,12 @@ void DeferredRenderer::RenderObjectsInstanced(const std::vector<Renderable> &p_O
 {
 	if(p_Objects.size() >  m_Buffer["WorldInstance"]->getNumOfElements())
 	{
-		VRAMInfo::getInstance()->updateUsage(sizeof(DirectX::XMFLOAT4X4) * m_Buffer["WorldInstance"]->getNumOfElements() * -1);
+		VRAMInfo::getInstance()->updateUsage(sizeof(cInstanceBuffer) * m_Buffer["WorldInstance"]->getNumOfElements() * -1);
 		SAFE_DELETE(m_Buffer["WorldInstance"]);
 		Buffer::Description instanceWorldDesc;
 		instanceWorldDesc.initData = nullptr;
 		instanceWorldDesc.numOfElements = p_Objects.size() + 5;
-		instanceWorldDesc.sizeOfElement = sizeof(DirectX::XMFLOAT4X4);
+		instanceWorldDesc.sizeOfElement = sizeof(cInstanceBuffer);
 		instanceWorldDesc.type = Buffer::Type::VERTEX_BUFFER;
 		instanceWorldDesc.usage = Buffer::Usage::CPU_WRITE_DISCARD;
 		m_Buffer["WorldInstance"] = WrapperFactory::getInstance()->createBuffer(instanceWorldDesc);
@@ -1261,7 +1283,7 @@ void DeferredRenderer::RenderObjectsInstanced(const std::vector<Renderable> &p_O
 
 	UINT Offsets[2] = {0,0};
 	ID3D11Buffer * buffers[] = {p_Objects.front().model->vertexBuffer->getBufferPointer(), m_Buffer["WorldInstance"]->getBufferPointer()};
-	UINT Stride[2] = {60, sizeof(DirectX::XMFLOAT4X4)};
+	UINT Stride[2] = {60, sizeof(cInstanceBuffer)};
 
 	ID3D11ShaderResourceView *nullsrvs[] = {0,0,0};
 
@@ -1275,14 +1297,15 @@ void DeferredRenderer::RenderObjectsInstanced(const std::vector<Renderable> &p_O
 
 	m_DeviceContext->Map(m_Buffer["WorldInstance"]->getBufferPointer(), NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);
 
-	XMFLOAT4X4 *ptr = (XMFLOAT4X4 *)ms.pData;
+	cInstanceBuffer *ptr = (cInstanceBuffer *)ms.pData;
 	size_t numVisible = 0;
 	for(unsigned int j = 0; j < p_Objects.size(); j++)
 	{
 		if (!isVisible(p_Objects[j]))
 			continue;
 
-		ptr[numVisible] = p_Objects[j].world;
+		ptr[numVisible].world = p_Objects[j].world;
+		ptr[numVisible].colorTone = *p_Objects[j].colorTone;
 		++numVisible;
 	}
 

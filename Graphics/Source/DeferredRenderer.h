@@ -40,6 +40,7 @@ private:
 	std::map<std::string, ID3D11SamplerState*> m_Sampler;
 	std::map<std::string, Shader*> m_Shader;
 	std::map<std::string, Buffer*> m_Buffer;
+	Buffer *m_ColorShadingConstantBuffer;
 
 	ID3D11BlendState *m_BlendState;
 	ID3D11BlendState *m_BlendState2;
