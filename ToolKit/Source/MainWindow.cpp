@@ -186,41 +186,47 @@ void MainWindow::on_actionLight_Tree_triggered()
 void MainWindow::on_m_ObjectTree_itemSelectionChanged()
 {
     QTreeWidgetItem *currItem = ui->m_ObjectTree->currentItem();
-
+	if(!currItem)
+		return;
+	
+	TreeItem *cItem = dynamic_cast<TreeItem*>(currItem);
+	if(!cItem)
+		return;
 
 	ui->PositionBox->hide();
     ui->ScaleBox->hide();
     ui->RotationBox->hide();
 
-    if(currItem && currItem->isSelected())
+	Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
+	std::weak_ptr<ModelComponent> pmodel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
+	std::shared_ptr<ModelComponent> spmodel = pmodel.lock();
+	
+
+    if(currItem->isSelected())
 	{
-        TreeItem *cItem = dynamic_cast<TreeItem*>(currItem);
-        if(cItem)
-        {
-            ui->PositionBox->show();
-            ui->ScaleBox->show();
-            ui->RotationBox->show();
+        ui->PositionBox->show();
+        ui->ScaleBox->show();
+        ui->RotationBox->show();
+        Vector3 scale = spmodel->getScale();
+        Vector3 position = spmodel->getPosition();
+        Vector3 rotation = spmodel->getRotation();
 
-			Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
-            std::weak_ptr<ModelComponent> pmodel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
-            std::shared_ptr<ModelComponent> spmodel = pmodel.lock();
+        ui->m_ObjectScaleXBox->setValue(scale.x);
+        ui->m_ObjectScaleYBox->setValue(scale.y);
+        ui->m_ObjectScaleZBox->setValue(scale.z);
 
-            Vector3 scale = spmodel->getScale();
-            Vector3 position = spmodel->getPosition();
-            Vector3 rotation = spmodel->getRotation();
+        ui->m_ObjectPositionXBox->setValue(position.x);
+        ui->m_ObjectPositionYBox->setValue(position.y);
+        ui->m_ObjectPositionZBox->setValue(position.z);
 
-            ui->m_ObjectScaleXBox->setValue(scale.x);
-            ui->m_ObjectScaleYBox->setValue(scale.y);
-            ui->m_ObjectScaleZBox->setValue(scale.z);
-
-            ui->m_ObjectPositionXBox->setValue(position.x);
-            ui->m_ObjectPositionYBox->setValue(position.y);
-            ui->m_ObjectPositionZBox->setValue(position.z);
-
-            ui->m_ObjectRotationXBox->setValue(rotation.x);
-            ui->m_ObjectRotationYBox->setValue(rotation.y);
-            ui->m_ObjectRotationZBox->setValue(rotation.z);
-        }
+        ui->m_ObjectRotationXBox->setValue(rotation.x);
+        ui->m_ObjectRotationYBox->setValue(rotation.y);
+        ui->m_ObjectRotationZBox->setValue(rotation.z);
+		spmodel->setColorTone(Vector3(5,5,7));
+	}
+	else
+	{
+		spmodel->setColorTone(Vector3(1.0f, 1.0f, 1.0f));
 	}
 }
 
