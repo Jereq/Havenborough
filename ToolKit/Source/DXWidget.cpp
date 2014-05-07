@@ -140,6 +140,9 @@ void DXWidget::mouseMoveEvent(QMouseEvent* e)
 
 			a = floorf(a);
 
+			std::shared_ptr<PowerPieSelectEventData> pie(new PowerPieSelectEventData(a));
+			m_EventManager->queueEvent(pie);
+
 			((QMainWindow*)window())->statusBar()->showMessage("Angle: " + QString::number(a));
 
 			update();
