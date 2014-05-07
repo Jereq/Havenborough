@@ -43,30 +43,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->ScaleBox->hide();
     ui->RotationBox->hide();
 
-    //Signals and slots for connecting the camera to the camerabox values
-    QObject::connect(ui->m_RenderWidget, SIGNAL(CameraPositionChanged(Vector3)), this, SLOT(splitCameraPosition(Vector3)));
-
-    QObject::connect(ui->m_CameraPositionXBox, SIGNAL(editingFinished()), this, SLOT(setCameraPosition()));
-    QObject::connect(ui->m_CameraPositionYBox, SIGNAL(editingFinished()), this, SLOT(setCameraPosition()));
-    QObject::connect(ui->m_CameraPositionZBox, SIGNAL(editingFinished()), this, SLOT(setCameraPosition()));
-
-    QObject::connect(this, SIGNAL(setCameraPositionSignal(Vector3)), ui->m_RenderWidget, SLOT(CameraPositionSet(Vector3)));
-
-	QObject::connect(m_ObjectManager.get(), SIGNAL(meshCreated(std::string, int)), this, SLOT(on_meshCreated_triggered(std::string, int)));
-	QObject::connect(m_ObjectManager.get(), SIGNAL(lightCreated(std::string, int)), this, SLOT(on_lightCreated_triggered(std::string, int)));
-	QObject::connect(m_ObjectManager.get(), SIGNAL(particleCreated(std::string, int)), this, SLOT(on_particleCreated_triggered(std::string, int)));
-
-    QObject::connect(ui->m_ObjectScaleXBox, SIGNAL(editingFinished()), this, SLOT(setObjectScale()));
-    QObject::connect(ui->m_ObjectScaleYBox, SIGNAL(editingFinished()), this, SLOT(setObjectScale()));
-    QObject::connect(ui->m_ObjectScaleZBox, SIGNAL(editingFinished()), this, SLOT(setObjectScale()));
-
-    QObject::connect(ui->m_ObjectRotationXBox, SIGNAL(editingFinished()), this, SLOT(setObjectRotation()));
-    QObject::connect(ui->m_ObjectRotationYBox, SIGNAL(editingFinished()), this, SLOT(setObjectRotation()));
-    QObject::connect(ui->m_ObjectRotationZBox, SIGNAL(editingFinished()), this, SLOT(setObjectRotation()));
-
-    QObject::connect(ui->m_ObjectPositionXBox, SIGNAL(editingFinished()), this, SLOT(setObjectPosition()));
-    QObject::connect(ui->m_ObjectPositionYBox, SIGNAL(editingFinished()), this, SLOT(setObjectPosition()));
-    QObject::connect(ui->m_ObjectPositionZBox, SIGNAL(editingFinished()), this, SLOT(setObjectPosition()));
+	signalAndSlotsDefinitions();
 
     // Nest dock widgets.
     tabifyDockWidget(ui->m_ParticleTreeDockableWidget, ui->m_LightTreeDockableWidget);
@@ -90,63 +67,51 @@ MainWindow::~MainWindow()
 	delete ui;
 }
 
-void MainWindow::on_m_ObjectTreeAddButton_clicked()
+void MainWindow::signalAndSlotsDefinitions()
 {
-	addFilter(ui->m_ObjectTree);
-}
+	//Signals and slots for connecting the camera to the camerabox values
+    QObject::connect(ui->m_RenderWidget, SIGNAL(CameraPositionChanged(Vector3)), this, SLOT(splitCameraPosition(Vector3)));
 
-void MainWindow::on_m_ObjectTreeRemoveButton_clicked()
-{
-    QTreeWidgetItem *currItem = ui->m_ObjectTree->currentItem();
+    QObject::connect(ui->m_CameraPositionXBox, SIGNAL(editingFinished()), this, SLOT(setCameraPosition()));
+    QObject::connect(ui->m_CameraPositionYBox, SIGNAL(editingFinished()), this, SLOT(setCameraPosition()));
+    QObject::connect(ui->m_CameraPositionZBox, SIGNAL(editingFinished()), this, SLOT(setCameraPosition()));
 
-    removeChild(currItem);
-}
+    QObject::connect(this, SIGNAL(setCameraPositionSignal(Vector3)), ui->m_RenderWidget, SLOT(CameraPositionSet(Vector3)));
 
-void MainWindow::removeChild(QTreeWidgetItem* currItem)
-{
-	if(currItem && currItem->isSelected())
-	{
-		for (int i = 0; i < currItem->childCount(); i++)
-		{
-			QTreeWidgetItem *currChild = currItem->takeChild(i);
-			if (currChild->childCount() != 0)
-			{
-				removeChild(currChild);
-			}
-			else
-				delete currChild;
-		}
+    //Signals and slots for connecting the object creation to the trees
+	QObject::connect(m_ObjectManager.get(), SIGNAL(meshCreated(std::string, int)), ui->m_ObjectTree, SLOT(objectCreated(std::string, int)));
+	QObject::connect(m_ObjectManager.get(), SIGNAL(lightCreated(std::string, int)), ui->m_LightTree, SLOT(objectCreated(std::string, int)));
+	QObject::connect(m_ObjectManager.get(), SIGNAL(particleCreated(std::string, int)), ui->m_ParticleTree, SLOT(objectCreated(std::string, int)));
 
-		delete currItem;
-	}
-}
+    //Signals and slots for connecting the object scale editing to the object
+    QObject::connect(ui->m_ObjectScaleXBox, SIGNAL(editingFinished()), this, SLOT(setObjectScale()));
+    QObject::connect(ui->m_ObjectScaleYBox, SIGNAL(editingFinished()), this, SLOT(setObjectScale()));
+    QObject::connect(ui->m_ObjectScaleZBox, SIGNAL(editingFinished()), this, SLOT(setObjectScale()));
 
-void MainWindow::addFilter(QTreeWidget* tree)
-{
-    TreeFilter *newFilter = new TreeFilter("NewFilter");
+    //Signals and slots for connecting the object rotation editing to the object
+    QObject::connect(ui->m_ObjectRotationXBox, SIGNAL(editingFinished()), this, SLOT(setObjectRotation()));
+    QObject::connect(ui->m_ObjectRotationYBox, SIGNAL(editingFinished()), this, SLOT(setObjectRotation()));
+    QObject::connect(ui->m_ObjectRotationZBox, SIGNAL(editingFinished()), this, SLOT(setObjectRotation()));
 
-    QTreeWidgetItem *currItem = tree->currentItem();
-	if(currItem)
-	{
-		QTreeWidgetItem *currItemParent = currItem->parent();
-		TreeFilter *cFilter = dynamic_cast<TreeFilter*>(currItem);
+    //Signals and slots for connecting the object position editing to the object
+    QObject::connect(ui->m_ObjectPositionXBox, SIGNAL(editingFinished()), this, SLOT(setObjectPosition()));
+    QObject::connect(ui->m_ObjectPositionYBox, SIGNAL(editingFinished()), this, SLOT(setObjectPosition()));
+    QObject::connect(ui->m_ObjectPositionZBox, SIGNAL(editingFinished()), this, SLOT(setObjectPosition()));
 
-		if(cFilter)
-		{
-			currItem->addChild(newFilter);
-		}
-		else
-		{
-			if(currItemParent)
-				currItemParent->addChild(newFilter);
-			else
-				tree->addTopLevelItem(newFilter);
-		}
-	}
-	else
-	{
-		tree->addTopLevelItem(newFilter);
-	}
+    //Signals and slots for connecting the Filter creation to the trees
+	QObject::connect(ui->m_ObjectTreeAddButton, SIGNAL(clicked()), ui->m_ObjectTree, SLOT(addFilter()));
+	QObject::connect(ui->m_LightTreeAddButton, SIGNAL(clicked()), ui->m_LightTree, SLOT(addFilter()));
+	QObject::connect(ui->m_ParticleTreeAddButton, SIGNAL(clicked()), ui->m_ParticleTree, SLOT(addFilter()));
+
+    //Signals and slots for connecting the remove button creation to the trees
+	QObject::connect(ui->m_ObjectTreeRemoveButton, SIGNAL(clicked()), ui->m_ObjectTree, SLOT(removeItem()));
+	QObject::connect(ui->m_LightTreeRemoveButton, SIGNAL(clicked()), ui->m_LightTree, SLOT(removeItem()));
+	QObject::connect(ui->m_ParticleTreeRemoveButton, SIGNAL(clicked()), ui->m_ParticleTree, SLOT(removeItem()));
+
+	//Signals and slots for connecting the Tree item creation to the table
+	QObject::connect(ui->m_ObjectTree, SIGNAL(addTableObject(std::string)), ui->m_ObjectTable, SLOT(addObject(std::string)));
+	QObject::connect(ui->m_LightTree, SIGNAL(addTableObject(std::string)), ui->m_ObjectTable, SLOT(addObject(std::string)));
+	QObject::connect(ui->m_ParticleTree, SIGNAL(addTableObject(std::string)), ui->m_ObjectTable, SLOT(addObject(std::string)));
 }
 
 void MainWindow::on_actionObject_Tree_triggered()
@@ -172,8 +137,9 @@ void MainWindow::on_actionOpen_triggered()
 	QString fullFilePath = QFileDialog::getOpenFileName(this, tr("Open Level"), "/home/ME", tr("Level Files (*.xml *.btxl)"));
 	if (!fullFilePath.isNull())
 	{
-		m_ObjectCount.clear();
-		ui->m_ObjectTree->clear();
+		ui->m_ObjectTree->clearTree();
+		ui->m_LightTree->clearTree();
+		ui->m_ParticleTree->clearTree();
 		
 		loadLevel(fullFilePath.toStdString());
 	}
@@ -255,81 +221,6 @@ void MainWindow::on_m_ObjectTree_itemSelectionChanged()
             ui->m_ObjectRotationZBox->setValue(rotation.z);
         }
 	}
-}
-
-void MainWindow::on_meshCreated_triggered(std::string p_MeshName, int p_ActorId)
-{
-	if(m_ObjectCount.count(p_MeshName) > 0)
-		m_ObjectCount.at(p_MeshName)++;
-	else
-	{
-		m_ObjectCount.insert(std::pair<std::string, int>(p_MeshName, 0));
-
-        ui->m_ObjectTable->setItem(m_TableIndex.y, m_TableIndex.x, new TableItem(p_MeshName));
-        
-        m_TableIndex.x++;
-
-		if(m_TableIndex.x > 17)
-		{
-			ui->m_ObjectTable->insertRow(ui->m_ObjectTable->rowCount());
-			m_TableIndex.x = 0;
-			m_TableIndex.y++;
-		}
-		
-		if(m_TableIndex.y == 0 && m_TableIndex.x <= 17)
-			ui->m_ObjectTable->insertColumn(ui->m_ObjectTable->columnCount());
-
-		ui->m_ObjectTable->resizeColumnsToContents();
-        ui->m_ObjectTable->resizeRowsToContents();
-	}
-
-	ui->m_ObjectTree->addTopLevelItem(new TreeItem(p_MeshName + "_" + std::to_string(m_ObjectCount.at(p_MeshName)), p_ActorId));
-}
-
-void MainWindow::on_lightCreated_triggered(std::string p_MeshName, int p_ActorId)
-{
-	if(m_ObjectCount.count(p_MeshName) > 0)
-		m_ObjectCount.at(p_MeshName)++;
-	else
-	{
-		m_ObjectCount.insert(std::pair<std::string, int>(p_MeshName, 0));
-	}
-
-	ui->m_LightTree->addTopLevelItem(new TreeItem(p_MeshName + "_" + std::to_string(m_ObjectCount.at(p_MeshName)), p_ActorId));
-}
-
-void MainWindow::on_particleCreated_triggered(std::string p_MeshName, int p_ActorId)
-{
-	if(m_ObjectCount.count(p_MeshName) > 0)
-		m_ObjectCount.at(p_MeshName)++;
-	else
-	{
-		m_ObjectCount.insert(std::pair<std::string, int>(p_MeshName, 0));
-	}
-
-	ui->m_ParticleTree->addTopLevelItem(new TreeItem(p_MeshName + "_" + std::to_string(m_ObjectCount.at(p_MeshName)), p_ActorId));
-}
-
-void MainWindow::on_m_LightTreeAddButton_clicked()
-{
-	addFilter(ui->m_LightTree);
-}
-
-void MainWindow::on_m_ParticleTreeAddButton_clicked()
-{
-	addFilter(ui->m_ParticleTree);
-}
-
-void MainWindow::on_m_LightTreeRemoveButton_clicked()
-{
-    QTreeWidgetItem *currItem = ui->m_LightTree->currentItem();
-    removeChild(currItem);
-}
-
-void MainWindow::on_m_ParticleTreeRemoveButton_4_clicked()
-{
-    QTreeWidgetItem *currItem = ui->m_ParticleTree->currentItem();
-    removeChild(currItem);
 }
 
 void MainWindow::setObjectScale()

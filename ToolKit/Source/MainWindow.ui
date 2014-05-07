@@ -145,7 +145,7 @@
       </layout>
      </item>
      <item row="0" column="0">
-      <widget class="QTreeWidget" name="m_ObjectTree">
+      <widget class="Tree" name="m_ObjectTree">
        <property name="styleSheet">
         <string notr="true"> QTreeView::branch:has-siblings:!adjoins-item {
      border-image: url(:/Pictures/Assets/stylesheet-vline.png) 0;
@@ -212,7 +212,7 @@
    <widget class="QWidget" name="dockWidgetContents_3">
     <layout class="QGridLayout" name="gridLayout_3">
      <item row="0" column="0">
-      <widget class="ExtendedTableWidget" name="m_ObjectTable">
+      <widget class="Table" name="m_ObjectTable">
        <property name="editTriggers">
         <set>QAbstractItemView::NoEditTriggers</set>
        </property>
@@ -748,7 +748,7 @@
       <number>0</number>
      </property>
      <item row="0" column="0">
-      <widget class="QTreeWidget" name="m_LightTree">
+      <widget class="Tree" name="m_LightTree">
        <property name="enabled">
         <bool>true</bool>
        </property>
@@ -851,7 +851,7 @@
       <number>0</number>
      </property>
      <item row="0" column="0">
-      <widget class="QTreeWidget" name="m_ParticleTree">
+      <widget class="Tree" name="m_ParticleTree">
        <property name="styleSheet">
         <string notr="true"> QTreeView::branch:has-siblings:!adjoins-item {
      border-image: url(:/Pictures/Assets/stylesheet-vline.png) 0;
@@ -915,7 +915,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="m_ParticleTreeRemoveButton_4">
+        <widget class="QPushButton" name="m_ParticleTreeRemoveButton">
          <property name="text">
           <string>Remove</string>
          </property>
@@ -1008,9 +1008,14 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>ExtendedTableWidget</class>
+   <class>Tree</class>
+   <extends>QTreeWidget</extends>
+   <header>tree.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Table</class>
    <extends>QTableWidget</extends>
-   <header>extendedtablewidget.h</header>
+   <header>table.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
