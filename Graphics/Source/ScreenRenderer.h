@@ -52,8 +52,9 @@ public:
 	 *
 	 * @param p_DepthStencilView the default depth stencil view
 	 * @param p_RenderTarget the default render target
+	 * @param p_OrthoData the size of the orthographic projection
 	 */
-	void resize(ID3D11DepthStencilView *p_DepthStencilView, ID3D11RenderTargetView *p_RenderTarget);
+	void resize(ID3D11DepthStencilView *p_DepthStencilView, ID3D11RenderTargetView *p_RenderTarget, DirectX::XMFLOAT4 p_OrthoData);
 
 	/**
 	* Adds a specific object to the list of objects to be rendered during the next render call.
