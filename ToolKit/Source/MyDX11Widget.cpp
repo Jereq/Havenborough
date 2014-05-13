@@ -326,10 +326,11 @@ void MyDX11Widget::updateLightDirection(IEventData::Ptr p_Data)
 {
 	std::shared_ptr<UpdateLightDirectionEventData> data = std::static_pointer_cast<UpdateLightDirectionEventData>(p_Data);
 	LightClass* light = findLight(data->getId());
-
+	
 	if(light)
 	{
-		light->direction = data->getDirection();
+		DirectX::XMStoreFloat3(&light->direction, DirectX::XMVector3Normalize(DirectX::XMVectorSet(data->getDirection().x,data->getDirection().y,data->getDirection().z, 0.f)));
+		//light->direction = data->getDirection();
 	}
 }
 
