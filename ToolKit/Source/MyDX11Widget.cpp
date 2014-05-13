@@ -308,9 +308,6 @@ void MyDX11Widget::pick(IEventData::Ptr p_Data)
 {
 	std::shared_ptr<CreateRayEventData> data = std::static_pointer_cast<CreateRayEventData>(p_Data);
 
-	float x = data->getMousePos().x;
-	float y = data->getMousePos().y;
-
 	DirectX::XMFLOAT4X4 fView = m_Graphics->getView();
 	DirectX::XMFLOAT4X4 fProj = m_Graphics->getProj();
 	DirectX::XMMATRIX mWorld = DirectX::XMMatrixIdentity();
@@ -318,11 +315,9 @@ void MyDX11Widget::pick(IEventData::Ptr p_Data)
 	DirectX::XMMATRIX mProj = DirectX::XMLoadFloat4x4(&fProj);
 	mView = XMMatrixTranspose(mView);
 	mProj = XMMatrixTranspose(mProj);
-	DirectX::XMFLOAT2 screensize = m_Graphics->getScreenSize();
 
-	//DirectX::XMVECTOR cursorScreenSpace = DirectX::XMVectorSet(x + screensize.x / 2.f, y + screensize.y / 2.f, 0.f, 1.f);
-	DirectX::XMVECTOR cursorScreenSpace = DirectX::XMVectorSet(x, y, 0.f, 1.f);
-	DirectX::XMVECTOR unprojectedCursor = DirectX::XMVector3Unproject(cursorScreenSpace, 0.f, 0.f, screensize.x, screensize.y, 0.f, 1.f, mProj, mView, mWorld);
+	DirectX::XMVECTOR cursorScreenSpace = DirectX::XMVectorSet(data->getMousePos().x, data->getMousePos().y, 0.f, 1.f);
+	DirectX::XMVECTOR unprojectedCursor = DirectX::XMVector3Unproject(cursorScreenSpace, 0.f, 0.f, data->getResolution().x, data->getResolution().y, 0.f, 1.f, mProj, mView, mWorld);
 
 	DirectX::XMMATRIX invView = XMMatrixInverse(nullptr, mView);
 	DirectX::XMVECTOR vRayOrigin =  invView.r[3];

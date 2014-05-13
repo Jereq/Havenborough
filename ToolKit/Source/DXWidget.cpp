@@ -84,12 +84,8 @@ void DXWidget::mousePressEvent(QMouseEvent* e)
 	{
 		if ((e->buttons() & Qt::LeftButton) && !(e->buttons() & Qt::RightButton))
 		{
-			float x = e->localPos().x();
-			float y = e->localPos().y();
-			//x = x - width()*0.5f;
-			//y = -y + height()*0.5f;
-			((QMainWindow*)window())->statusBar()->showMessage("PosX: " + QString::number(x) + " PosY: " + QString::number(y));
-			m_EventManager->triggerTriggerEvent(IEventData::Ptr(new CreateRayEventData(DirectX::XMFLOAT2(x,y))));
+			m_EventManager->triggerTriggerEvent(IEventData::Ptr(new CreateRayEventData(DirectX::XMFLOAT2(e->localPos().x(), e->localPos().y()),
+																						DirectX::XMFLOAT2(width(), height()))));
 			//showStatus(tr("Tumble Tool: LMB Drag: Use LMB or MMB to tumble"));
 			setCursor(Qt::OpenHandCursor);
 		}

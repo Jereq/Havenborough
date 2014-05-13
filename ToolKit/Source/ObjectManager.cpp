@@ -69,13 +69,13 @@ Actor::ptr ObjectManager::getActor(Actor::Id p_Id)
 	return m_ActorList.findActor(p_Id);
 }
 
-Actor::ptr ObjectManager::getActorFromBodyHandle(BodyHandle b)
+Actor::ptr ObjectManager::getActorFromBodyHandle(BodyHandle p_BodyHandle)
 {
 	for(auto a = m_ActorList.begin(); a != m_ActorList.end(); a++)
 	{
 		if(a->second->getBodyHandles().size() > 0)
 		{
-			if(a->second->getBodyHandles()[0] == b)
+			if(a->second->getBodyHandles()[0] == p_BodyHandle)
 				return a->second;
 		}
 	}

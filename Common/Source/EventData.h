@@ -1919,13 +1919,13 @@ class CreateRayEventData : public BaseEventData
 {
 private:
 	DirectX::XMFLOAT2 m_MousePos;
-
+	DirectX::XMFLOAT2 m_Resolution;
 public:
 	static const Type sk_EventType = (0x3917705f);
 
 
-	CreateRayEventData(DirectX::XMFLOAT2 p_MousePos) 
-		: m_MousePos(p_MousePos)
+	CreateRayEventData(DirectX::XMFLOAT2 p_MousePos, DirectX::XMFLOAT2 p_Resolution) 
+		: m_MousePos(p_MousePos), m_Resolution(p_Resolution)
 	{
 	}
 
@@ -1936,7 +1936,7 @@ public:
 
 	virtual Ptr copy(void) const override
 	{
-		return Ptr(new CreateRayEventData(m_MousePos));
+		return Ptr(new CreateRayEventData(m_MousePos, m_Resolution));
 	}
 
 	virtual const char *getName(void) const override
@@ -1950,6 +1950,10 @@ public:
 	DirectX::XMFLOAT2 getMousePos()
 	{
 		return m_MousePos;
+	}
+	DirectX::XMFLOAT2 getResolution()
+	{
+		return m_Resolution;
 	}
 };
 

@@ -1246,11 +1246,6 @@ DirectX::XMFLOAT4X4 Graphics::getProj() const
 	return m_ProjectionMatrix;
 }
 
-DirectX::XMFLOAT2 Graphics::getScreenSize() const
-{
-	return XMFLOAT2((float)m_ScreenWidth, (float)m_ScreenHeight);
-}
-
 void Graphics::createDefaultShaders(void)
 {
 	createShader("DefaultDeferredShader", L"assets/shaders/GeometryPass.hlsl", "VS,PS","5_0",

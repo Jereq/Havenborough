@@ -37,7 +37,7 @@ public:
 	void loadDescriptionsFromFolder(const std::string& p_Path);
 
 	Actor::ptr getActor(Actor::Id p_Id);
-	Actor::ptr getActorFromBodyHandle(BodyHandle b);
+	Actor::ptr getActorFromBodyHandle(BodyHandle p_BodyHandle);
 
 
 public:
