@@ -41,10 +41,10 @@ void MyDX11Widget::initialize(EventManager* p_EventManager, ResourceManager* p_R
 	m_EventManager->addListener(EventListenerDelegate(this, &MyDX11Widget::pick), CreateRayEventData::sk_EventType);
 
 	m_ResourceIDs.push_back(m_ResourceManager->loadResource("particleSystem", "TestParticle"));
-
+	
+	m_PowerPie = PowerPie();
 	preLoadModels();
 
-	m_PowerPie = PowerPie();
 }
 
 void MyDX11Widget::uninitialize()
@@ -67,6 +67,10 @@ void MyDX11Widget::render()
 		m_Graphics->render2D_Object(m_GUI["Translate"]);
 		m_Graphics->render2D_Object(m_GUI["Resize"]);
 		m_Graphics->render2D_Object(m_GUI["Rotate"]);
+		m_Graphics->render2D_Object(m_GUI["Copy"]);
+		m_Graphics->render2D_Object(m_GUI["Paste"]);
+		m_Graphics->render2D_Object(m_GUI["Camera"]);
+		m_Graphics->render2D_Object(m_GUI["Eye"]);
 	}
 
 	for (auto& mesh : m_Models)
@@ -348,6 +352,19 @@ void MyDX11Widget::pick(IEventData::Ptr p_Data)
 	m_EventManager->triggerTriggerEvent(IEventData::Ptr(new CreatePickingEventData(fRayDir, fRayOrigin)));
 }
 
+static const std::string f_Icons[] =
+{
+	"Translate",
+	"Rotate",
+	"Resize",
+	"Copy",
+	"Paste",
+	"Camera",
+	//"EyeNO",
+	"Eye",
+};
+
+
 void MyDX11Widget::selectPie(IEventData::Ptr p_Data)
 {
 	std::shared_ptr<PowerPieSelectEventData> pie = std::static_pointer_cast<PowerPieSelectEventData>(p_Data);
@@ -356,7 +373,7 @@ void MyDX11Widget::selectPie(IEventData::Ptr p_Data)
 	Vector4 color(0.9101f, 0.f, 0.f, 1.f);
 	m_Graphics->set2D_ObjectColor(m_GUI["PiePiece"], color);
 
-	m_Graphics->set2D_ObjectRotationZ(m_GUI["PiePiece"], -0.785398163f * pie->getIndex());
+	m_Graphics->set2D_ObjectRotationZ(m_GUI["PiePiece"], m_PowerPie.angle * pie->getIndex());
 }
 
 void MyDX11Widget::activatePowerPie(IEventData::Ptr p_Data)
@@ -372,26 +389,13 @@ void MyDX11Widget::activatePowerPie(IEventData::Ptr p_Data)
 
 	Vector4 color(0.9101f, 0.8632f, 0.0937f, 0.f);
 	m_Graphics->set2D_ObjectColor(m_GUI["PiePiece"], color);
-
-	static const std::string icons[] =
-	{
-		"Translate",
-		"Rotate",
-		"Resize",
-		/*"Copy",
-		"Paste",
-		"Camera",
-		"EyeNO",
-		"Eye",*/
-	};
 	
 	unsigned int index = 0;
-	for (const std::string &icons : icons)
+	for (const std::string &icons : f_Icons)
 	{
 		m_Graphics->set2D_ObjectPosition(m_GUI[icons], Vector3(pos.x + m_RelativeIconPositions[index].x, pos.y + m_RelativeIconPositions[index].y, (float)DRAW::MEDIUM));
 		index++;
 	}
-
 }
 
 void MyDX11Widget::createPowerPieElement()
@@ -413,27 +417,21 @@ void MyDX11Widget::createPowerPieElement()
 	color = Vector4(1.f, 1.f, 1.f, 1.f);
 	scale = Vector3(0.4f, 0.4f, 1.f);
 
-	m_GUI.insert(std::pair<std::string, int>("Translate", m_Graphics->create2D_Object(position, Vector2(64.f, 64.f), scale, 0.f, "Translate")));
-	m_Graphics->set2D_ObjectColor(m_GUI["Translate"], color);
+	m_PowerPie.nrOfElements = sizeof(f_Icons) / sizeof(std::string);
+	m_PowerPie.angle = -2*DirectX::XM_PI/m_PowerPie.nrOfElements;
 
-	m_GUI.insert(std::pair<std::string, int>("Resize", m_Graphics->create2D_Object(position, Vector2(64.f, 64.f), scale, 0.f, "Resize")));
-	m_Graphics->set2D_ObjectColor(m_GUI["Resize"], color);
-
-	m_GUI.insert(std::pair<std::string, int>("Rotate", m_Graphics->create2D_Object(position, Vector2(64.f, 64.f), scale, 0.f, "Rotate")));
-	m_Graphics->set2D_ObjectColor(m_GUI["Rotate"], color);
-
-
-	DirectX::XMMATRIX rot = DirectX::XMMatrixRotationZ(-2*DirectX::XM_PI/8.f);
+	DirectX::XMMATRIX rot = DirectX::XMMatrixRotationZ(m_PowerPie.angle);
 	DirectX::XMVECTOR vec = DirectX::XMVectorSet(0.f, 80.f, 0.f, 0.f);
 	float *x = &vec.m128_f32[0];
 	float *y = &vec.m128_f32[1];
-
-	m_RelativeIconPositions.push_back(Vector2(*x, *y));
-
-	for(int i = 1; i < 8; i++)
+	
+	for (const std::string &icons : f_Icons)
 	{
-		vec = DirectX::XMVector2Transform(vec, rot);
+		m_GUI.insert(std::pair<std::string, int>(icons, m_Graphics->create2D_Object(position, Vector2(64.f, 64.f), scale, 0.f, icons.c_str())));
+		m_Graphics->set2D_ObjectColor(m_GUI[icons], color);
+
 		m_RelativeIconPositions.push_back(Vector2(*x, *y));
+		vec = DirectX::XMVector2Transform(vec, rot);
 	}
 }
 
@@ -443,16 +441,13 @@ void MyDX11Widget::preLoadModels()
 	{
 		"PowerPie",
 		"PiePiece",
-		"Translate",
-		"Camera",
-		"Copy",
-		"EyeNO",
-		"Paste",
-		"Rotate",
-		"Resize",
-		"Eye",
 	};
 	for (const std::string &texture : preloadedTextures)
+	{
+		m_ResourceIDs.push_back(m_ResourceManager->loadResource("texture", texture));
+	}
+
+	for (const std::string &texture : f_Icons)
 	{
 		m_ResourceIDs.push_back(m_ResourceManager->loadResource("texture", texture));
 	}

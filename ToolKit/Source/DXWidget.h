@@ -16,6 +16,27 @@ class DXWidget : public QWidget
 	Q_OBJECT
 
 protected:
+	struct PowerPie
+	{
+		Vector2 position;
+		bool isActive;
+
+		float nrOfElements;
+		float angle;
+
+		Vector4 selectedColor;
+		Vector4 pieColor;
+
+
+		PowerPie()
+		{
+			position = Vector2(0.f, 0.f);
+			isActive = false;
+		}
+	};
+	
+	PowerPie m_PowerPie;
+
 	Camera m_Camera;
 	KeyboardControl m_Control;
 	FlyControl m_FlyControl;

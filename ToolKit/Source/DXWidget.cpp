@@ -136,12 +136,12 @@ void DXWidget::mouseMoveEvent(QMouseEvent* e)
 			float a = atan2f(-m_MouseDir.x(), m_MouseDir.y());
 
 			a += DirectX::XM_PI;
-			a += (2 * DirectX::XM_PI) / 16.f;
+			a += (2 * DirectX::XM_PI) / (m_PowerPie.nrOfElements * 2.f);
 			if(a > 2 * DirectX::XM_PI)
 				a -= 2*DirectX::XM_PI;
 
 			a /= (2*DirectX::XM_PI);
-			a *= 8;
+			a *= m_PowerPie.nrOfElements;
 
 			a = floorf(a);
 
