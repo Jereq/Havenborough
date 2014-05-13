@@ -89,12 +89,11 @@ void DXWidget::mousePressEvent(QMouseEvent* e)
 		else if ((e->buttons() & Qt::RightButton) && !(e->buttons() & Qt::LeftButton))
 		{
 			//showStatus(tr("Dolly Tool: RMB Drag: Use mouse to dolly"));
-			//setCursor(Qt::ClosedHandCursor);
+			//setCursor(Qt::BlankCursor);
 
 			m_MouseStartPos = e->localPos();
-			m_MousePosPrev = e->localPos();
 			m_MouseDir = QPointF(0, 0);
-
+		
 			std::shared_ptr<MouseEventDataPie> pie(new MouseEventDataPie(Vector2(m_MouseStartPos.x() - width()*0.5f, -m_MouseStartPos.y() + height()*0.5f), true));
 			m_EventManager->queueEvent(pie);
 		}
@@ -123,13 +122,13 @@ void DXWidget::mouseMoveEvent(QMouseEvent* e)
 			//QPointF delta = (e->localPos() - m_ClickPos) / (float)height() * m_Camera->getCenterOfInterest();
 			//moveCamera(0, 0, delta.y());
 
-			QPointF mouseDir = e->localPos() - m_MousePosPrev;
+			QPointF mouseDir = e->localPos() - m_PrevMousePos;
 
 			qreal dotMouseDir = QPointF::dotProduct(mouseDir, mouseDir);
 			dotMouseDir = sqrtf(dotMouseDir);
 			mouseDir = mouseDir / dotMouseDir;
 
-			m_MouseDir = m_MouseDir * 0.99f + mouseDir * 0.01f;
+			m_MouseDir = m_MouseDirPrev * 0.9f + mouseDir * 0.1f;
 
 			float a = atan2f(-m_MouseDir.x(), m_MouseDir.y());
 
@@ -148,7 +147,7 @@ void DXWidget::mouseMoveEvent(QMouseEvent* e)
 
 			((QMainWindow*)window())->statusBar()->showMessage("Angle: " + QString::number(a));
 
-			m_MousePosPrev = e->localPos();
+			m_MouseDirPrev = m_MouseDir;
 
 			update();
 		}
