@@ -2,6 +2,9 @@
 
 #include <iostream>
 
+#include <boost/filesystem/fstream.hpp>
+#include <boost/filesystem/path.hpp>
+
 #include <Components.h>
 #include <Level.h>
 
@@ -93,10 +96,7 @@ void ObjectManager::addObject(const std::string& p_ObjectName, const Vector3& p_
 		return;
 	}
 
-	tinyxml2::XMLDocument descDoc;
-	descDoc.Parse(description->second.c_str());
-
-	tinyxml2::XMLElement* root = descDoc.FirstChildElement("Object");
+	tinyxml2::XMLElement* root = description->second->FirstChildElement("Object");
 	if (!root)
 	{
 		return;
@@ -108,7 +108,55 @@ void ObjectManager::addObject(const std::string& p_ObjectName, const Vector3& p_
 	m_ActorList.addActor(actor);
 }
 
-void ObjectManager::registerObjectDescription(const std::string& p_ObjectName, const std::string& p_Description)
+static void deepClone(tinyxml2::XMLNode* p_NewNode, const tinyxml2::XMLNode* p_SrcNode)
 {
-	m_ObjectDescriptions[p_ObjectName] = p_Description;
+	for (const tinyxml2::XMLNode* srcChild = p_SrcNode->FirstChild(); srcChild; srcChild = srcChild->NextSibling())
+	{
+		tinyxml2::XMLNode* clonedChild = srcChild->ShallowClone(p_NewNode->GetDocument());
+		deepClone(clonedChild, srcChild);
+		p_NewNode->InsertEndChild(clonedChild);
+	}
+}
+
+void ObjectManager::registerObjectDescription(const std::string& p_ObjectName, const tinyxml2::XMLNode* p_Description)
+{
+	auto& doc = m_ObjectDescriptions[p_ObjectName];
+	doc.reset(new tinyxml2::XMLDocument);
+	deepClone(doc.get(), p_Description);
+	objectTypeCreated(p_ObjectName);
+}
+
+void ObjectManager::loadDescriptionsFromFolder(const std::string& p_Path)
+{
+	using namespace boost::filesystem;
+
+	path folder(p_Path);
+	
+	if (!exists(folder))
+	{
+		return;
+	}
+
+	for (recursive_directory_iterator iter(folder); iter != recursive_directory_iterator(); ++iter)
+	{
+		tinyxml2::XMLDocument doc;
+		if (doc.LoadFile(iter->path().string().c_str()))
+		{
+			continue;
+		}
+
+		tinyxml2::XMLElement* root = doc.FirstChildElement("ObjectDescription");
+		if (!root)
+		{
+			continue;
+		}
+
+		const char* descName = root->Attribute("Name");
+		if (!descName)
+		{
+			continue;
+		}
+
+		registerObjectDescription(descName, root);
+	}
 }

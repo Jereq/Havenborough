@@ -1,0 +1,25 @@
+<ObjectDescription Name="CastleTower1">
+    <Object x="0.000000" y="0.000000" z="0.000000" yaw="0.000000" pitch="0.000000" roll="0.000000">
+        <Model Mesh="CastleTower1">
+            <Scale x="1.000000" y="1.000000" z="1.000000"/>
+        </Model>
+        <MeshPhysics Mesh="CastleTower1">
+            <Scale x="1.000000" y="1.000000" z="1.000000"/>
+        </MeshPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="288.364655" y="5.000000" z="5.000000"/>
+            <OffsetPosition x="373.687378" y="3649.092773" z="2898.197998"/>
+            <OffsetRotation yaw="1.015599" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="191.930008" y="5.000000" z="5.000000"/>
+            <OffsetPosition x="49.971119" y="3649.092773" z="3233.745605"/>
+            <OffsetRotation yaw="0.481211" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="326.826416" y="5.000000" z="5.000000"/>
+            <OffsetPosition x="-439.369263" y="3649.092773" z="3233.667725"/>
+            <OffsetRotation yaw="-0.267475" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+    </Object>
+</ObjectDescription>

@@ -1,0 +1,30 @@
+<ObjectDescription Name="Wagon3">
+    <Object x="0.000000" y="0.000000" z="0.000000" yaw="0.000000" pitch="0.000000" roll="0.000000">
+        <Model Mesh="Wagon3">
+            <Scale x="1.000000" y="1.000000" z="1.000000"/>
+        </Model>
+        <MeshPhysics Mesh="Wagon3">
+            <Scale x="1.000000" y="1.000000" z="1.000000"/>
+        </MeshPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="64.221420" y="5.000000" z="5.000000"/>
+            <OffsetPosition x="-0.000000" y="140.232819" z="89.109856"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="46.547333" y="5.000000" z="5.000000"/>
+            <OffsetPosition x="-0.000000" y="123.493866" z="-209.094009"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="150.382019" y="5.000000" z="5.000000"/>
+            <OffsetPosition x="-63.872040" y="140.262085" z="-61.431061"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="150.382019" y="5.000000" z="5.000000"/>
+            <OffsetPosition x="64.240608" y="140.038727" z="-61.111134"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+    </Object>
+</ObjectDescription>

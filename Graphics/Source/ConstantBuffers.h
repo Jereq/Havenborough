@@ -58,3 +58,9 @@ struct cLightBuffer
 	int big;
 	int shadowMapped;
 };
+
+struct cInstanceBuffer
+{
+	DirectX::XMFLOAT4X4 world;
+	DirectX::XMFLOAT3 colorTone;
+};

@@ -11,7 +11,9 @@
 #endif
 
 class QTableWidgetItem;
+class QTreeWidgetItem;
 
+class AnimationLoader;
 class IGraphics;
 class IPhysics;
 class ObjectManager;
@@ -32,6 +34,7 @@ private:
 	EventManager m_EventManager;
 	ResourceManager m_ResourceManager;
 	std::unique_ptr<ObjectManager> m_ObjectManager;
+	std::unique_ptr<AnimationLoader> m_AnimationLoader;
 	IGraphics* m_Graphics;
 	IPhysics* m_Physics;
 	
@@ -75,15 +78,14 @@ private slots:
 
 	void addObject(QTableWidgetItem* p_ObjectItem);
 
+    void on_m_ObjectTree_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
+
 signals:
     void setCameraPositionSignal(Vector3 p_CameraPosition);
 
 private:
-	void createSimpleObjectDescription(const std::string& p_ModelName);
-	void addSimpleObjectType(const std::string& p_ModelName);
 	void onFrame(float p_DeltaTime);
 	void loadLevel(const std::string& p_Filename);
-	void registerObjectDescription(const std::string& p_ObjectName, const std::string& p_Description);
 
 	void initializeSystems();
 	void uninitializeSystems();

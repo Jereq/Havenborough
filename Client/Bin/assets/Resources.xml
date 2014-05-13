@@ -160,10 +160,10 @@
         <Resource Name="Park1Part2" Path="assets/models/Park1Part2.btx"/>
         <Resource Name="Park1Part3" Path="assets/models/Park1Part3.btx"/>
         <Resource Name="Park1Part4" Path="assets/models/Park1Part4.btx"/>
-        <Resource Name="Minque6" Path="assets/models/Minque6.btx"/>
         <Resource Name="Tunnel2" Path="assets/models/Tunnel2.btx"/>
         <Resource Name="Wall1v2" Path="assets/models/Wall1v2.btx"/>
         <Resource Name="Wall2v2" Path="assets/models/Wall2v2.btx"/>
+        <Resource Name="Minque6" Path="assets/models/Minque6.btx"/>
     </ResourceType>
     <ResourceType Type="volume">
         <Resource Name="Aqueduct1" Path="assets/volumes/CB_Aqueduct1.txc"/>
@@ -188,10 +188,8 @@
         <Resource Name="CaveMiddleSection1" Path="assets/volumes/CB_CaveMiddleSection1.txc"/>
         <Resource Name="CaveUpperSection1" Path="assets/volumes/CB_CaveUpperSection1.txc"/>
         <Resource Name="CaveWall1" Path="assets/volumes/CB_CaveWall1.txc"/>
-        <Resource Name="Checkpoint1" Path="assets/volumes/CB_Checkpoint1.txc"/>
         <Resource Name="Crane" Path="assets/volumes/CB_Crane.txc"/>
         <Resource Name="Crate1" Path="assets/volumes/CB_Crate1.txc"/>
-        <Resource Name="Dzala" Path="assets/volumes/CB_Dzala.txc"/>
         <Resource Name="Fireplace1" Path="assets/volumes/CB_Fireplace1.txc"/>
         <Resource Name="Floor1" Path="assets/volumes/CB_Floor1.txc"/>
         <Resource Name="Floor2" Path="assets/volumes/CB_Floor2.txc"/>
@@ -254,7 +252,6 @@
         <Resource Name="WoodenPlatform2" Path="assets/volumes/CB_WoodenPlatform2.txc"/>
         <Resource Name="WoodenPlatform3" Path="assets/volumes/CB_WoodenPlatform3.txc"/>
         <Resource Name="WoodenShed1" Path="assets/volumes/CB_WoodenShed1.txc"/>
-        <Resource Name="Zane" Path="assets/volumes/CB_Zane.txc"/>
         <Resource Name="Fountain1" Path="assets/volumes/CB_Fountain1.txc"/>
         <Resource Name="HangingStairCase1" Path="assets/volumes/CB_HangingStairCase1.txc"/>
         <Resource Name="House10" Path="assets/volumes/CB_House10.txc"/>
@@ -286,7 +283,6 @@
         <Resource Name="Park1Part2" Path="assets/volumes/CB_Park1Part2.txc"/>
         <Resource Name="Park1Part3" Path="assets/volumes/CB_Park1Part3.txc"/>
         <Resource Name="Park1Part4" Path="assets/volumes/CB_Park1Part4.txc"/>
-        <Resource Name="Minque6" Path="assets/volumes/CB_Minque6.txc"/>
         <Resource Name="Tunnel2" Path="assets/volumes/CB_Tunnel2.txc"/>
         <Resource Name="Wall1v2" Path="assets/volumes/CB_Wall1v2.txc"/>
         <Resource Name="Wall2v2" Path="assets/volumes/CB_Wall2v2.txc"/>

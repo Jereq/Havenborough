@@ -416,7 +416,7 @@ std::string ActorFactory::getInstanceActorDescription(
 	}
 	printer.CloseElement();
 
-	return std::string(printer.CStr(), printer.CStrSize());
+	return std::string(printer.CStr(), printer.CStrSize() - 1);
 }
 
 Actor::ptr ActorFactory::createSpell(const std::string& p_Spell, Actor::Id p_CasterId, Vector3 p_Direction, Vector3 p_StartPosition)
