@@ -9,7 +9,8 @@ DXWidget::DXWidget(QWidget* parent, Qt::WindowFlags flags)
 	: QWidget(parent, flags),
 	m_FlyControl(&m_Camera, &m_Control),
 	m_EventManager(nullptr),
-	m_ResourceManager(nullptr)
+	m_ResourceManager(nullptr),
+	m_ToolFunctionState(ToolFunctionState::SELECT)
 {
 	setAttribute(Qt::WA_PaintOnScreen);
 	setAttribute(Qt::WA_NoSystemBackground);
@@ -84,8 +85,31 @@ void DXWidget::mousePressEvent(QMouseEvent* e)
 	{
 		if ((e->buttons() & Qt::LeftButton) && !(e->buttons() & Qt::RightButton))
 		{
-			m_EventManager->triggerTriggerEvent(IEventData::Ptr(new CreateRayEventData(DirectX::XMFLOAT2(e->localPos().x(), e->localPos().y()),
-																						DirectX::XMFLOAT2(width(), height()))));
+			switch (m_ToolFunctionState)
+			{
+			case DXWidget::ToolFunctionState::TRANSLATE:
+				break;
+			case DXWidget::ToolFunctionState::RESIZE:
+				break;
+			case DXWidget::ToolFunctionState::ROTATE:
+				break;
+			case DXWidget::ToolFunctionState::COPY:
+				break;
+			case DXWidget::ToolFunctionState::PASTE:
+				break;
+			case DXWidget::ToolFunctionState::FOCUS:
+				break;
+			case DXWidget::ToolFunctionState::SELECT:
+				{
+					m_EventManager->triggerTriggerEvent(IEventData::Ptr(new CreateRayEventData(DirectX::XMFLOAT2(e->localPos().x(), e->localPos().y()),
+																								DirectX::XMFLOAT2(width(), height()))));
+					break;
+				}
+			case DXWidget::ToolFunctionState::EYE:
+				break;
+			default:
+				break;
+			}
 			//showStatus(tr("Tumble Tool: LMB Drag: Use LMB or MMB to tumble"));
 			setCursor(Qt::OpenHandCursor);
 		}

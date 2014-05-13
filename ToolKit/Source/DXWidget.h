@@ -16,6 +16,18 @@ class DXWidget : public QWidget
 	Q_OBJECT
 
 protected:
+	enum class ToolFunctionState
+	{
+		TRANSLATE,
+		RESIZE,
+		ROTATE,
+		COPY,
+		PASTE,
+		FOCUS,
+		SELECT,
+		EYE
+	};
+
 	Camera m_Camera;
 	KeyboardControl m_Control;
 	FlyControl m_FlyControl;
@@ -26,6 +38,7 @@ protected:
 	QPointF m_MouseDirPrev;
 	EventManager* m_EventManager;
 	ResourceManager* m_ResourceManager;
+	ToolFunctionState m_ToolFunctionState;
 
 
 public:
