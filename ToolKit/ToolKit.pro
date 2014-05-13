@@ -51,7 +51,8 @@ SOURCES += Source/main.cpp\
     Source/DXWidget.cpp \
     Source/MyDX11Widget.cpp \
     Source/Tree.cpp \
-    Source/Table.cpp
+    Source/Table.cpp \
+    Source/XMLLevel.cpp
 
 HEADERS  += Source/MainWindow.h \
     Source/TreeItem.h \
@@ -64,7 +65,8 @@ HEADERS  += Source/MainWindow.h \
     Source/ObjectManager.h \
     Source/TableItem.h \
     Source/Tree.h \
-    Source/Table.h
+    Source/Table.h \
+    Source/XMLLevel.h
 
 FORMS    += Source/MainWindow.ui
 
