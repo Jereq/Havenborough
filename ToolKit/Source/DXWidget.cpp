@@ -92,6 +92,7 @@ void DXWidget::mousePressEvent(QMouseEvent* e)
 			//setCursor(Qt::ClosedHandCursor);
 
 			m_MouseStartPos = e->localPos();
+			m_MousePosPrev = e->localPos();
 			m_MouseDir = QPointF(0, 0);
 
 			std::shared_ptr<MouseEventDataPie> pie(new MouseEventDataPie(Vector2(m_MouseStartPos.x() - width()*0.5f, -m_MouseStartPos.y() + height()*0.5f), true));
@@ -122,11 +123,13 @@ void DXWidget::mouseMoveEvent(QMouseEvent* e)
 			//QPointF delta = (e->localPos() - m_ClickPos) / (float)height() * m_Camera->getCenterOfInterest();
 			//moveCamera(0, 0, delta.y());
 
-			m_MouseDir = e->localPos() - m_MouseStartPos;
+			QPointF mouseDir = e->localPos() - m_MousePosPrev;
 
-			qreal dotMouseDir = QPointF::dotProduct(m_MouseDir, m_MouseDir);
+			qreal dotMouseDir = QPointF::dotProduct(mouseDir, mouseDir);
 			dotMouseDir = sqrtf(dotMouseDir);
-			m_MouseDir = m_MouseDir / dotMouseDir;
+			mouseDir = mouseDir / dotMouseDir;
+
+			m_MouseDir = m_MouseDir * 0.99f + mouseDir * 0.01f;
 
 			float a = atan2f(-m_MouseDir.x(), m_MouseDir.y());
 
@@ -144,6 +147,8 @@ void DXWidget::mouseMoveEvent(QMouseEvent* e)
 			m_EventManager->queueEvent(pie);
 
 			((QMainWindow*)window())->statusBar()->showMessage("Angle: " + QString::number(a));
+
+			m_MousePosPrev = e->localPos();
 
 			update();
 		}

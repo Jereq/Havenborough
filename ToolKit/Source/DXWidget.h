@@ -22,6 +22,7 @@ protected:
 	QPointF m_PrevMousePos;
 
 	QPointF m_MouseStartPos;
+	QPointF m_MousePosPrev;
 	QPointF m_MouseDir;
 	EventManager* m_EventManager;
 	ResourceManager* m_ResourceManager;
