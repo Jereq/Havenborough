@@ -10,7 +10,10 @@
 #include <ResourceManager.h>
 #endif
 
+#include <vector>
+
 class QTableWidgetItem;
+class QGroupBox;
 
 class IGraphics;
 class IPhysics;
@@ -34,6 +37,7 @@ private:
 	std::unique_ptr<ObjectManager> m_ObjectManager;
 	IGraphics* m_Graphics;
 	IPhysics* m_Physics;
+    std::vector<QGroupBox*> m_Boxes;
 	
 public:
 	explicit MainWindow(QWidget *parent = 0);
@@ -41,6 +45,8 @@ public:
 
 private:
 	void signalAndSlotsDefinitions();
+    void pushBoxes();
+    void sortPropertiesBoxes();
 
 private slots:
     void on_actionObject_Tree_triggered();
@@ -75,6 +81,16 @@ private slots:
 	
 	void setLightPosition();
 
+	void setLightColor();
+
+	void setLightDirection();
+
+	void setLightAngles();
+
+	void setLightRange();
+
+	void setLightIntensity();
+		
 	void addObject(QTableWidgetItem* p_ObjectItem);
 
     void on_m_LightTree_itemSelectionChanged();

@@ -49,8 +49,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->AdditionalBox_1->hide();
     ui->AdditionalBox_2->hide();
     ui->AngleBox->hide();
+    ui->PositionBox_2->hide();
 
 	signalAndSlotsDefinitions();
+    pushBoxes();
 
     // Nest dock widgets.
     tabifyDockWidget(ui->m_ParticleTreeDockableWidget, ui->m_LightTreeDockableWidget);
@@ -124,6 +126,40 @@ void MainWindow::signalAndSlotsDefinitions()
     QObject::connect(ui->m_LightPositionXBox, SIGNAL(editingFinished()), this, SLOT(setLightPosition()));
     QObject::connect(ui->m_LightPositionYBox, SIGNAL(editingFinished()), this, SLOT(setLightPosition()));
     QObject::connect(ui->m_LightPositionZBox, SIGNAL(editingFinished()), this, SLOT(setLightPosition()));
+
+	//Signals and slots for connecting the light color editing to the light
+    QObject::connect(ui->m_LightColorXBox, SIGNAL(editingFinished()), this, SLOT(setLightColor()));
+    QObject::connect(ui->m_LightColorYBox, SIGNAL(editingFinished()), this, SLOT(setLightColor()));
+    QObject::connect(ui->m_LightColorZBox, SIGNAL(editingFinished()), this, SLOT(setLightColor()));
+
+	//Signals and slots for connecting the light direction editing to the light
+    QObject::connect(ui->m_LightDirectionXBox, SIGNAL(editingFinished()), this, SLOT(setLightDirection()));
+    QObject::connect(ui->m_LightDirectionYBox, SIGNAL(editingFinished()), this, SLOT(setLightDirection()));
+    QObject::connect(ui->m_LightDirectionZBox, SIGNAL(editingFinished()), this, SLOT(setLightDirection()));
+
+	//Signals and slots for connecting the light angles editing to the light
+    QObject::connect(ui->m_LightAngleXBox, SIGNAL(editingFinished()), this, SLOT(setLightAngles()));
+    QObject::connect(ui->m_LightAngleYBox, SIGNAL(editingFinished()), this, SLOT(setLightAngles()));
+
+	//Signals and slots for connecting the light range editing to the light
+    QObject::connect(ui->m_LightAdditionalBox2, SIGNAL(editingFinished()), this, SLOT(setLightRange()));
+
+	//Signals and slots for connecting the light intensity editing to the light
+    QObject::connect(ui->m_LightAdditionalBox1, SIGNAL(editingFinished()), this, SLOT(setLightIntensity()));
+}
+
+void MainWindow::pushBoxes()
+{
+    m_Boxes.push_back(ui->PositionBox);
+    m_Boxes.push_back(ui->PositionBox_2);
+    m_Boxes.push_back(ui->ScaleBox);
+    m_Boxes.push_back(ui->RotationBox);
+
+    m_Boxes.push_back(ui->ColorBox);
+    m_Boxes.push_back(ui->DirectionBox);
+    m_Boxes.push_back(ui->AngleBox);
+    m_Boxes.push_back(ui->AdditionalBox_1);
+    m_Boxes.push_back(ui->AdditionalBox_2);
 }
 
 void MainWindow::on_actionObject_Tree_triggered()
@@ -207,6 +243,7 @@ void MainWindow::on_m_ObjectTree_itemSelectionChanged()
     ui->AdditionalBox_1->hide();
     ui->AdditionalBox_2->hide();
     ui->AngleBox->hide();
+    ui->PositionBox_2->hide();
 
     if(currItem && currItem->isSelected())
 	{
@@ -238,6 +275,8 @@ void MainWindow::on_m_ObjectTree_itemSelectionChanged()
             ui->m_ObjectRotationZBox->setValue(rotation.z);
         }
 	}
+
+    sortPropertiesBoxes();
 }
 
 void MainWindow::setObjectScale()
@@ -304,8 +343,92 @@ void MainWindow::setLightPosition()
 			Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
 			std::weak_ptr<LightComponent> light = actor->getComponent<LightComponent>(LightInterface::m_ComponentId);
 			std::shared_ptr<LightComponent> slight = light.lock();
+			slight->setPosition(Vector3(ui->m_LightPositionXBox->value(),ui->m_LightPositionYBox->value(),ui->m_LightPositionZBox->value()));
+		}
+	}
+}
 
-            m_EventManager.queueEvent(IEventData::Ptr(new UpdateLightPositionEventData(slight->getId(), Vector3(ui->m_LightPositionXBox->value(),ui->m_LightPositionYBox->value(),ui->m_LightPositionZBox->value()))));
+void MainWindow::setLightColor()
+{
+    QTreeWidgetItem *currItem = ui->m_LightTree->currentItem();
+
+	if(currItem)
+	{
+		TreeItem *cItem = dynamic_cast<TreeItem*>(currItem);
+        if(currItem->isSelected() && cItem)
+		{
+			Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
+			std::weak_ptr<LightComponent> light = actor->getComponent<LightComponent>(LightInterface::m_ComponentId);
+			std::shared_ptr<LightComponent> slight = light.lock();
+			slight->setColor(Vector3(ui->m_LightColorXBox->value(),ui->m_LightColorYBox->value(),ui->m_LightColorZBox->value()));
+		}
+	}
+}
+
+void MainWindow::setLightDirection()
+{
+    QTreeWidgetItem *currItem = ui->m_LightTree->currentItem();
+
+	if(currItem)
+	{
+		TreeItem *cItem = dynamic_cast<TreeItem*>(currItem);
+        if(currItem->isSelected() && cItem)
+		{
+			Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
+			std::weak_ptr<LightComponent> light = actor->getComponent<LightComponent>(LightInterface::m_ComponentId);
+			std::shared_ptr<LightComponent> slight = light.lock();
+			slight->setDirection(Vector3(ui->m_LightDirectionXBox->value(),ui->m_LightDirectionYBox->value(),ui->m_LightDirectionZBox->value()));
+		}
+	}
+}
+
+void MainWindow::setLightAngles()
+{
+    QTreeWidgetItem *currItem = ui->m_LightTree->currentItem();
+
+	if(currItem)
+	{
+		TreeItem *cItem = dynamic_cast<TreeItem*>(currItem);
+        if(currItem->isSelected() && cItem)
+		{
+			Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
+			std::weak_ptr<LightComponent> light = actor->getComponent<LightComponent>(LightInterface::m_ComponentId);
+			std::shared_ptr<LightComponent> slight = light.lock();
+			slight->setSpotLightAngles(Vector2(ui->m_LightAngleXBox->value(),ui->m_LightAngleYBox->value()));
+		}
+	}
+}
+
+void MainWindow::setLightRange()
+{
+    QTreeWidgetItem *currItem = ui->m_LightTree->currentItem();
+
+	if(currItem)
+	{
+		TreeItem *cItem = dynamic_cast<TreeItem*>(currItem);
+        if(currItem->isSelected() && cItem)
+		{
+			Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
+			std::weak_ptr<LightComponent> light = actor->getComponent<LightComponent>(LightInterface::m_ComponentId);
+			std::shared_ptr<LightComponent> slight = light.lock();
+			slight->setRange(ui->m_LightAdditionalBox2->value());
+		}
+	}
+}
+
+void MainWindow::setLightIntensity()
+{
+    QTreeWidgetItem *currItem = ui->m_LightTree->currentItem();
+
+	if(currItem)
+	{
+		TreeItem *cItem = dynamic_cast<TreeItem*>(currItem);
+        if(currItem->isSelected() && cItem)
+		{
+			Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
+			std::weak_ptr<LightComponent> light = actor->getComponent<LightComponent>(LightInterface::m_ComponentId);
+			std::shared_ptr<LightComponent> slight = light.lock();
+			slight->setIntensity(ui->m_LightAdditionalBox1->value());
 		}
 	}
 }
@@ -442,31 +565,88 @@ void MainWindow::on_m_LightTree_itemSelectionChanged()
     ui->AdditionalBox_1->hide();
     ui->AdditionalBox_2->hide();
     ui->AngleBox->hide();
+    ui->PositionBox_2->hide();
 
     if(currItem && currItem->isSelected())
     {
         TreeItem *cItem = dynamic_cast<TreeItem*>(currItem);
         if(cItem)
         {
-            ui->PositionBox->show();
+			Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
+			std::weak_ptr<LightComponent> light = actor->getComponent<LightComponent>(LightInterface::m_ComponentId);
+			std::shared_ptr<LightComponent> slight = light.lock();
+
+            ui->PositionBox_2->show();
             ui->ColorBox->show();
-            //ui->ScaleBox->show();
-            //ui->RotationBox->show();
+
+			const Vector3& pos = slight->getPosition();
+			ui->m_LightPositionXBox->setValue(pos.x);
+			ui->m_LightPositionYBox->setValue(pos.y);
+			ui->m_LightPositionZBox->setValue(pos.z);
+
+			const Vector3& color = slight->getColor();
+			ui->m_LightColorXBox->setValue(color.x);
+			ui->m_LightColorYBox->setValue(color.y);
+			ui->m_LightColorZBox->setValue(color.z);
+
             TreeItem::TreeItemType type = cItem->getType();
+
             if(type == TreeItem::TreeItemType::POINTLIGHT)
             {
                 ui->AdditionalBox_2->show();
+
+				const float &range = slight->getRange();
+				ui->m_LightAdditionalBox2->setValue(range);
             }
             else if(type == TreeItem::TreeItemType::DIRECTIONALLIGHT)
             {
                 ui->AdditionalBox_1->show();
+				ui->DirectionBox->show();
+
+				const Vector3& dir = slight->getDirection();
+				ui->m_LightDirectionXBox->setValue(dir.x);
+				ui->m_LightDirectionYBox->setValue(dir.y);
+				ui->m_LightDirectionZBox->setValue(dir.z);
+
+				const float &intensity = slight->getIntensity();
+				ui->m_LightAdditionalBox1->setValue(intensity);
             }
             else
             {
                 ui->AdditionalBox_2->show();
                 ui->DirectionBox->show();
                 ui->AngleBox->show();
+
+				const Vector3& dir = slight->getDirection();
+				ui->m_LightDirectionXBox->setValue(dir.x);
+				ui->m_LightDirectionYBox->setValue(dir.y);
+				ui->m_LightDirectionZBox->setValue(dir.z);
+
+				const Vector2 &angle = slight->getSpotLightAngles();
+				ui->m_LightAngleXBox->setValue(angle.x);
+				ui->m_LightAngleYBox->setValue(angle.y);
+
+				const float &range = slight->getRange();
+				ui->m_LightAdditionalBox2->setValue(range);
             }
+        }
+    }
+
+    sortPropertiesBoxes();
+}
+
+void MainWindow::sortPropertiesBoxes()
+{
+    int x = 9;
+    int incrementalY = 122;
+    int marginY = 5;
+
+    for(int i = 0; i < m_Boxes.size(); i++)
+    {
+        if(!m_Boxes.at(i)->isHidden())
+        {
+            m_Boxes.at(i)->move(x, incrementalY);
+			incrementalY += m_Boxes.at(i)->height() + marginY;
         }
     }
 }

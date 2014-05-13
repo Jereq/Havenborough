@@ -747,13 +747,13 @@
           <enum>QAbstractSpinBox::UpDownArrows</enum>
          </property>
          <property name="decimals">
-          <number>4</number>
+          <number>3</number>
          </property>
          <property name="minimum">
-          <double>-360.000000000000000</double>
+          <double>-6.280000000000000</double>
          </property>
          <property name="maximum">
-          <double>360.000000000000000</double>
+          <double>6.280000000000000</double>
          </property>
          <property name="value">
           <double>0.000000000000000</double>
@@ -775,13 +775,13 @@
           <enum>QAbstractSpinBox::UpDownArrows</enum>
          </property>
          <property name="decimals">
-          <number>4</number>
+          <number>3</number>
          </property>
          <property name="minimum">
-          <double>-360.000000000000000</double>
+          <double>-6.280000000000000</double>
          </property>
          <property name="maximum">
-          <double>360.000000000000000</double>
+          <double>6.280000000000000</double>
          </property>
         </widget>
        </item>
@@ -800,13 +800,13 @@
           <enum>QAbstractSpinBox::UpDownArrows</enum>
          </property>
          <property name="decimals">
-          <number>4</number>
+          <number>3</number>
          </property>
          <property name="minimum">
-          <double>-360.000000000000000</double>
+          <double>-6.280000000000000</double>
          </property>
          <property name="maximum">
-          <double>360.000000000000000</double>
+          <double>6.280000000000000</double>
          </property>
         </widget>
        </item>
@@ -885,7 +885,7 @@
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="QDoubleSpinBox" name="doubleSpinBox_2">
+        <widget class="QDoubleSpinBox" name="m_LightColorYBox">
          <property name="decimals">
           <number>3</number>
          </property>
@@ -895,7 +895,7 @@
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="QDoubleSpinBox" name="doubleSpinBox_3">
+        <widget class="QDoubleSpinBox" name="m_LightColorZBox">
          <property name="decimals">
           <number>3</number>
          </property>
@@ -905,7 +905,7 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QDoubleSpinBox" name="doubleSpinBox">
+        <widget class="QDoubleSpinBox" name="m_LightColorXBox">
          <property name="maximumSize">
           <size>
            <width>71</width>
@@ -976,7 +976,7 @@
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="QDoubleSpinBox" name="doubleSpinBox_4">
+        <widget class="QDoubleSpinBox" name="m_LightDirectionYBox">
          <property name="decimals">
           <number>3</number>
          </property>
@@ -986,7 +986,7 @@
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="QDoubleSpinBox" name="doubleSpinBox_5">
+        <widget class="QDoubleSpinBox" name="m_LightDirectionZBox">
          <property name="decimals">
           <number>3</number>
          </property>
@@ -996,7 +996,7 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QDoubleSpinBox" name="doubleSpinBox_6">
+        <widget class="QDoubleSpinBox" name="m_LightDirectionXBox">
          <property name="maximumSize">
           <size>
            <width>71</width>
@@ -1047,7 +1047,7 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QDoubleSpinBox" name="doubleSpinBox_9">
+        <widget class="QDoubleSpinBox" name="m_LightAdditionalBox1">
          <property name="maximumSize">
           <size>
            <width>71</width>
@@ -1098,7 +1098,7 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QDoubleSpinBox" name="doubleSpinBox_10">
+        <widget class="QDoubleSpinBox" name="m_LightAdditionalBox2">
          <property name="maximumSize">
           <size>
            <width>71</width>
@@ -1106,10 +1106,10 @@
           </size>
          </property>
          <property name="decimals">
-          <number>3</number>
+          <number>0</number>
          </property>
          <property name="maximum">
-          <double>1.000000000000000</double>
+          <double>999999999.000000000000000</double>
          </property>
         </widget>
        </item>
@@ -1149,7 +1149,7 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QDoubleSpinBox" name="doubleSpinBox_11">
+        <widget class="QDoubleSpinBox" name="m_LightAngleXBox">
          <property name="maximumSize">
           <size>
            <width>71</width>
@@ -1160,17 +1160,17 @@
           <number>3</number>
          </property>
          <property name="maximum">
-          <double>1.000000000000000</double>
+          <double>6.280000000000000</double>
          </property>
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="QDoubleSpinBox" name="doubleSpinBox_7">
+        <widget class="QDoubleSpinBox" name="m_LightAngleYBox">
          <property name="decimals">
           <number>3</number>
          </property>
          <property name="maximum">
-          <double>1.000000000000000</double>
+          <double>6.280000000000000</double>
          </property>
         </widget>
        </item>
