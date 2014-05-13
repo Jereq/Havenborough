@@ -1,10 +1,13 @@
 #include "TreeFilter.h"
 
+#include <boost/uuid/random_generator.hpp>
+
 TreeFilter::TreeFilter()
 {
 }
 
 TreeFilter::TreeFilter(std::string p_FilterName)
+	: m_Id(boost::uuids::random_generator()())
 {
 	m_Filterame = p_FilterName;
 
@@ -14,6 +17,10 @@ TreeFilter::TreeFilter(std::string p_FilterName)
 	setToolTip(0, "Filter: " + QString::fromStdString(m_Filterame));
 }
 
+const boost::uuids::uuid& TreeFilter::getID() const
+{
+	return m_Id;
+}
 
 void TreeFilter::setName(std::string p_ObjectName)
 {
