@@ -49,7 +49,7 @@
     <MouseMap Display="Look up" Command="lookUp" Direction="PosY" />
     <MouseMap Display="Look down" Command="lookDown" Direction="NegY" />
     <MouseButtonMap Display="Cast spell" Command="spellCast" Button="Left" />
-    <MouseButtonMap Display="Climb" Command="climbEdge" Button="Right" />
+    <MouseButtonMap Display="Pie" Command="activatePie" Button="Right" />
     <!-- Gamepad input
 
 	This is a default mapping for an Xbox360 controller.

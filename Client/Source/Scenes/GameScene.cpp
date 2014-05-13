@@ -188,9 +188,9 @@ void GameScene::onFrame(float p_DeltaTime, int* p_IsCurrentScene)
 
 void GameScene::onFocus()
 {
-	std::shared_ptr<MouseEventDataShow> showMouse(new MouseEventDataShow(false));
+	std::shared_ptr<MouseEventDataShow> showMouse(new MouseEventDataShow(true));
 	m_EventManager->queueEvent(showMouse);
-	std::shared_ptr<MouseEventDataLock> lockMouse(new MouseEventDataLock(true));
+	std::shared_ptr<MouseEventDataLock> lockMouse(new MouseEventDataLock(false));
 	m_EventManager->queueEvent(lockMouse);
 }
 
@@ -387,6 +387,11 @@ void GameScene::registeredInput(std::string p_Action, float p_Value, float p_Pre
 	if(p_Action == "climbEdge")
 	{
 		m_GameLogic->setPlayerClimb(p_Value > 0.5f);
+	}
+	else if(p_Action == "activatePie")
+	{
+		std::shared_ptr<MouseEventDataPie> mousePos(new MouseEventDataPie(Vector2(0.f, 0.f), p_Value > 0.5f));
+		m_EventManager->queueEvent(mousePos);
 	}
 	else if (p_Action == "lookRight")
 	{

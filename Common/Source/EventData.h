@@ -582,6 +582,89 @@ public:
 	}
 };
 
+class MouseEventDataPie : public BaseEventData
+{
+private: 
+	Vector2 m_MousePos;
+	bool m_PieStatus;
+
+public:
+	static const IEventData::Type sk_EventType = Type(0xa5cc161);
+	
+	explicit MouseEventDataPie(Vector2 p_MousePos, bool p_PieStatus) :
+	m_MousePos(p_MousePos), m_PieStatus(p_PieStatus)
+	{
+	}
+
+	virtual const IEventData::Type &getEventType(void) const override
+	{
+		return sk_EventType;
+	}
+
+	virtual Ptr copy(void) const override
+	{
+		return Ptr(new MouseEventDataPie(m_MousePos, m_PieStatus));
+	}
+
+	virtual void serialize(std::ostream &p_Out) const override
+	{
+		//p_Out << m_MousePos;
+	}
+
+	virtual const char *getName(void) const override
+	{
+		return "MouseEventDataPie";
+	}
+
+	Vector2 getMousePos(void) const
+	{
+		return m_MousePos;
+	}
+
+	bool getPieStatus() const
+	{
+		return m_PieStatus;
+	}
+};
+
+class PowerPieSelectEventData : public BaseEventData
+{
+private: 
+	unsigned int m_Index;
+public:
+	static const IEventData::Type sk_EventType = Type(0xcd4a1ec7);
+	
+	explicit PowerPieSelectEventData(unsigned int p_Index) :
+		m_Index(p_Index)
+	{
+	}
+
+	virtual const IEventData::Type &getEventType(void) const override
+	{
+		return sk_EventType;
+	}
+
+	virtual Ptr copy(void) const override
+	{
+		return Ptr(new PowerPieSelectEventData(m_Index));
+	}
+
+	virtual void serialize(std::ostream &p_Out) const override
+	{
+		//p_Out << m_MousePos;
+	}
+
+	virtual const char *getName(void) const override
+	{
+		return "PowerPieSelectEventData";
+	}
+
+	virtual unsigned int getIndex(void) const
+	{
+		return m_Index;
+	}
+};
+
 class ChangeColorToneEvent : public BaseEventData
 {
 private: 
