@@ -665,7 +665,7 @@ void MainWindow::onActorAdded(std::string p_ObjectType, Actor::ptr p_Actor)
 	std::shared_ptr<ModelComponent> smodel = model.lock();
 	if(smodel)
 	{
-		ui->m_ObjectTree->objectCreated(p_ObjectType, p_Actor->getId());
+		ui->m_ObjectTree->objectCreated(smodel->getMeshName(), p_Actor->getId(), 3);
 	}
 	std::weak_ptr<LightComponent> lmodel = p_Actor->getComponent<LightComponent>(LightInterface::m_ComponentId);
 	std::shared_ptr<LightComponent> slmodel = lmodel.lock();
@@ -679,13 +679,13 @@ void MainWindow::onActorAdded(std::string p_ObjectType, Actor::ptr p_Actor)
 		case LightClass::Type::POINT: lightype = "Point"; break;
 		}
 		
-		ui->m_LightTree->objectCreated(p_ObjectType, p_Actor->getId());
+		ui->m_LightTree->objectCreated(p_ObjectType, p_Actor->getId(), (int)slmodel->getType());
 	}
 	std::weak_ptr<ParticleComponent> pmodel = p_Actor->getComponent<ParticleComponent>(ParticleInterface::m_ComponentId);
 	std::shared_ptr<ParticleComponent> spmodel = pmodel.lock();
 	if(spmodel)
 	{
-		ui->m_ParticleTree->objectCreated(p_ObjectType, p_Actor->getId());
+		ui->m_ParticleTree->objectCreated(p_ObjectType, p_Actor->getId(), 4);
 	}
 }
 
