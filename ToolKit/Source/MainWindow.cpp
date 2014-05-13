@@ -274,7 +274,7 @@ void MainWindow::on_m_ObjectTree_itemSelectionChanged()
 		        ui->PositionBox_2->show();
 		        ui->ColorBox->show();
 
-				const Vector3& pos = slight->getPosition();
+				const Vector3& pos = actor->getPosition();
 				ui->m_LightPositionXBox->setValue(pos.x);
 				ui->m_LightPositionYBox->setValue(pos.y);
 				ui->m_LightPositionZBox->setValue(pos.z);
@@ -392,9 +392,9 @@ void MainWindow::setLightPosition()
         if(currItem->isSelected() && cItem)
 		{
 			Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
-			std::weak_ptr<LightComponent> light = actor->getComponent<LightComponent>(LightInterface::m_ComponentId);
-			std::shared_ptr<LightComponent> slight = light.lock();
-			slight->setPosition(Vector3(ui->m_LightPositionXBox->value(),ui->m_LightPositionYBox->value(),ui->m_LightPositionZBox->value()));
+			//std::weak_ptr<LightComponent> light = actor->getComponent<LightComponent>(LightInterface::m_ComponentId);
+			//std::shared_ptr<LightComponent> slight = light.lock();
+			actor->setPosition(Vector3(ui->m_LightPositionXBox->value(),ui->m_LightPositionYBox->value(),ui->m_LightPositionZBox->value()));
 		}
 	}
 }
@@ -671,4 +671,20 @@ void MainWindow::pick(IEventData::Ptr p_Data)
 		return;
 
 	ui->m_ObjectTree->selectItem(actor->getId());
+}
+void MainWindow::on_actionGo_To_Selected_triggered()
+{
+	QTreeWidgetItem *currItem = ui->m_ObjectTree->currentItem();
+	if(!currItem)
+		return;
+
+	TreeItem *cItem = dynamic_cast<TreeItem*>(currItem);
+	if(!cItem)
+		return;
+	
+    if(currItem->isSelected())
+    {
+		Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
+		emit setCameraPositionSignal(actor->getPosition());
+	}
 }

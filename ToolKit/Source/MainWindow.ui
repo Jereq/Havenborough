@@ -70,6 +70,7 @@
     <property name="title">
      <string>Tools</string>
     </property>
+    <addaction name="actionGo_To_Selected"/>
    </widget>
    <widget class="QMenu" name="menuOptions">
     <property name="title">
@@ -1396,6 +1397,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+L</string>
+   </property>
+  </action>
+  <action name="actionGo_To_Selected">
+   <property name="text">
+    <string>Go to Selected Item</string>
+   </property>
+   <property name="shortcut">
+    <string>Home</string>
    </property>
   </action>
  </widget>
