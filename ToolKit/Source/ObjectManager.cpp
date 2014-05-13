@@ -8,10 +8,13 @@
 #include <Components.h>
 #include <Level.h>
 
-ObjectManager::ObjectManager(ActorFactory::ptr p_ActorFactory, EventManager* p_EventManager, ResourceManager* p_ResourceManager)
+#include "XMLLevel.h"
+
+ObjectManager::ObjectManager(ActorFactory::ptr p_ActorFactory, EventManager* p_EventManager, ResourceManager* p_ResourceManager, Tree* p_ObjectTree)
 	: m_ActorFactory(p_ActorFactory),
 	m_EventManager(p_EventManager),
-	m_ResourceManager(p_ResourceManager)
+	m_ResourceManager(p_ResourceManager),
+	m_ObjectTree(p_ObjectTree)
 {
 }
 
@@ -37,6 +40,13 @@ void ObjectManager::loadLevel(const std::string& p_Filename)
 	{
 		emit actorAdded("", actor.second);
 	}
+}
+
+void ObjectManager::saveLevel(const std::string& p_Filename)
+{
+	XMLLevel levelSaver(m_ActorList, m_ObjectTree);
+	std::ofstream outStream(p_Filename, std::ios_base::binary);
+	levelSaver.save(outStream);
 }
 
 Actor::ptr ObjectManager::getActor(Actor::Id p_Id)

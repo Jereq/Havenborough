@@ -185,7 +185,11 @@ void MainWindow::on_actionOpen_triggered()
 
 void MainWindow::on_actionSave_triggered()
 {
-    QFileDialog::getSaveFileName(this, tr("Save Level As..."), "./assets/levels/", tr("Level Files (*.xml"));
+    QString fullFilePath = QFileDialog::getSaveFileName(this, tr("Save Level As..."), "./assets/levels/", tr("Level Files (*.xml"));
+	if (!fullFilePath.isNull())
+	{
+		saveLevel(fullFilePath.toStdString());
+	}
 }
 
 void MainWindow::splitCameraPosition(Vector3 p_cameraPosition)
@@ -499,6 +503,11 @@ void MainWindow::loadLevel(const std::string& p_Filename)
 	m_ObjectManager->loadLevel(p_Filename);
 }
 
+void MainWindow::saveLevel(const std::string& p_Filename)
+{
+	m_ObjectManager->saveLevel(p_Filename);
+}
+
 void MainWindow::addObject(QTableWidgetItem* p_ObjectItem)
 {
 	m_ObjectManager->addObject(p_ObjectItem->text().toStdString(), Vector3(rand() % 1000, rand() % 1000, rand() % 1000));
@@ -546,7 +555,7 @@ void MainWindow::initializeSystems()
 	actorFactory->setEventManager(&m_EventManager);
 	actorFactory->setResourceManager(&m_ResourceManager);
 	actorFactory->setAnimationLoader(m_AnimationLoader.get());
-	m_ObjectManager.reset(new ObjectManager(actorFactory, &m_EventManager, &m_ResourceManager));
+	m_ObjectManager.reset(new ObjectManager(actorFactory, &m_EventManager, &m_ResourceManager, ui->m_ObjectTree));
 
 	ui->m_RenderWidget->initialize(&m_EventManager, &m_ResourceManager, m_Graphics);
 

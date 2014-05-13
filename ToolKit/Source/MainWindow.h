@@ -91,6 +91,7 @@ signals:
 private:
 	void onFrame(float p_DeltaTime);
 	void loadLevel(const std::string& p_Filename);
+	void saveLevel(const std::string& p_Filename);
 
 	void initializeSystems();
 	void uninitializeSystems();
