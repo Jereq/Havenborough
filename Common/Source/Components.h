@@ -1110,6 +1110,7 @@ class LightComponent : public LightInterface
 {
 private:
 	LightClass m_Light;
+	Vector3 m_Offset;
 
 public:
 	~LightComponent() override
@@ -1158,13 +1159,14 @@ public:
 
 			p_Data->QueryAttribute("Range", &range);
 
-			const tinyxml2::XMLElement* pos = p_Data->FirstChildElement("Position");
+			/*const tinyxml2::XMLElement* pos = p_Data->FirstChildElement("Position");
 			if (pos)
 			{
 				pos->QueryAttribute("x", &position.x);
 				pos->QueryAttribute("y", &position.y);
 				pos->QueryAttribute("z", &position.z);
-			}
+			}*/
+			m_Offset = Vector3(0,0,0);
 
 			const tinyxml2::XMLElement* dir = p_Data->FirstChildElement("Direction");
 			if (dir)
@@ -1274,10 +1276,16 @@ public:
 		p_Printer.CloseElement();
 	}
 
-	void setPosition(Vector3 p_Position)
+	//void setPosition(Vector3 p_Position)
+	//{
+	//	m_Light.position = p_Position;
+	//	m_Owner->getEventManager()->queueEvent(IEventData::Ptr(new UpdateLightPositionEventData(m_Light.id, p_Position)));
+	//}
+
+	void setPosition(Vector3 p_Position) override
 	{
-		m_Light.position = p_Position;
-		m_Owner->getEventManager()->queueEvent(IEventData::Ptr(new UpdateLightPositionEventData(m_Light.id, p_Position)));
+		m_Light.position = p_Position + m_Offset;
+		m_Owner->getEventManager()->queueEvent(IEventData::Ptr(new UpdateLightPositionEventData(m_Light.id, m_Light.position)));
 	}
 
 	const Vector3& getPosition() const
