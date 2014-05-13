@@ -27,6 +27,7 @@ public slots:
 
 signals:
 	void addTableObject(std::string p_ObjectName);
+	void removeActor(int id);
 
 private:
     void removeChild(QTreeWidgetItem* currItem);

@@ -135,6 +135,9 @@ void MainWindow::signalAndSlotsDefinitions()
 
 	//Signals and slots for connecting the light intensity editing to the light
     QObject::connect(ui->m_LightAdditionalBox1, SIGNAL(editingFinished()), this, SLOT(setLightIntensity()));
+
+	//Signal and slot for removing actor when pressing remove in the tree.
+	QObject::connect(ui->m_ObjectTree, SIGNAL(removeActor(int)), m_ObjectManager.get(), SLOT(actorRemoved(int)));
 }
 
 void MainWindow::pushBoxes()

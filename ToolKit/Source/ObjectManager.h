@@ -39,9 +39,11 @@ public:
 	Actor::ptr getActor(Actor::Id p_Id);
 	Actor::ptr getActorFromBodyHandle(BodyHandle p_BodyHandle);
 
-
 public:
 signals:
 	void actorAdded(std::string p_ObjectType, Actor::ptr p_Actor);
 	void objectTypeCreated(std::string p_ObjectName);
+
+private slots:
+	void actorRemoved(int actorID);
 };

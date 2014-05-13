@@ -35,35 +35,6 @@ void ObjectManager::loadLevel(const std::string& p_Filename)
 
 	for(const auto &actor : m_ActorList)
 	{
-		//std::string objectName = "Object";
-		//int type = 5;
-		//std::weak_ptr<LightComponent> lmodel = actor.second->getComponent<LightComponent>(LightInterface::m_ComponentId);
-		//std::shared_ptr<LightComponent> slmodel = lmodel.lock();
-		//if(slmodel)
-		//{
-		//	switch(slmodel->getType())
-		//	{
-		//	case LightClass::Type::DIRECTIONAL: objectName = "Directional"; break;
-		//	case LightClass::Type::SPOT: objectName = "Spot"; break;
-		//	case LightClass::Type::POINT: objectName = "Point"; break;
-		//	}
-		//	type = (int)slmodel->getType();
-		//}
-		//std::weak_ptr<ParticleComponent> pmodel = actor.second->getComponent<ParticleComponent>(ParticleInterface::m_ComponentId);
-		//std::shared_ptr<ParticleComponent> spmodel = pmodel.lock();
-		//if(spmodel)
-		//{
-		//	objectName = spmodel->getEffectName();
-		//	type = 4;
-		//}
-		//std::weak_ptr<ModelComponent> model = actor.second->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
-		//std::shared_ptr<ModelComponent> smodel = model.lock();
-		//if(smodel)
-		//{
-		//	objectName = smodel->getMeshName();
-		//	type = 3;
-		//}
-
 		emit actorAdded("", actor.second);
 	}
 }
@@ -164,4 +135,9 @@ void ObjectManager::loadDescriptionsFromFolder(const std::string& p_Path)
 
 		registerObjectDescription(descName, root);
 	}
+}
+
+void ObjectManager::actorRemoved(int actorID)
+{
+	m_ActorList.removeActor(actorID);
 }

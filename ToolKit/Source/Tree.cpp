@@ -17,8 +17,6 @@ void Tree::clearTree()
 
 void Tree::selectItem(int p_ActorId)
 {
-
-
 	QTreeWidgetItem *previous = currentItem();
 	
 	QTreeWidgetItem *currItem;
@@ -110,8 +108,28 @@ void Tree::removeChild(QTreeWidgetItem* currItem)
                 removeChild(currChild);
             }
             else
+			{
+				TreeItem* treeItem = (TreeItem*)currChild;
+
+				if(treeItem)
+				{
+					int id = treeItem->getActorId();
+
+					emit removeActor(id);
+				}
+
                 delete currChild;
+			}
         }
+
+		TreeItem* treeItem = (TreeItem*)currItem;
+
+		if(treeItem)
+		{
+			int id = treeItem->getActorId();
+
+			emit removeActor(id);
+		}
 
         delete currItem;
     }
