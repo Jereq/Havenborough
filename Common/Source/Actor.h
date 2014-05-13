@@ -134,6 +134,7 @@ public:
 	}
 
 	void serialize(std::ostream& p_Stream) const;
+	void serialize(tinyxml2::XMLPrinter& p_Printer) const;
 
 	/**
 	 * Get a matrix representation of the actors position and rotation in the world.
