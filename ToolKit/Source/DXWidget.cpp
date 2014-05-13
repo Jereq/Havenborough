@@ -131,7 +131,7 @@ void DXWidget::mouseMoveEvent(QMouseEvent* e)
 			dotMouseDir = sqrtf(dotMouseDir);
 			mouseDir = mouseDir / dotMouseDir;
 
-			m_MouseDir = m_MouseDirPrev * 0.9f + mouseDir * 0.1f;
+			m_MouseDir = m_MouseDirPrev * 0.95f + mouseDir * 0.05f;
 
 			float a = atan2f(-m_MouseDir.x(), m_MouseDir.y());
 

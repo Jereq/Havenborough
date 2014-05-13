@@ -16,6 +16,15 @@ private:
 	bool m_PowerPieActive;
 	std::map<std::string, int> m_GUI;
 
+	std::vector<Vector2> m_RelativeIconPositions;
+
+	enum class DRAW
+	{
+		LOW,
+		MEDIUM,
+		HIGH
+	};
+
 	struct PowerPie
 	{
 		Vector2 position;
