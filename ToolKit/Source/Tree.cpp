@@ -16,6 +16,8 @@ void Tree::clearTree()
 
 void Tree::selectItem(int p_ActorId)
 {
+	clearSelection();
+
 	int tempId = p_ActorId;
 	for(int i = 0; i < topLevelItemCount(); i++)
 	{
