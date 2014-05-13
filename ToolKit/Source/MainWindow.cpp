@@ -80,9 +80,7 @@ void MainWindow::signalAndSlotsDefinitions()
     QObject::connect(this, SIGNAL(setCameraPositionSignal(Vector3)), ui->m_RenderWidget, SLOT(CameraPositionSet(Vector3)));
 
     //Signals and slots for connecting the object creation to the trees
-	QObject::connect(m_ObjectManager.get(), SIGNAL(meshCreated(std::string, int)), ui->m_ObjectTree, SLOT(objectCreated(std::string, int)));
-	QObject::connect(m_ObjectManager.get(), SIGNAL(lightCreated(std::string, int)), ui->m_LightTree, SLOT(objectCreated(std::string, int)));
-	QObject::connect(m_ObjectManager.get(), SIGNAL(particleCreated(std::string, int)), ui->m_ParticleTree, SLOT(objectCreated(std::string, int)));
+	QObject::connect(m_ObjectManager.get(), SIGNAL(actorAdded(std::string,  Actor::ptr)), this, SLOT(onActorAdded(std::string, Actor::ptr)));
 
     //Signals and slots for connecting the object scale editing to the object
     QObject::connect(ui->m_ObjectScaleXBox, SIGNAL(editingFinished()), this, SLOT(setObjectScale()));
@@ -415,6 +413,36 @@ void MainWindow::on_m_ObjectTree_currentItemChanged(QTreeWidgetItem *current, QT
             spmodel->setColorTone(Vector3(1,1,1));
         }
     }
+}
+
+void MainWindow::onActorAdded(std::string p_ObjectType, Actor::ptr p_Actor)
+{
+	std::weak_ptr<ModelComponent> model = p_Actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
+	std::shared_ptr<ModelComponent> smodel = model.lock();
+	if(smodel)
+	{
+		ui->m_ObjectTree->objectCreated(p_ObjectType, p_Actor->getId());
+	}
+	std::weak_ptr<LightComponent> lmodel = p_Actor->getComponent<LightComponent>(LightInterface::m_ComponentId);
+	std::shared_ptr<LightComponent> slmodel = lmodel.lock();
+	if(slmodel)
+	{
+		std::string lightype = "Unknown";
+		switch(slmodel->getType())
+		{
+		case LightClass::Type::DIRECTIONAL: lightype = "Directional"; break;
+		case LightClass::Type::SPOT: lightype = "Spot"; break;
+		case LightClass::Type::POINT: lightype = "Point"; break;
+		}
+		
+		ui->m_LightTree->objectCreated(p_ObjectType, p_Actor->getId());
+	}
+	std::weak_ptr<ParticleComponent> pmodel = p_Actor->getComponent<ParticleComponent>(ParticleInterface::m_ComponentId);
+	std::shared_ptr<ParticleComponent> spmodel = pmodel.lock();
+	if(spmodel)
+	{
+		ui->m_ParticleTree->objectCreated(p_ObjectType, p_Actor->getId());
+	}
 }
 
 void MainWindow::pick(IEventData::Ptr p_Data)
