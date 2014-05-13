@@ -858,7 +858,7 @@ BodyHandle Physics::rayCast(const XMFLOAT4 &p_RayDirection, const XMFLOAT4 &p_Ra
 	float dist = FLT_MAX;
 	BodyHandle body = 0;
 
-	for(unsigned int i = 1; i < m_Bodies.size(); i++)
+	for(unsigned int i = 0; i < m_Bodies.size(); i++)
 	{
 		Body &b = m_Bodies[i];
 		if(!b.getIsImmovable())
