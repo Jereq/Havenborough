@@ -3,6 +3,7 @@
 #include <QMainWindow>
 #include <QTimer>
 
+#include <Actor.h>
 #include <EventManager.h>
 #include <Utilities\XMFloatUtil.h>
 
@@ -79,6 +80,7 @@ private slots:
 	void addObject(QTableWidgetItem* p_ObjectItem);
 
     void on_m_ObjectTree_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
+	void onActorAdded(std::string p_ObjectType, Actor::ptr p_Actor);
 
 signals:
     void setCameraPositionSignal(Vector3 p_CameraPosition);
