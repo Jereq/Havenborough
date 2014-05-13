@@ -1,0 +1,40 @@
+<ObjectDescription Name="Wall2v2">
+    <Object x="0.000000" y="0.000000" z="0.000000" yaw="0.000000" pitch="0.000000" roll="0.000000">
+        <Model Mesh="Wall2v2">
+            <Scale x="1.000000" y="1.000000" z="1.000000"/>
+        </Model>
+        <MeshPhysics Mesh="Wall2v2">
+            <Scale x="1.000000" y="1.000000" z="1.000000"/>
+        </MeshPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="40.549454"/>
+            <OffsetPosition x="-86.779236" y="71.988258" z="0.000000"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="40.549454"/>
+            <OffsetPosition x="-157.677109" y="71.961845" z="0.000000"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="125.499908"/>
+            <OffsetPosition x="46.509396" y="18.141657" z="41.370659"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="125.499908"/>
+            <OffsetPosition x="46.509396" y="18.141657" z="-40.938667"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="34.824238"/>
+            <OffsetPosition x="-122.203949" y="72.001297" z="41.370659"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="34.824238"/>
+            <OffsetPosition x="-122.203949" y="72.001297" z="-40.857643"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+    </Object>
+</ObjectDescription>

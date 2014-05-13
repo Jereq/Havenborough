@@ -8,7 +8,7 @@
 
 *Materials
 Material: TurnRoad:Road
-DiffuseMap: StreetTilesGray_COLOR.dds
+DiffuseMap: StreetTiles_COLOR.dds
 NormalMap: StreetTiles_NRM.dds
 SpecularMap: Default_SPEC.dds
 

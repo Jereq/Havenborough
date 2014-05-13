@@ -1,0 +1,265 @@
+<ObjectDescription Name="House6v2">
+    <Object x="0.000000" y="0.000000" z="0.000000" yaw="0.000000" pitch="0.000000" roll="0.000000">
+        <Model Mesh="House6v2">
+            <Scale x="1.000000" y="1.000000" z="1.000000"/>
+        </Model>
+        <MeshPhysics Mesh="House6v2">
+            <Scale x="1.000000" y="1.000000" z="1.000000"/>
+        </MeshPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="730.939453"/>
+            <OffsetPosition x="1377.615723" y="459.930786" z="-41.654198"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="347.038727"/>
+            <OffsetPosition x="825.033264" y="459.930786" z="340.719421"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="375.390106"/>
+            <OffsetPosition x="1099.180786" y="282.678711" z="830.136658"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="92.320023"/>
+            <OffsetPosition x="1105.956787" y="449.204926" z="794.069641"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="42.529381"/>
+            <OffsetPosition x="1196.461426" y="440.178497" z="750.807312"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="42.529381"/>
+            <OffsetPosition x="1013.877686" y="440.178497" z="747.700073"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="28.723497"/>
+            <OffsetPosition x="409.545380" y="441.670929" z="39.449093"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="92.320023"/>
+            <OffsetPosition x="320.001282" y="449.107117" z="66.997665"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="29.300383"/>
+            <OffsetPosition x="226.961639" y="441.670929" z="38.847973"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="92.320023"/>
+            <OffsetPosition x="-331.761261" y="449.282684" z="67.841782"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="31.470280"/>
+            <OffsetPosition x="-423.010712" y="441.253082" z="36.267124"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="30.850672"/>
+            <OffsetPosition x="-240.426971" y="441.253082" z="36.334000"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="92.320023"/>
+            <OffsetPosition x="-1106.963379" y="448.143188" z="789.427490"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="38.126324"/>
+            <OffsetPosition x="-1010.143799" y="437.314819" z="749.231873"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="39.692982"/>
+            <OffsetPosition x="-1198.216553" y="439.380585" z="744.844788"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="92.320023"/>
+            <OffsetPosition x="-924.232727" y="447.202087" z="-846.385132"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="32.433434"/>
+            <OffsetPosition x="-1016.444092" y="438.227203" z="-815.836975"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="32.870422"/>
+            <OffsetPosition x="-833.860352" y="438.227203" z="-817.206665"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="92.320023"/>
+            <OffsetPosition x="-9.425355" y="445.631104" z="-847.220520"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="31.566122"/>
+            <OffsetPosition x="81.772316" y="440.140808" z="-817.137024"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="31.146473"/>
+            <OffsetPosition x="-100.811424" y="440.140808" z="-817.143311"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="92.320023"/>
+            <OffsetPosition x="916.597473" y="440.080597" z="-849.372192"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="28.592590"/>
+            <OffsetPosition x="1010.321472" y="432.709930" z="-821.328003"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="28.212473"/>
+            <OffsetPosition x="827.737732" y="432.709930" z="-821.752075"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="1369.629639"/>
+            <OffsetPosition x="3.171668" y="459.930786" z="-769.711487"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="815.644287"/>
+            <OffsetPosition x="4.132722" y="459.930786" z="-5.360795"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="339.290558"/>
+            <OffsetPosition x="-818.689880" y="459.930786" z="341.763214"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="728.791565"/>
+            <OffsetPosition x="-1371.271973" y="459.930786" z="-40.845787"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="278.218384"/>
+            <OffsetPosition x="-1094.497925" y="459.930786" z="686.476868"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="42.749065"/>
+            <OffsetPosition x="-1093.080444" y="557.993164" z="-549.609924"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="42.863346"/>
+            <OffsetPosition x="-1053.773682" y="557.993164" z="-590.136658"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="52.793808"/>
+            <OffsetPosition x="-1200.244873" y="606.382874" z="-639.459534"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="52.016140"/>
+            <OffsetPosition x="-1250.929443" y="606.382874" z="-589.091858"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="42.884438"/>
+            <OffsetPosition x="-1092.277588" y="557.993164" z="-630.782532"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="52.793808"/>
+            <OffsetPosition x="-1199.314331" y="606.382874" z="-538.597473"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="52.016140"/>
+            <OffsetPosition x="-1150.067383" y="606.382874" z="-588.948669"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="52.793808"/>
+            <OffsetPosition x="1212.561646" y="607.835938" z="-642.029480"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="52.793808"/>
+            <OffsetPosition x="1214.248413" y="607.835938" z="-538.834412"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="52.016140"/>
+            <OffsetPosition x="1162.851440" y="607.835938" z="-590.181702"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="52.016140"/>
+            <OffsetPosition x="1266.046509" y="607.835938" z="-589.726563"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="42.749065"/>
+            <OffsetPosition x="1113.302368" y="557.993164" z="-549.609924"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="42.863346"/>
+            <OffsetPosition x="1073.347168" y="557.993164" z="-590.351929"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="42.884438"/>
+            <OffsetPosition x="1113.302368" y="557.993164" z="-630.782532"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="281.349884"/>
+            <OffsetPosition x="1105.956787" y="459.930786" z="686.476868"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="846.394775"/>
+            <OffsetPosition x="1474.223877" y="282.678711" z="-23.098305"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="1467.862793"/>
+            <OffsetPosition x="0.716870" y="282.678711" z="-877.009338"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="848.138794"/>
+            <OffsetPosition x="-1471.060303" y="282.678711" z="-26.727699"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="366.797211"/>
+            <OffsetPosition x="-1099.258057" y="282.678711" z="820.625488"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="366.993164"/>
+            <OffsetPosition x="-723.037354" y="282.678711" z="464.119812"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="715.289001"/>
+            <OffsetPosition x="3.661238" y="282.678711" z="101.199295"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="5.000000" y="5.000000" z="365.100037"/>
+            <OffsetPosition x="726.403137" y="282.678711" z="469.095490"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+    </Object>
+</ObjectDescription>

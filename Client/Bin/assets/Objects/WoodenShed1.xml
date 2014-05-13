@@ -1,0 +1,25 @@
+<ObjectDescription Name="WoodenShed1">
+    <Object x="0.000000" y="0.000000" z="0.000000" yaw="0.000000" pitch="0.000000" roll="0.000000">
+        <Model Mesh="WoodenShed1">
+            <Scale x="1.000000" y="1.000000" z="1.000000"/>
+        </Model>
+        <MeshPhysics Mesh="WoodenShed1">
+            <Scale x="1.000000" y="1.000000" z="1.000000"/>
+        </MeshPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="97.025902" y="5.000000" z="5.000000"/>
+            <OffsetPosition x="-2.881995" y="114.979980" z="109.692924"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="0.191986"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="97.025902" y="5.000000" z="5.000000"/>
+            <OffsetPosition x="-2.881995" y="114.979980" z="-109.692924"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="0.191986"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="109.635246" y="5.000000" z="5.000000"/>
+            <OffsetPosition x="-99.102295" y="96.095657" z="0.000000"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+    </Object>
+</ObjectDescription>

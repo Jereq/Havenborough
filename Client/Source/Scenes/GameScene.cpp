@@ -421,6 +421,11 @@ void GameScene::setSoundManager(ISound *p_SoundManager)
 	m_SoundManager = p_SoundManager;
 }
 
+void GameScene::setResolution(Vector2 p_Resolution)
+{
+	m_WindowSize = p_Resolution;
+}
+
 /*########## TEST FUNCTIONS ##########*/
 
 int GameScene::getID()
@@ -799,7 +804,6 @@ void GameScene::preLoadModels()
 	//DO NOT MAKE ANY CALLS TO GRAPHICS IN HERE!
 	m_ResourceIDs.push_back(m_ResourceManager->loadResource("particleSystem", "TestParticle"));
 	m_ResourceIDs.push_back(m_ResourceManager->loadResource("model", "Pivot1"));
-
 }
 
 void GameScene::releasePreLoadedModels()

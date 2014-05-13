@@ -23,8 +23,8 @@ NormalMap: RoofTileCheck_NRM.dds
 SpecularMap: Default_SPEC.dds
 
 Material: lambert1
-DiffuseMap: Default_COLOR.dds
-NormalMap: Default_NRM.dds
+DiffuseMap: RoofTileCheck_COLOR.dds
+NormalMap: RoofTileCheck_NRM.dds
 SpecularMap: Default_SPEC.dds
 
 Material: wood2

@@ -81,7 +81,7 @@ private:
 	void updateParticlePosition(IEventData::Ptr p_Data);
 	void updateParticleRotation(IEventData::Ptr p_Data);
 	void updateParticleBaseColor(IEventData::Ptr p_Data);
-
+	void pick(IEventData::Ptr p_Data);
 	void selectPie(IEventData::Ptr p_Data);
 	void activatePowerPie(IEventData::Ptr p_Data);
 	void createPowerPieElement();

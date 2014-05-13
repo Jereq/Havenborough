@@ -772,7 +772,7 @@ void Graphics::renderModel(InstanceId p_ModelId)
 				Renderable::Type::DEFERRED_OBJECT, modelDef,
 				model.getWorldMatrix(),
 				&model.getFinalTransform(),
-				nullptr,
+				&model.getColorTone(),
 				model.getSelectedMaterialSet()));
 		}
 		else
@@ -1234,6 +1234,15 @@ void Graphics::setFOV(float p_FOV)
 	}
 }
 
+DirectX::XMFLOAT4X4 Graphics::getView() const
+{
+	return m_ViewMatrix;
+}
+
+DirectX::XMFLOAT4X4 Graphics::getProj() const
+{
+	return m_ProjectionMatrix;
+}
 
 void Graphics::createDefaultShaders(void)
 {

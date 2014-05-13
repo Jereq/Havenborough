@@ -90,11 +90,31 @@ public:
 	*/
 	static HitData HullVsSphere(Hull const &p_Hull, Sphere const &p_Sphere);
 
+
+	/**
+	 * Check if a ray intersects with a body.
+	 * @param, p_Sphere the sphere surrounding the body to test against
+	 * @param, p_RayDir direction of the ray in world space
+	 * @param, p_RayOrigin origin of the ray in world space
+	 * @returns true if there an intersection otherwise false
+	 */
+	static float raySphereIntersect(const Sphere &p_Sphere, const DirectX::XMFLOAT4 &p_RayDirection, const DirectX::XMFLOAT4 &p_RayOrigin);
+	
+	/**
+	 * Check if a ray intersects with a body.
+	 * @param, p_Hull the hull representing the body to test against
+	 * @param, p_RayDir direction of the ray in world space
+	 * @param, p_RayOrigin origin of the ray in world space
+	 * @returns true if there an intersection otherwise false
+	 */
+	static float Collision::rayTriangleIntersect(const Hull &p_Hull, const DirectX::XMFLOAT4 &p_RayDirection, const DirectX::XMFLOAT4 &p_RayOrigin);
+
 private:
 	static HitData SATBoxVsBox(OBB const &p_OBB, BoundingVolume const &p_vol);
 	static HitData SATBoxVsHull(OBB const &p_OBB, Hull const &p_Hull);
 	static void checkCollisionDepth(float p_RA, float p_RB, float p_R, float &p_Overlap, DirectX::XMVECTOR p_L, DirectX::XMVECTOR &p_Least);
 	static bool checkCollision(DirectX::XMVECTOR p_Axis, float p_TriangleProjection0, float p_TriangleProjection1,
 							   float p_BoxProjection, float &p_Overlap, DirectX::XMVECTOR &p_Least);
+
 };
 

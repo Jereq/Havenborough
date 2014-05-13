@@ -1997,4 +1997,90 @@ public:
 		return m_Velocity;
 	}
 };
+
+class CreateRayEventData : public BaseEventData
+{
+private:
+	DirectX::XMFLOAT2 m_MousePos;
+	DirectX::XMFLOAT2 m_Resolution;
+public:
+	static const Type sk_EventType = (0x3917705f);
+
+
+	CreateRayEventData(DirectX::XMFLOAT2 p_MousePos, DirectX::XMFLOAT2 p_Resolution) 
+		: m_MousePos(p_MousePos), m_Resolution(p_Resolution)
+	{
+	}
+
+	virtual const Type &getEventType(void) const override
+	{
+		return sk_EventType;
+	}
+
+	virtual Ptr copy(void) const override
+	{
+		return Ptr(new CreateRayEventData(m_MousePos, m_Resolution));
+	}
+
+	virtual const char *getName(void) const override
+	{
+		return "CreateRayEventData";
+	}
+	virtual void serialize(std::ostream &p_Out) const override
+	{
+	}
+
+	DirectX::XMFLOAT2 getMousePos()
+	{
+		return m_MousePos;
+	}
+	DirectX::XMFLOAT2 getResolution()
+	{
+		return m_Resolution;
+	}
+};
+
+class CreatePickingEventData : public BaseEventData
+{
+private:
+	DirectX::XMFLOAT4 m_RayDir;
+	DirectX::XMFLOAT4 m_RayOrigin;
+
+public:
+	static const Type sk_EventType = (0x823bc110);
+
+
+	CreatePickingEventData(DirectX::XMFLOAT4 p_RayDir, DirectX::XMFLOAT4 p_RayOrigin) 
+		: m_RayDir(p_RayDir), m_RayOrigin(p_RayOrigin)
+	{
+	}
+
+	virtual const Type &getEventType(void) const override
+	{
+		return sk_EventType;
+	}
+
+	virtual Ptr copy(void) const override
+	{
+		return Ptr(new CreatePickingEventData(m_RayDir, m_RayOrigin));
+	}
+
+	virtual const char *getName(void) const override
+	{
+		return "CreatePickingEventData";
+	}
+	virtual void serialize(std::ostream &p_Out) const override
+	{
+	}
+
+	DirectX::XMFLOAT4 getRayDir()
+	{
+		return m_RayDir;
+	}
+	DirectX::XMFLOAT4 getRayOrigin()
+	{
+		return m_RayOrigin;
+	}
+};
+
 #pragma warning(pop)

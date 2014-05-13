@@ -316,4 +316,12 @@ public:
 	virtual bool validBody(BodyHandle p_BodyHandle) = 0;
 
 	virtual float getTimestep() const = 0;
+
+	/**
+	 * Check if a ray intersects with a body.
+	 * @param, p_RayDir direction of the ray in world space
+	 * @param, p_RayOrigin origin of the ray in world space
+	 * @returns the first body that intersects with the ray
+	 */
+	virtual BodyHandle rayCast(const DirectX::XMFLOAT4 &p_RayDirection, const DirectX::XMFLOAT4 &p_RayOrigin) = 0;
 };

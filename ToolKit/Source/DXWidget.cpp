@@ -3,6 +3,7 @@
 #include <qevent.h>
 #include <QMainWindow>
 #include <QStatusBar>
+#include "EventData.h"
 
 DXWidget::DXWidget(QWidget* parent, Qt::WindowFlags flags)
 	: QWidget(parent, flags),
@@ -83,6 +84,8 @@ void DXWidget::mousePressEvent(QMouseEvent* e)
 	{
 		if ((e->buttons() & Qt::LeftButton) && !(e->buttons() & Qt::RightButton))
 		{
+			m_EventManager->triggerTriggerEvent(IEventData::Ptr(new CreateRayEventData(DirectX::XMFLOAT2(e->localPos().x(), e->localPos().y()),
+																						DirectX::XMFLOAT2(width(), height()))));
 			//showStatus(tr("Tumble Tool: LMB Drag: Use LMB or MMB to tumble"));
 			setCursor(Qt::OpenHandCursor);
 		}

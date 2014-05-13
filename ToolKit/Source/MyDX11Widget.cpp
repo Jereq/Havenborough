@@ -38,6 +38,7 @@ void MyDX11Widget::initialize(EventManager* p_EventManager, ResourceManager* p_R
 	m_EventManager->addListener(EventListenerDelegate(this, &MyDX11Widget::updateParticleBaseColor), UpdateParticleBaseColorEventData::sk_EventType);
 	m_EventManager->addListener(EventListenerDelegate(this, &MyDX11Widget::activatePowerPie), MouseEventDataPie::sk_EventType);
 	m_EventManager->addListener(EventListenerDelegate(this, &MyDX11Widget::selectPie), PowerPieSelectEventData::sk_EventType);
+	m_EventManager->addListener(EventListenerDelegate(this, &MyDX11Widget::pick), CreateRayEventData::sk_EventType);
 
 	m_ResourceIDs.push_back(m_ResourceManager->loadResource("particleSystem", "TestParticle"));
 
@@ -314,6 +315,36 @@ void MyDX11Widget::updateParticleBaseColor(IEventData::Ptr p_Data)
 	{
 		m_Graphics->setParticleEffectBaseColor(it->second.instance, data->getBaseColor());
 	}
+}
+
+void MyDX11Widget::pick(IEventData::Ptr p_Data)
+{
+	std::shared_ptr<CreateRayEventData> data = std::static_pointer_cast<CreateRayEventData>(p_Data);
+
+	DirectX::XMFLOAT4X4 fView = m_Graphics->getView();
+	DirectX::XMFLOAT4X4 fProj = m_Graphics->getProj();
+	DirectX::XMMATRIX mWorld = DirectX::XMMatrixIdentity();
+	DirectX::XMMATRIX mView = DirectX::XMLoadFloat4x4(&fView);
+	DirectX::XMMATRIX mProj = DirectX::XMLoadFloat4x4(&fProj);
+	mView = XMMatrixTranspose(mView);
+	mProj = XMMatrixTranspose(mProj);
+
+	DirectX::XMVECTOR cursorScreenSpace = DirectX::XMVectorSet(data->getMousePos().x, data->getMousePos().y, 0.f, 1.f);
+	DirectX::XMVECTOR unprojectedCursor = DirectX::XMVector3Unproject(cursorScreenSpace, 0.f, 0.f, data->getResolution().x, data->getResolution().y, 0.f, 1.f, mProj, mView, mWorld);
+
+	DirectX::XMMATRIX invView = XMMatrixInverse(nullptr, mView);
+	DirectX::XMVECTOR vRayOrigin =  invView.r[3];
+
+	using DirectX::operator-;
+	DirectX::XMVECTOR direction = unprojectedCursor - vRayOrigin;
+	
+	direction = DirectX::XMVector3Normalize(direction);
+
+ 	DirectX::XMFLOAT4 fRayDir, fRayOrigin;
+	DirectX::XMStoreFloat4(&fRayDir, direction);
+	DirectX::XMStoreFloat4(&fRayOrigin, vRayOrigin);
+
+	m_EventManager->triggerTriggerEvent(IEventData::Ptr(new CreatePickingEventData(fRayDir, fRayOrigin)));
 }
 
 void MyDX11Widget::selectPie(IEventData::Ptr p_Data)

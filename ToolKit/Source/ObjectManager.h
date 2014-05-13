@@ -1,44 +1,49 @@
 #pragma once
 
 #include <map>
+#include <memory>
 #include <string>
-
-#include <ActorFactory.h>
-
-class EventManager;
-class ResourceManager;
 
 #include <QObject>
 
-#include "Components.h"
+#include <tinyxml2\tinyxml2.h>
 
+#include <ActorList.h>
+
+class ActorFactory;
+class EventManager;
+class ResourceManager;
 
 class ObjectManager : public QObject
 {
 	Q_OBJECT
 
 private:
-	ActorFactory::ptr m_ActorFactory;
+	std::shared_ptr<ActorFactory> m_ActorFactory;
 	ActorList m_ActorList;
 	EventManager* m_EventManager;
 	ResourceManager* m_ResourceManager;
-	std::map<std::string, std::string> m_ObjectDescriptions;
+	std::map<std::string, std::unique_ptr<tinyxml2::XMLDocument>> m_ObjectDescriptions;
 
 public:
-	ObjectManager(ActorFactory::ptr p_ActorFactory, EventManager* p_EventManager, ResourceManager* p_ResourceManager);
+	ObjectManager(std::shared_ptr<ActorFactory> p_ActorFactory, EventManager* p_EventManager, ResourceManager* p_ResourceManager);
 	~ObjectManager();
 
 	void update(float p_DeltaTime);
 
 	void loadLevel(const std::string& p_Filename);
 	void addObject(const std::string& p_ObjectName, const Vector3& p_Position);
-	void registerObjectDescription(const std::string& p_ObjectName, const std::string& p_Description);
+	void registerObjectDescription(const std::string& p_ObjectName, const tinyxml2::XMLNode* p_Description);
+	void loadDescriptionsFromFolder(const std::string& p_Path);
 
 	Actor::ptr getActor(Actor::Id p_Id);
+	Actor::ptr getActorFromBodyHandle(BodyHandle p_BodyHandle);
+
 
 public:
 signals:
 	void meshCreated(std::string p_MeshName, int p_ActorId);
 	void lightCreated(std::string p_LightName, int p_ActorId);
 	void particleCreated(std::string p_ParticleName, int p_ActorId);
+	void objectTypeCreated(std::string p_ObjectName);
 };

@@ -1,0 +1,23 @@
+<ObjectDescription Name="Dzala">
+	<Object x="0.000000" y="0.000000" z="0.000000">
+		<Model Mesh="Dzala" Style="Red"/>
+		<PlayerPhysics RadiusMain="30.000000" RadiusAnkle="10.000000" RadiusHead="25.000000" Mass="68.000000" FallTolerance="0.500000">
+			<HalfsizeBox x="25.000000" y="60.000000" z="25.000000"/>
+			<OffsetPositionSphereMain x="0.000000" y="35.000000" z="0.000000"/>
+			<OffsetPositionSphereHead x="0.000000" y="140.000000" z="0.000000"/>
+			<OffsetPositionBox x="0.000000" y="110.000000" z="0.000000"/>
+		</PlayerPhysics>
+		<TextComponent Text="Player">
+			<TextSettings Font="Segoe UI" FontSize="20" Scale="1" Rotation="0"/>
+			<BackgroundColor r="0.000000" g="0.000000" b="0.000000" a="0.400000"/>
+			<FontColor r="0.800000" g="0.800000" b="0.800000" a="1.000000"/>
+			<OffsetPosition x="0.000000" y="190.000000" z="0.000000"/>
+		</TextComponent>
+		<Pulse Length="0.500000" Strength="0.500000"/>
+		<Look>
+			<OffsetPosition x="0.000000" y="-10.000000" z="7.000000"/>
+		</Look>
+		<HumanAnimation Animation="Dzala"/>
+		<RunControl MaxSpeed="1500.000000" MaxSpeedDefault="900.000000" Acceleration="600.000000"/>
+	</Object>
+</ObjectDescription>

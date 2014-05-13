@@ -1,21 +1,34 @@
-#ifndef EXTENDEDTABLEWIDGET_H
-#define EXTENDEDTABLEWIDGET_H
+#ifndef TABLE_H
+#define TABLE_H
 
 #include <QTableWidget>
 
-class ExtendedTableWidget : public QTableWidget
+class Table : public QTableWidget
 {
-Q_OBJECT
-public:
-    explicit ExtendedTableWidget(QWidget *parent = 0) : QTableWidget(parent)
-    {
-    }
+	Q_OBJECT
+
 private:
+	struct intVec2
+	{
+		unsigned int x;
+		unsigned int y;
 
-protected:
+		intVec2()
+		{
+			x = y = 0;
+		}
+	};
+	intVec2 m_TableIndex;
+
+public:
+    Table(QWidget* parent);
 
 
-    // QAbstractItemView interface
+public slots:
+	void addObject(std::string p_ObjectName);
+
+signals:
+
 protected:
     QStyleOptionViewItem viewOptions() const
     {
@@ -25,8 +38,7 @@ protected:
         option.decorationSize = QSize(200, 200);
 		
         return option;
-
     }
 };
 
-#endif // EXTENDEDTABLEWIDGET_H
+#endif // TABLE_H
