@@ -11,7 +11,8 @@ public:
         POINTLIGHT,
         SPOTLIGHT,
         MODEL,
-        PARTICLE
+        PARTICLE,
+		UNKNOWN
     };
     explicit TreeItem();
     TreeItem(std::string p_ItemName, int p_ActorId, int p_Type);

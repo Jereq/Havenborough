@@ -35,37 +35,36 @@ void ObjectManager::loadLevel(const std::string& p_Filename)
 
 	for(const auto &actor : m_ActorList)
 	{
-		std::weak_ptr<ModelComponent> model = actor.second->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
-		std::shared_ptr<ModelComponent> smodel = model.lock();
-		if(smodel)
-		{
-			emit actorAdded(smodel->getMeshName(), actor.second);
-			continue;
-		}
-		std::weak_ptr<LightComponent> lmodel = actor.second->getComponent<LightComponent>(LightInterface::m_ComponentId);
-		std::shared_ptr<LightComponent> slmodel = lmodel.lock();
-		if(slmodel)
-		{
-			std::string lightype = "Unknown";
-			switch(slmodel->getType())
-			{
-			case LightClass::Type::DIRECTIONAL: lightype = "Directional"; break;
-			case LightClass::Type::SPOT: lightype = "Spot"; break;
-			case LightClass::Type::POINT: lightype = "Point"; break;
-			}
-		
-			emit actorAdded(lightype, actor.second);
-			continue;
-		}
-		std::weak_ptr<ParticleComponent> pmodel = actor.second->getComponent<ParticleComponent>(ParticleInterface::m_ComponentId);
-		std::shared_ptr<ParticleComponent> spmodel = pmodel.lock();
-		if(spmodel)
-		{
-			emit actorAdded(spmodel->getEffectName(), actor.second);
-			continue;
-		}
+		//std::string objectName = "Object";
+		//int type = 5;
+		//std::weak_ptr<LightComponent> lmodel = actor.second->getComponent<LightComponent>(LightInterface::m_ComponentId);
+		//std::shared_ptr<LightComponent> slmodel = lmodel.lock();
+		//if(slmodel)
+		//{
+		//	switch(slmodel->getType())
+		//	{
+		//	case LightClass::Type::DIRECTIONAL: objectName = "Directional"; break;
+		//	case LightClass::Type::SPOT: objectName = "Spot"; break;
+		//	case LightClass::Type::POINT: objectName = "Point"; break;
+		//	}
+		//	type = (int)slmodel->getType();
+		//}
+		//std::weak_ptr<ParticleComponent> pmodel = actor.second->getComponent<ParticleComponent>(ParticleInterface::m_ComponentId);
+		//std::shared_ptr<ParticleComponent> spmodel = pmodel.lock();
+		//if(spmodel)
+		//{
+		//	objectName = spmodel->getEffectName();
+		//	type = 4;
+		//}
+		//std::weak_ptr<ModelComponent> model = actor.second->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
+		//std::shared_ptr<ModelComponent> smodel = model.lock();
+		//if(smodel)
+		//{
+		//	objectName = smodel->getMeshName();
+		//	type = 3;
+		//}
 
-		emit actorAdded("Object", actor.second);
+		emit actorAdded("", actor.second);
 	}
 }
 

@@ -53,54 +53,37 @@ private:
     void sortPropertiesBoxes();
 
 private slots:
-    void on_actionObject_Tree_triggered();
-
+	// Engine changes
+	void addObject(QTableWidgetItem* p_ObjectItem);
+	void onActorAdded(std::string p_ObjectType, Actor::ptr p_Actor);
 	void idle();
 
-    void on_actionExit_triggered();
-
-    void on_actionOpen_triggered();
-
-    void on_actionSave_triggered();
-	
+	// Property changes
 	void splitCameraPosition(Vector3 p_cameraPosition);
-
     void setCameraPosition();
 
-    void on_actionProperties_triggered();
+    void setObjectScale();
+    void setObjectRotation();
+    void setObjectPosition();
 
-    void on_actionAdd_Object_triggered();
+	void setLightPosition();
+	void setLightColor();
+	void setLightDirection();
+	void setLightAngles();
+	void setLightRange();
+	void setLightIntensity();
 
+	// QT object changes
+	void on_m_ObjectTree_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
     void on_m_ObjectTree_itemSelectionChanged();
 
-    void on_actionParticle_Tree_triggered();
-
-    void on_actionLight_Tree_triggered();
-
-    void setObjectScale();
-
-    void setObjectRotation();
-
-    void setObjectPosition();
-	
-	void setLightPosition();
-
-	void setLightColor();
-
-	void setLightDirection();
-
-	void setLightAngles();
-
-	void setLightRange();
-
-	void setLightIntensity();
-		
-	void addObject(QTableWidgetItem* p_ObjectItem);
-
-    void on_m_LightTree_itemSelectionChanged();
-
-    void on_m_ObjectTree_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
-	void onActorAdded(std::string p_ObjectType, Actor::ptr p_Actor);
+	// QT Triggers
+	void on_actionProperties_triggered();
+    void on_actionAdd_Object_triggered();
+	void on_actionObject_Tree_triggered();
+	void on_actionExit_triggered();
+    void on_actionOpen_triggered();
+    void on_actionSave_triggered();
 
 signals:
     void setCameraPositionSignal(Vector3 p_CameraPosition);
