@@ -1,5 +1,6 @@
 #include "Collision.h"
 #include "PhysicsExceptions.h"
+#include "PhysicsLogger.h"
 #define EPSILON XMVectorGetX(g_XMEpsilon)
 using namespace DirectX;
 
@@ -966,4 +967,96 @@ bool Collision::checkCollision(XMVECTOR p_Axis, float p_TriangleProjection0, flo
 		}
 	}
 	return true;
+}
+
+float Collision::raySphereIntersect(const Sphere &p_Sphere, const XMFLOAT4 &p_RayDirection, const XMFLOAT4 &p_RayOrigin)
+{
+
+	//Intersection test starts
+
+	//Transform to object space?
+	const XMVECTOR spherePos = XMLoadFloat4(&p_Sphere.getPosition());
+	const XMVECTOR rayDir = XMLoadFloat4(&p_RayDirection);
+	const XMVECTOR rayOrigin = XMLoadFloat4(&p_RayOrigin);
+
+	const XMVECTOR length = spherePos - rayOrigin;
+	////projection of lenght onto ray direction
+	float s = XMVector3Dot(length, rayDir).m128_f32[0];
+
+	float lengthSquared = XMVector3Dot(length, length).m128_f32[0];
+	float radiusSquared = p_Sphere.getSqrRadius();
+
+	if(s < 0 && lengthSquared > radiusSquared)
+		return -1.f; //miss
+
+	////squared distance from sphere center to projection
+	float m = lengthSquared - (s*s);
+
+	if(m > radiusSquared)
+		return -1.f; //miss
+	//
+	float q = radiusSquared - m;
+	q = sqrtf(q);
+
+	float t;
+	if(lengthSquared > radiusSquared)
+	{
+		t = s - q;
+	}
+	else
+	{
+		t = s + q;
+	}
+
+	return t;
+}
+
+float Collision::rayTriangleIntersect(const Hull &p_Hull, const XMFLOAT4 &p_RayDirection, const XMFLOAT4 &p_RayOrigin)
+{
+	XMVECTOR RayDir = XMLoadFloat4(&p_RayDirection);
+	XMVECTOR RayOrigin = XMLoadFloat4(&p_RayOrigin);
+	float dist = FLT_MAX;
+
+	for(unsigned int i = 0; i < p_Hull.getTriangleListSize(); i++)
+	{
+		float tempDist = 0.f;
+		//Triangle Vertices 
+		Triangle triangle = p_Hull.getTriangleInWorldCoord(i);
+		const XMVECTOR p0 = Vector4ToXMVECTOR(&triangle.corners[0]);
+		const XMVECTOR p1 = Vector4ToXMVECTOR(&triangle.corners[1]);
+		const XMVECTOR p2 = Vector4ToXMVECTOR(&triangle.corners[2]);
+
+		//Triangle egdes 
+		const XMVECTOR e1 = p1 - p0;
+		const XMVECTOR e2 = p2 - p0;
+
+		XMVECTOR q = XMVector3Cross(RayDir, e2);
+		float a = XMVector3Dot(e1, q).m128_f32[0];
+		if(a > -EPSILON && a < EPSILON)
+			continue;
+
+		float f = 1/a; //because math!
+
+		XMVECTOR s = RayOrigin - p0;
+		float u = f * XMVector3Dot(s, q).m128_f32[0];
+		if(u < 0.f)
+			continue;
+
+		XMVECTOR r = XMVector3Cross(s, e1);
+		float v = f * XMVector3Dot(RayDir, r).m128_f32[0];
+		if(v < 0.f || (u + v) > 1.f)
+			continue;
+
+		float t = f * XMVector3Dot(e2, r).m128_f32[0];
+
+		if(t > 0.f && t < dist)
+		{
+			dist = t;
+		}
+	}
+
+	if(dist == FLT_MAX)
+		return -1.f;
+	else
+		return dist;
 }

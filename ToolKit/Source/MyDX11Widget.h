@@ -13,6 +13,26 @@ private:
 	std::vector<int> m_ResourceIDs;
 	std::vector<LightClass> m_Lights;
 
+	bool m_PowerPieActive;
+	std::map<std::string, int> m_GUI;
+
+	struct PowerPie
+	{
+		Vector2 position;
+		bool isActive;
+		Vector4 selectedColor;
+		Vector4 pieColor;
+
+
+		PowerPie()
+		{
+			position = Vector2(0.f, 0.f);
+			isActive = false;
+		}
+	};
+
+	PowerPie m_PowerPie;
+
 	struct ReachIK
 	{
 		std::string group;
@@ -61,6 +81,12 @@ private:
 	void updateParticlePosition(IEventData::Ptr p_Data);
 	void updateParticleRotation(IEventData::Ptr p_Data);
 	void updateParticleBaseColor(IEventData::Ptr p_Data);
+	void pick(IEventData::Ptr p_Data);
+	void selectPie(IEventData::Ptr p_Data);
+	void activatePowerPie(IEventData::Ptr p_Data);
+	void createPowerPieElement();
+	void preLoadModels();
+
 
 	void updateLightColor(IEventData::Ptr p_Data);
 	void updateLightDirection(IEventData::Ptr p_Data);

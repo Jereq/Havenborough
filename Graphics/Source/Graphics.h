@@ -50,6 +50,7 @@ private:
 
 	int m_ScreenHeight;
 	int m_ScreenWidth;
+
 	float m_FOV;
 	float m_FarZ;
 	float m_NearZ;
@@ -219,6 +220,9 @@ public:
 	void enableShadowMap(bool p_State) override;
 	void setShadowMapResolution(int p_ShadowMapResolution) override;
 	void setFOV(float p_FOV) override;
+
+	DirectX::XMFLOAT4X4 getView() const override;
+	DirectX::XMFLOAT4X4 getProj() const override;
 
 private:
 	void createDefaultShaders(void) override;

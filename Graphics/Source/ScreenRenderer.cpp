@@ -75,10 +75,12 @@ void ScreenRenderer::initialize(ID3D11Device *p_Device, ID3D11DeviceContext *p_D
 	createBuffers();
 }
 
-void ScreenRenderer::resize(ID3D11DepthStencilView *p_DepthStencilView, ID3D11RenderTargetView *p_RenderTarget)
+void ScreenRenderer::resize(ID3D11DepthStencilView *p_DepthStencilView, ID3D11RenderTargetView *p_RenderTarget, XMFLOAT4 p_OrthoData)
 {
 	m_DepthStencilView = p_DepthStencilView;
 	m_RenderTarget = p_RenderTarget;
+	XMStoreFloat4x4(&m_OrthoMatrix,
+		XMMatrixTranspose(XMMatrixOrthographicLH(p_OrthoData.x, p_OrthoData.y, p_OrthoData.z, p_OrthoData.w)));
 }
 
 void ScreenRenderer::add2D_Object(Renderable2D &p_Object)

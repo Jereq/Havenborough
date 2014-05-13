@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QWidget>
+#include <EventData.h>
 
 #include "Camera.h"
 #include "FlyControl.h"
@@ -20,11 +21,16 @@ protected:
 	FlyControl m_FlyControl;
 	QPointF m_PrevMousePos;
 
+	QPointF m_MouseStartPos;
+	QPointF m_MouseDir;
+	QPointF m_MouseDirPrev;
 	EventManager* m_EventManager;
 	ResourceManager* m_ResourceManager;
 
+
 public:
 	DXWidget(QWidget* parent = nullptr, Qt::WindowFlags flags = 0);
+
 
 	virtual ~DXWidget() {}
 

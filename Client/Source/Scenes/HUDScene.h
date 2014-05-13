@@ -45,6 +45,9 @@ private:
 
 	bool m_RenderCountdown;
 	bool m_RenderHUD;
+
+	bool m_PowerPieActive;
+
 	Vector3 m_CheckpointPosition;
 	Vector2 m_Resolution;
 public: 
@@ -97,6 +100,8 @@ private:
 	void onFinish(IEventData::Ptr p_Data);
 	void onSpellhit(IEventData::Ptr p_Data);
 
+	void activatePowerPie(IEventData::Ptr p_Data);
+
 	void createArrowElement();
 	void createManabarElement();
 	void createCountdownElement();
@@ -106,6 +111,8 @@ private:
 	void createDebugElement();
 	void createIndicatorElement();
 	void createCrosshairElement();
+
+	void createPowerPieElement();
 
 	void onFrameTimeElement(float p_DeltaTime);
 	void onFrameManabarElement(float p_DeltaTime);

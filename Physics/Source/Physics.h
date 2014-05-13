@@ -90,6 +90,8 @@ public:
 
 	float getTimestep() const override;
 
+	BodyHandle rayCast(const DirectX::XMFLOAT4 &p_RayDirection, const DirectX::XMFLOAT4 &p_RayOrigin) override;
+
 private:
 	Body* findBody(BodyHandle p_Body);
 	

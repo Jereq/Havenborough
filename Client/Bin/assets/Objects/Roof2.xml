@@ -1,0 +1,70 @@
+<ObjectDescription Name="Roof2">
+    <Object x="0.000000" y="0.000000" z="0.000000" yaw="0.000000" pitch="0.000000" roll="0.000000">
+        <Model Mesh="Roof2">
+            <Scale x="1.000000" y="1.000000" z="1.000000"/>
+        </Model>
+        <MeshPhysics Mesh="Roof2">
+            <Scale x="1.000000" y="1.000000" z="1.000000"/>
+        </MeshPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="600.000000" y="5.000000" z="5.000000"/>
+            <OffsetPosition x="-0.000000" y="351.874054" z="-600.000000"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="600.000000" y="5.000000" z="5.000000"/>
+            <OffsetPosition x="599.999878" y="351.874054" z="0.000000"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="600.000000" y="5.000000" z="5.000000"/>
+            <OffsetPosition x="-600.000000" y="351.874054" z="0.000000"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="50.513500" y="5.000000" z="5.000000"/>
+            <OffsetPosition x="-460.435181" y="536.690918" z="-345.243439"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="50.513500" y="5.000000" z="5.000000"/>
+            <OffsetPosition x="-360.435181" y="536.690918" z="-345.243439"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="50.513500" y="5.000000" z="5.000000"/>
+            <OffsetPosition x="-360.435181" y="452.523010" z="-219.026489"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="50.513500" y="5.000000" z="5.000000"/>
+            <OffsetPosition x="-460.435181" y="452.523010" z="-220.277954"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="50.513500" y="5.000000" z="5.000000"/>
+            <OffsetPosition x="-410.803192" y="452.523010" z="-170.180817"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="50.513500" y="5.000000" z="5.000000"/>
+            <OffsetPosition x="-410.803192" y="452.523010" z="-270.180817"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="50.513500" y="5.000000" z="5.000000"/>
+            <OffsetPosition x="-409.745148" y="536.690918" z="-295.238983"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="50.513500" y="5.000000" z="5.000000"/>
+            <OffsetPosition x="-410.551025" y="536.690918" z="-395.238983"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="600.000000" y="5.000000" z="5.000000"/>
+            <OffsetPosition x="-0.000000" y="351.874054" z="600.000000"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+    </Object>
+</ObjectDescription>

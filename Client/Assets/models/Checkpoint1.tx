@@ -1,6 +1,6 @@
 *Header
 #Transparent 1
-#Collidable 1
+#Collidable 0
 #Materials 1
 #MESH Checkpoint1
 #Vertices 14

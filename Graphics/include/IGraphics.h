@@ -718,7 +718,20 @@ public:
 	 * @param p_FOV, new FOV the game will use.
 	 */
 	virtual void setFOV(float p_FOV) = 0;
+	
+	/**
+	 * Gets the current transposed view matrix.
+	 *
+	 * @return View matrix
+	 */
+	virtual DirectX::XMFLOAT4X4 getView() const = 0;
 
+	/**
+	 * Gets the current transposed projection matrix.
+	 *
+	 * @return Projection matrix
+	 */
+	virtual DirectX::XMFLOAT4X4 getProj() const = 0;
 private:
 
 	/**

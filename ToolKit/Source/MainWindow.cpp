@@ -23,6 +23,9 @@
 #include "TreeFilter.h"
 #include "TableItem.h"
 
+#include <EventData.h>
+
+
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
 	ui(new Ui::MainWindow),
@@ -64,10 +67,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	QObject::connect(&m_Timer, SIGNAL(timeout()), this, SLOT(idle()));
 	m_Timer.start();
 
-	addSimpleObjectType("Barrel1");
-	addSimpleObjectType("House1");
-	addSimpleObjectType("Island1");
-	addSimpleObjectType("Top1");
+	m_ObjectManager->loadDescriptionsFromFolder("assets/Objects");
 }
 
 MainWindow::~MainWindow()
@@ -88,9 +88,7 @@ void MainWindow::signalAndSlotsDefinitions()
     QObject::connect(this, SIGNAL(setCameraPositionSignal(Vector3)), ui->m_RenderWidget, SLOT(CameraPositionSet(Vector3)));
 
     //Signals and slots for connecting the object creation to the trees
-    QObject::connect(m_ObjectManager.get(), SIGNAL(meshCreated(std::string, int, int)), ui->m_ObjectTree, SLOT(objectCreated(std::string, int, int)));
-    QObject::connect(m_ObjectManager.get(), SIGNAL(lightCreated(std::string, int, int)), ui->m_LightTree, SLOT(objectCreated(std::string, int, int)));
-    QObject::connect(m_ObjectManager.get(), SIGNAL(particleCreated(std::string, int, int)), ui->m_ParticleTree, SLOT(objectCreated(std::string, int, int)));
+	QObject::connect(m_ObjectManager.get(), SIGNAL(actorAdded(std::string,  Actor::ptr)), this, SLOT(onActorAdded(std::string, Actor::ptr)));
 
     //Signals and slots for connecting the object scale editing to the object
     QObject::connect(ui->m_ObjectScaleXBox, SIGNAL(editingFinished()), this, SLOT(setObjectScale()));
@@ -121,6 +119,7 @@ void MainWindow::signalAndSlotsDefinitions()
 	QObject::connect(ui->m_ObjectTree, SIGNAL(addTableObject(std::string)), ui->m_ObjectTable, SLOT(addObject(std::string)));
 	QObject::connect(ui->m_LightTree, SIGNAL(addTableObject(std::string)), ui->m_ObjectTable, SLOT(addObject(std::string)));
 	QObject::connect(ui->m_ParticleTree, SIGNAL(addTableObject(std::string)), ui->m_ObjectTable, SLOT(addObject(std::string)));
+	QObject::connect(m_ObjectManager.get(), SIGNAL(objectTypeCreated(std::string)), ui->m_ObjectTable, SLOT(addObject(std::string)));
 
     //Signals and slots for connecting the light position editing to the light
     QObject::connect(ui->m_LightPositionXBox, SIGNAL(editingFinished()), this, SLOT(setLightPosition()));
@@ -182,7 +181,7 @@ void MainWindow::on_actionExit_triggered()
 
 void MainWindow::on_actionOpen_triggered()
 {
-	QString fullFilePath = QFileDialog::getOpenFileName(this, tr("Open Level"), "/home/ME", tr("Level Files (*.xml *.btxl)"));
+	QString fullFilePath = QFileDialog::getOpenFileName(this, tr("Open Level"), "./assets/levels/", tr("Level Files (*.xml *.btxl)"));
 	if (!fullFilePath.isNull())
 	{
 		ui->m_ObjectTree->clearTree();
@@ -195,7 +194,7 @@ void MainWindow::on_actionOpen_triggered()
 
 void MainWindow::on_actionSave_triggered()
 {
-    QFileDialog::getSaveFileName(this, tr("Save Level As..."), "/home/ME", tr("Level Files (*.xml"));
+    QFileDialog::getSaveFileName(this, tr("Save Level As..."), "./assets/levels/", tr("Level Files (*.xml"));
 }
 
 void MainWindow::splitCameraPosition(Vector3 p_cameraPosition)
@@ -233,7 +232,12 @@ void MainWindow::on_actionLight_Tree_triggered()
 void MainWindow::on_m_ObjectTree_itemSelectionChanged()
 {
     QTreeWidgetItem *currItem = ui->m_ObjectTree->currentItem();
-
+	if(!currItem)
+		return;
+	
+	TreeItem *cItem = dynamic_cast<TreeItem*>(currItem);
+	if(!cItem)
+		return;
 	ui->PositionBox->hide();
     ui->ScaleBox->hide();
     ui->RotationBox->hide();
@@ -245,35 +249,36 @@ void MainWindow::on_m_ObjectTree_itemSelectionChanged()
     ui->AngleBox->hide();
     ui->PositionBox_2->hide();
 
-    if(currItem && currItem->isSelected())
+	Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
+	std::weak_ptr<ModelComponent> pmodel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
+	std::shared_ptr<ModelComponent> spmodel = pmodel.lock();
+	
+
+    if(currItem->isSelected())
 	{
-        TreeItem *cItem = dynamic_cast<TreeItem*>(currItem);
-        if(cItem)
-        {
-            ui->PositionBox->show();
-            ui->ScaleBox->show();
-            ui->RotationBox->show();
+        ui->PositionBox->show();
+        ui->ScaleBox->show();
+        ui->RotationBox->show();
+        Vector3 scale = spmodel->getScale();
+        Vector3 position = spmodel->getPosition();
+        Vector3 rotation = spmodel->getRotation();
 
-			Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
-            std::weak_ptr<ModelComponent> pmodel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
-            std::shared_ptr<ModelComponent> spmodel = pmodel.lock();
+        ui->m_ObjectScaleXBox->setValue(scale.x);
+        ui->m_ObjectScaleYBox->setValue(scale.y);
+        ui->m_ObjectScaleZBox->setValue(scale.z);
 
-            Vector3 scale = spmodel->getScale();
-            Vector3 position = spmodel->getPosition();
-            Vector3 rotation = spmodel->getRotation();
+        ui->m_ObjectPositionXBox->setValue(position.x);
+        ui->m_ObjectPositionYBox->setValue(position.y);
+        ui->m_ObjectPositionZBox->setValue(position.z);
 
-            ui->m_ObjectScaleXBox->setValue(scale.x);
-            ui->m_ObjectScaleYBox->setValue(scale.y);
-            ui->m_ObjectScaleZBox->setValue(scale.z);
-
-            ui->m_ObjectPositionXBox->setValue(position.x);
-            ui->m_ObjectPositionYBox->setValue(position.y);
-            ui->m_ObjectPositionZBox->setValue(position.z);
-
-            ui->m_ObjectRotationXBox->setValue(rotation.x);
-            ui->m_ObjectRotationYBox->setValue(rotation.y);
-            ui->m_ObjectRotationZBox->setValue(rotation.z);
-        }
+        ui->m_ObjectRotationXBox->setValue(rotation.x);
+        ui->m_ObjectRotationYBox->setValue(rotation.y);
+        ui->m_ObjectRotationZBox->setValue(rotation.z);
+		spmodel->setColorTone(Vector3(5,5,7));
+	}
+	else
+	{
+		spmodel->setColorTone(Vector3(1.0f, 1.0f, 1.0f));
 	}
 
     sortPropertiesBoxes();
@@ -433,38 +438,6 @@ void MainWindow::setLightIntensity()
 	}
 }
 
-void MainWindow::createSimpleObjectDescription(const std::string& p_ModelName)
-{
-	ActorFactory::InstanceModel model;
-	model.meshName = p_ModelName;
-	model.position = Vector3();
-	model.rotation = Vector3();
-	model.scale = Vector3(1.f, 1.f, 1.f);
-
-	std::vector<ActorFactory::InstanceBoundingVolume> volumes;
-	ActorFactory::InstanceBoundingVolume volume;
-	volume.meshName = p_ModelName;
-	volume.scale = Vector3(1.f, 1.f, 1.f);
-	volumes.push_back(volume);
-
-	std::vector<ActorFactory::InstanceEdgeBox> edges;
-
-	registerObjectDescription(p_ModelName, ActorFactory::getInstanceActorDescription(model, volumes, edges));
-}
-
-void MainWindow::addSimpleObjectType(const std::string& p_ModelName)
-{
-    QTableWidgetItem *item = new QTableWidgetItem();
-	item->setIcon(m_DefaultObjectIcon);
-	item->setText(QString::fromStdString(p_ModelName));
-    item->setTextAlignment(Qt::AlignBottom | Qt::AlignCenter);
-
-	int column = ui->m_ObjectTable->columnCount();
-	ui->m_ObjectTable->insertColumn(column);
-	ui->m_ObjectTable->setItem(0, column, item);
-	createSimpleObjectDescription(p_ModelName);
-}
-
 void MainWindow::onFrame(float p_DeltaTime)
 {
 	m_EventManager.processEvents();
@@ -475,11 +448,6 @@ void MainWindow::onFrame(float p_DeltaTime)
 void MainWindow::loadLevel(const std::string& p_Filename)
 {
 	m_ObjectManager->loadLevel(p_Filename);
-}
-
-void MainWindow::registerObjectDescription(const std::string& p_ObjectName, const std::string& p_Description)
-{
-	m_ObjectManager->registerObjectDescription(p_ObjectName, p_Description);
 }
 
 void MainWindow::addObject(QTableWidgetItem* p_ObjectItem)
@@ -493,6 +461,8 @@ void MainWindow::initializeSystems()
 
 	m_Physics = IPhysics::createPhysics();
 	m_Physics->initialize(false, 1.f / 60.f);
+
+	m_AnimationLoader.reset(new AnimationLoader);
 
 	m_Graphics = IGraphics::createGraphics();
 	m_Graphics->setTweaker(TweakSettings::getInstance());
@@ -517,15 +487,21 @@ void MainWindow::initializeSystems()
 	m_ResourceManager.registerFunction("particleSystem",
 		std::bind(&IGraphics::createParticleEffectDefinition, m_Graphics, _1, _2),
 		std::bind(&IGraphics::releaseParticleEffectDefinition, m_Graphics, _1));
+	m_ResourceManager.registerFunction("animation",
+		std::bind(&AnimationLoader::loadAnimationDataResource, m_AnimationLoader.get(), _1, _2),
+		std::bind(&AnimationLoader::releaseAnimationData, m_AnimationLoader.get(), _1));
 	m_ResourceManager.loadDataFromFile("assets/Resources.xml");
 
 	ActorFactory::ptr actorFactory(new ActorFactory(0));
 	actorFactory->setPhysics(m_Physics);
 	actorFactory->setEventManager(&m_EventManager);
 	actorFactory->setResourceManager(&m_ResourceManager);
+	actorFactory->setAnimationLoader(m_AnimationLoader.get());
 	m_ObjectManager.reset(new ObjectManager(actorFactory, &m_EventManager, &m_ResourceManager));
 
 	ui->m_RenderWidget->initialize(&m_EventManager, &m_ResourceManager, m_Graphics);
+
+	m_EventManager.addListener(EventListenerDelegate(this, &MainWindow::pick), CreatePickingEventData::sk_EventType);
 }
 
 void MainWindow::uninitializeSystems()
@@ -536,7 +512,11 @@ void MainWindow::uninitializeSystems()
 
 	ui->m_RenderWidget->uninitialize();
 
+	m_ResourceManager.unregisterResourceType("animation");
+	m_AnimationLoader.reset();
+
 	m_ResourceManager.unregisterResourceType("model");
+	m_ResourceManager.unregisterResourceType("particleSystem");
 	m_ResourceManager.unregisterResourceType("texture");
 
 	if (m_Graphics)
@@ -544,6 +524,8 @@ void MainWindow::uninitializeSystems()
 		IGraphics::deleteGraphics(m_Graphics);
 		m_Graphics = nullptr;
 	}
+
+	m_ResourceManager.unregisterResourceType("volume");
 
 	if (m_Physics)
 	{
@@ -649,4 +631,71 @@ void MainWindow::sortPropertiesBoxes()
 			incrementalY += m_Boxes.at(i)->height() + marginY;
         }
     }
+}
+
+void MainWindow::on_m_ObjectTree_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous)
+{
+    if(current)
+    {
+        TreeItem *cItem = dynamic_cast<TreeItem*>(current);
+        if(cItem)
+        {
+            Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
+            std::weak_ptr<ModelComponent> pmodel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
+            std::shared_ptr<ModelComponent> spmodel = pmodel.lock();
+            spmodel->setColorTone(Vector3(5,5,7));
+        }
+    }
+    if(previous)
+    {
+        TreeItem *cItem = dynamic_cast<TreeItem*>(previous);
+        if(cItem)
+        {
+            Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
+            std::weak_ptr<ModelComponent> pmodel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
+            std::shared_ptr<ModelComponent> spmodel = pmodel.lock();
+            spmodel->setColorTone(Vector3(1,1,1));
+        }
+    }
+}
+
+void MainWindow::onActorAdded(std::string p_ObjectType, Actor::ptr p_Actor)
+{
+	std::weak_ptr<ModelComponent> model = p_Actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
+	std::shared_ptr<ModelComponent> smodel = model.lock();
+	if(smodel)
+	{
+		ui->m_ObjectTree->objectCreated(p_ObjectType, p_Actor->getId());
+	}
+	std::weak_ptr<LightComponent> lmodel = p_Actor->getComponent<LightComponent>(LightInterface::m_ComponentId);
+	std::shared_ptr<LightComponent> slmodel = lmodel.lock();
+	if(slmodel)
+	{
+		std::string lightype = "Unknown";
+		switch(slmodel->getType())
+		{
+		case LightClass::Type::DIRECTIONAL: lightype = "Directional"; break;
+		case LightClass::Type::SPOT: lightype = "Spot"; break;
+		case LightClass::Type::POINT: lightype = "Point"; break;
+		}
+		
+		ui->m_LightTree->objectCreated(p_ObjectType, p_Actor->getId());
+	}
+	std::weak_ptr<ParticleComponent> pmodel = p_Actor->getComponent<ParticleComponent>(ParticleInterface::m_ComponentId);
+	std::shared_ptr<ParticleComponent> spmodel = pmodel.lock();
+	if(spmodel)
+	{
+		ui->m_ParticleTree->objectCreated(p_ObjectType, p_Actor->getId());
+	}
+}
+
+void MainWindow::pick(IEventData::Ptr p_Data)
+{
+	std::shared_ptr<CreatePickingEventData> data = std::static_pointer_cast<CreatePickingEventData>(p_Data);
+	BodyHandle b = m_Physics->rayCast(data.get()->getRayDir(), data.get()->getRayOrigin());
+	Actor::ptr actor = m_ObjectManager->getActorFromBodyHandle(b);
+	if(!actor)
+		return;
+
+	ui->m_ObjectTree->selectItem(actor->getId());
 }

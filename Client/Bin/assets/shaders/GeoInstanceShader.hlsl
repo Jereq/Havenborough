@@ -26,6 +26,7 @@ struct VSIn
 	float3 tangent	: TANGENT;
 	float3 binormal	: BINORMAL;
 	float4x4 vworld	: WORLD;
+	float3 colorTone : COLOR_TONE; 
 };
 
 //############################
@@ -43,7 +44,8 @@ PSIn VS( VSIn input )
 	output.tangent = normalize(mul(input.vworld, float4(input.tangent, 0.f)).xyz);
 	output.binormal = normalize(mul(input.vworld, float4(input.binormal, 0.f)).xyz);
 	output.depth = mul(cView, mul(input.vworld, input.pos)).z;
-			
+	output.colorTone = input.colorTone;
+
 	return output;
 }
 
@@ -52,5 +54,5 @@ PSIn VS( VSIn input )
 //############################
 PSOut PS( PSIn input )
 {
-	return PSFunction(input, cView, diffuseTex, normalTex, textureSampler);
+	return PSFunction(input, cView, input.colorTone, diffuseTex, normalTex, textureSampler);
 }

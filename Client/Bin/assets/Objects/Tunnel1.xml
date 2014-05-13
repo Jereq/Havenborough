@@ -1,0 +1,15 @@
+<ObjectDescription Name="Tunnel1">
+    <Object x="0.000000" y="0.000000" z="0.000000" yaw="0.000000" pitch="0.000000" roll="0.000000">
+        <Model Mesh="Tunnel1">
+            <Scale x="1.000000" y="1.000000" z="1.000000"/>
+        </Model>
+        <MeshPhysics Mesh="Tunnel1">
+            <Scale x="1.000000" y="1.000000" z="1.000000"/>
+        </MeshPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="967.260559" y="5.000000" z="5.000000"/>
+            <OffsetPosition x="8533.329102" y="-3167.202637" z="-3756.563721"/>
+            <OffsetRotation yaw="-1.085822" pitch="0.009950" roll="0.000602"/>
+        </OBBPhysics>
+    </Object>
+</ObjectDescription>

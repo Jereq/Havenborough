@@ -1,6 +1,6 @@
 *Header
 #Transparent 0
-#Collidable 1
+#Collidable 0
 #Materials 1
 #MESH Minque6
 #Vertices 1870

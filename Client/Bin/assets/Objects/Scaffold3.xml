@@ -1,0 +1,50 @@
+<ObjectDescription Name="Scaffold3">
+    <Object x="0.000000" y="0.000000" z="0.000000" yaw="0.000000" pitch="0.000000" roll="0.000000">
+        <Model Mesh="Scaffold3">
+            <Scale x="1.000000" y="1.000000" z="1.000000"/>
+        </Model>
+        <MeshPhysics Mesh="Scaffold3">
+            <Scale x="1.000000" y="1.000000" z="1.000000"/>
+        </MeshPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="111.145149" y="5.000000" z="5.000000"/>
+            <OffsetPosition x="-0.000000" y="5.047957" z="559.643555"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="111.145149" y="5.000000" z="5.000000"/>
+            <OffsetPosition x="-0.000000" y="303.257996" z="213.748322"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="111.145149" y="5.000000" z="5.000000"/>
+            <OffsetPosition x="-0.000000" y="303.317474" z="-558.207214"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="93.890778" y="5.000000" z="5.000000"/>
+            <OffsetPosition x="2.519679" y="6.297600" z="-548.709473"/>
+            <OffsetRotation yaw="-0.000000" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="388.305695" y="5.000000" z="5.000000"/>
+            <OffsetPosition x="-112.274551" y="303.294678" z="-174.532028"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="388.305695" y="5.000000" z="5.000000"/>
+            <OffsetPosition x="107.538574" y="303.294678" z="-174.532028"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="181.256927" y="5.000000" z="5.000000"/>
+            <OffsetPosition x="111.976173" y="6.468366" z="379.706696"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+        <OBBPhysics Immovable="1" Mass="0.000000" IsEdge="1">
+            <Halfsize x="181.256927" y="5.000000" z="5.000000"/>
+            <OffsetPosition x="-111.905914" y="6.468366" z="379.706696"/>
+            <OffsetRotation yaw="-1.570796" pitch="0.000000" roll="-0.000000"/>
+        </OBBPhysics>
+    </Object>
+</ObjectDescription>

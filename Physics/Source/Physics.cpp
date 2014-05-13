@@ -846,6 +846,49 @@ void Physics::setBodyForceCollisionNormal(BodyHandle p_Body, BodyHandle p_BodyVi
 	}
 }
 
+
+BodyHandle Physics::rayCast(const XMFLOAT4 &p_RayDirection, const XMFLOAT4 &p_RayOrigin)
+{
+	//Transfrom ray to meters instead of cm
+	XMFLOAT4 rayOriginConv = p_RayOrigin;
+	rayOriginConv.x *= 0.01f;
+	rayOriginConv.y *= 0.01f;
+	rayOriginConv.z *= 0.01f;
+
+	float dist = FLT_MAX;
+	BodyHandle body = 0;
+
+	for(unsigned int i = 0; i < m_Bodies.size(); i++)
+	{
+		Body &b = m_Bodies[i];
+		if(!b.getIsImmovable())
+			continue;
+		if(b.getIsEdge())
+			continue;
+		
+		float tempDist;
+		if(b.getVolume()->getType() == BoundingVolume::Type::HULL)
+			tempDist = Collision::rayTriangleIntersect((Hull&)*b.getVolume(), p_RayDirection, rayOriginConv);
+		else if(b.getVolume(0)->getType() == BoundingVolume::Type::SPHERE)
+			tempDist = Collision::raySphereIntersect((Sphere&)*b.getVolume(0), p_RayDirection, rayOriginConv);
+
+		
+		if(tempDist > 0.f && tempDist < dist)
+		{
+			dist = tempDist;
+			body = b.getHandle();
+		}
+	}
+
+	Body *b = findBody(body);
+	if(!body)
+	{
+		return 0;
+	}
+
+	return body;
+}
+
 bool Physics::validBody(BodyHandle p_BodyHandle)
 {
 	Body *b = findBody(p_BodyHandle);

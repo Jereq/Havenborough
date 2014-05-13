@@ -16,6 +16,8 @@ public:
 
 	void clearTree();
 
+	void selectItem(int p_ActorId);
+
 public slots:
     void addFilter();
 	void removeItem();
@@ -28,6 +30,7 @@ signals:
 
 private:
     void removeChild(QTreeWidgetItem* currItem);
+	void selectItemTraverse(QTreeWidgetItem* currItem, int &p_ActorId);
 };
 
 #endif // TREE_H

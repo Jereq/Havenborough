@@ -36,6 +36,9 @@ HUDScene::HUDScene()
 	m_ResourceManager = nullptr;
 	m_RenderHUD = true;
 	m_ShowDebugInfo = false;
+
+
+	m_PowerPieActive = false;
 }
 
 HUDScene::~HUDScene()
@@ -65,6 +68,7 @@ bool HUDScene::init(unsigned int p_SceneID, IGraphics *p_Graphics, ResourceManag
 	m_EventManager->addListener(EventListenerDelegate(this, &HUDScene::onFinish), FinishRaceEventData::sk_EventType);
 	m_EventManager->addListener(EventListenerDelegate(this, &HUDScene::updatePlayerElapsedTime), UpdatePlayerElapsedTimeEventData::sk_EventType);
 	m_EventManager->addListener(EventListenerDelegate(this, &HUDScene::onSpellhit), PlayerIsHitBySpellEventData::sk_EventType);
+	m_EventManager->addListener(EventListenerDelegate(this, &HUDScene::activatePowerPie), MouseEventDataPie::sk_EventType);
 
 	m_CheckpointPosition = Vector3(0,0,0);
 	m_RenderCountdown = false;
@@ -272,6 +276,10 @@ void HUDScene::render()
 		m_Graphics->render2D_Object(m_GUI["CheckpointsBG"]);
 		m_Graphics->render2D_Object(m_GUI["Crosshair"]);
 		m_Graphics->render2D_Object(m_GUI["Indicator"]);
+
+		if(m_PowerPieActive)
+			m_Graphics->render2D_Object(m_GUI["PowerPie"]);
+
 		if (m_ShowDebugInfo)
 		{
 			m_Graphics->render2D_Object(m_GUI["DebugTextKey"]);
@@ -502,6 +510,15 @@ void HUDScene::onSpellhit(IEventData::Ptr p_Data)
 	m_IndicatorTimeFade = m_IndicatorTimeFadeMax;
 }
 
+void HUDScene::activatePowerPie(IEventData::Ptr p_Data)
+{
+	std::shared_ptr<MouseEventDataPie> pie = std::static_pointer_cast<MouseEventDataPie>(p_Data);
+	//m_Graphics->set2D_ObjectPosition(m_GUI["PowerPie"], Vector3(data->getMousePos().x, data->getMousePos().y, 0.f));
+
+	
+
+	m_PowerPieActive = pie->getPieStatus();
+}
 
 void HUDScene::updateTakenCheckpoints(IEventData::Ptr p_Data)
 {
@@ -667,6 +684,18 @@ void HUDScene::createCrosshairElement()
 	m_Graphics->set2D_ObjectColor(m_GUI["Crosshair"], crosshairColor);
 }
 
+void HUDScene::createPowerPieElement()
+{
+	Vector4 color(0.9101f, 0.8632f, 0.0937f, 1.f);
+	Vector3 position(0.f, 0.f, 0.f);
+	Vector3 scale(1.f, 1.f, 1.f);
+	//getHUDSettings("Crosshair", position, scale);
+	//getHUDColor("Crosshair", color);
+	createGUIElement("PowerPie", m_Graphics->create2D_Object(position, Vector2(128.f, 128.f), scale, 0.f, "PowerPie"));
+	m_Graphics->set2D_ObjectColor(m_GUI["PowerPie"], color);
+}
+
+
 void HUDScene::preLoadModels()
 {
 	static const std::string preloadedTextures[] =
@@ -677,6 +706,7 @@ void HUDScene::preLoadModels()
 		"MANABAR_FEEDBACK",
 		"FEEDBACK_INDICATOR",
 		"Crosshair",
+		"PowerPie"
 	};
 	for (const std::string &texture : preloadedTextures)
 	{
@@ -693,6 +723,7 @@ void HUDScene::preLoadModels()
 	createDebugElement();
 	createIndicatorElement();
 	createCrosshairElement();
+	createPowerPieElement();
 }
 
 void HUDScene::releasePreLoadedModels()

@@ -2,6 +2,9 @@
 
 #include <iostream>
 
+#include <boost/filesystem/fstream.hpp>
+#include <boost/filesystem/path.hpp>
+
 #include <Components.h>
 #include <Level.h>
 
@@ -32,13 +35,14 @@ void ObjectManager::loadLevel(const std::string& p_Filename)
 
 	for(const auto &actor : m_ActorList)
 	{
-		std::weak_ptr<ModelComponent> model = actor.second.get()->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
+		std::weak_ptr<ModelComponent> model = actor.second->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
 		std::shared_ptr<ModelComponent> smodel = model.lock();
 		if(smodel)
 		{
-            emit meshCreated(smodel->getMeshName(), actor.first, 3);
+			emit actorAdded(smodel->getMeshName(), actor.second);
+			continue;
 		}
-		std::weak_ptr<LightComponent> lmodel = actor.second.get()->getComponent<LightComponent>(LightInterface::m_ComponentId);
+		std::weak_ptr<LightComponent> lmodel = actor.second->getComponent<LightComponent>(LightInterface::m_ComponentId);
 		std::shared_ptr<LightComponent> slmodel = lmodel.lock();
 		if(slmodel)
 		{
@@ -49,21 +53,39 @@ void ObjectManager::loadLevel(const std::string& p_Filename)
 			case LightClass::Type::SPOT: lightype = "Spot"; break;
 			case LightClass::Type::POINT: lightype = "Point"; break;
 			}
-
-            emit lightCreated(lightype, actor.first, (int)slmodel->getType());
+		
+			emit actorAdded(lightype, actor.second);
+			continue;
 		}
-		std::weak_ptr<ParticleComponent> pmodel = actor.second.get()->getComponent<ParticleComponent>(ParticleInterface::m_ComponentId);
+		std::weak_ptr<ParticleComponent> pmodel = actor.second->getComponent<ParticleComponent>(ParticleInterface::m_ComponentId);
 		std::shared_ptr<ParticleComponent> spmodel = pmodel.lock();
 		if(spmodel)
 		{
-            emit particleCreated(spmodel->getEffectName(), actor.first, 4);
+			emit actorAdded(spmodel->getEffectName(), actor.second);
+			continue;
 		}
+
+		emit actorAdded("Object", actor.second);
 	}
 }
 
 Actor::ptr ObjectManager::getActor(Actor::Id p_Id)
 {
 	return m_ActorList.findActor(p_Id);
+}
+
+Actor::ptr ObjectManager::getActorFromBodyHandle(BodyHandle p_BodyHandle)
+{
+	for(auto a = m_ActorList.begin(); a != m_ActorList.end(); a++)
+	{
+		if(a->second->getBodyHandles().size() > 0)
+		{
+			if(a->second->getBodyHandles()[0] == p_BodyHandle)
+				return a->second;
+		}
+	}
+
+	return nullptr;
 }
 
 void ObjectManager::addObject(const std::string& p_ObjectName, const Vector3& p_Position)
@@ -79,10 +101,7 @@ void ObjectManager::addObject(const std::string& p_ObjectName, const Vector3& p_
 		return;
 	}
 
-	tinyxml2::XMLDocument descDoc;
-	descDoc.Parse(description->second.c_str());
-
-	tinyxml2::XMLElement* root = descDoc.FirstChildElement("Object");
+	tinyxml2::XMLElement* root = description->second->FirstChildElement("Object");
 	if (!root)
 	{
 		return;
@@ -92,9 +111,58 @@ void ObjectManager::addObject(const std::string& p_ObjectName, const Vector3& p_
 	actor->setPosition(p_Position);
 
 	m_ActorList.addActor(actor);
+	emit actorAdded(p_ObjectName, actor);
 }
 
-void ObjectManager::registerObjectDescription(const std::string& p_ObjectName, const std::string& p_Description)
+static void deepClone(tinyxml2::XMLNode* p_NewNode, const tinyxml2::XMLNode* p_SrcNode)
 {
-	m_ObjectDescriptions[p_ObjectName] = p_Description;
+	for (const tinyxml2::XMLNode* srcChild = p_SrcNode->FirstChild(); srcChild; srcChild = srcChild->NextSibling())
+	{
+		tinyxml2::XMLNode* clonedChild = srcChild->ShallowClone(p_NewNode->GetDocument());
+		deepClone(clonedChild, srcChild);
+		p_NewNode->InsertEndChild(clonedChild);
+	}
+}
+
+void ObjectManager::registerObjectDescription(const std::string& p_ObjectName, const tinyxml2::XMLNode* p_Description)
+{
+	auto& doc = m_ObjectDescriptions[p_ObjectName];
+	doc.reset(new tinyxml2::XMLDocument);
+	deepClone(doc.get(), p_Description);
+	objectTypeCreated(p_ObjectName);
+}
+
+void ObjectManager::loadDescriptionsFromFolder(const std::string& p_Path)
+{
+	using namespace boost::filesystem;
+
+	path folder(p_Path);
+	
+	if (!exists(folder))
+	{
+		return;
+	}
+
+	for (recursive_directory_iterator iter(folder); iter != recursive_directory_iterator(); ++iter)
+	{
+		tinyxml2::XMLDocument doc;
+		if (doc.LoadFile(iter->path().string().c_str()))
+		{
+			continue;
+		}
+
+		tinyxml2::XMLElement* root = doc.FirstChildElement("ObjectDescription");
+		if (!root)
+		{
+			continue;
+		}
+
+		const char* descName = root->Attribute("Name");
+		if (!descName)
+		{
+			continue;
+		}
+
+		registerObjectDescription(descName, root);
+	}
 }

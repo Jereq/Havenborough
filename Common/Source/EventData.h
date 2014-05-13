@@ -582,6 +582,89 @@ public:
 	}
 };
 
+class MouseEventDataPie : public BaseEventData
+{
+private: 
+	Vector2 m_MousePos;
+	bool m_PieStatus;
+
+public:
+	static const IEventData::Type sk_EventType = Type(0xa5cc161);
+	
+	explicit MouseEventDataPie(Vector2 p_MousePos, bool p_PieStatus) :
+	m_MousePos(p_MousePos), m_PieStatus(p_PieStatus)
+	{
+	}
+
+	virtual const IEventData::Type &getEventType(void) const override
+	{
+		return sk_EventType;
+	}
+
+	virtual Ptr copy(void) const override
+	{
+		return Ptr(new MouseEventDataPie(m_MousePos, m_PieStatus));
+	}
+
+	virtual void serialize(std::ostream &p_Out) const override
+	{
+		//p_Out << m_MousePos;
+	}
+
+	virtual const char *getName(void) const override
+	{
+		return "MouseEventDataPie";
+	}
+
+	Vector2 getMousePos(void) const
+	{
+		return m_MousePos;
+	}
+
+	bool getPieStatus() const
+	{
+		return m_PieStatus;
+	}
+};
+
+class PowerPieSelectEventData : public BaseEventData
+{
+private: 
+	unsigned int m_Index;
+public:
+	static const IEventData::Type sk_EventType = Type(0xcd4a1ec7);
+	
+	explicit PowerPieSelectEventData(unsigned int p_Index) :
+		m_Index(p_Index)
+	{
+	}
+
+	virtual const IEventData::Type &getEventType(void) const override
+	{
+		return sk_EventType;
+	}
+
+	virtual Ptr copy(void) const override
+	{
+		return Ptr(new PowerPieSelectEventData(m_Index));
+	}
+
+	virtual void serialize(std::ostream &p_Out) const override
+	{
+		//p_Out << m_MousePos;
+	}
+
+	virtual const char *getName(void) const override
+	{
+		return "PowerPieSelectEventData";
+	}
+
+	virtual unsigned int getIndex(void) const
+	{
+		return m_Index;
+	}
+};
+
 class ChangeColorToneEvent : public BaseEventData
 {
 private: 
@@ -1915,6 +1998,91 @@ public:
 	}
 };
 
+class CreateRayEventData : public BaseEventData
+{
+private:
+	DirectX::XMFLOAT2 m_MousePos;
+	DirectX::XMFLOAT2 m_Resolution;
+public:
+	static const Type sk_EventType = (0x3917705f);
+
+
+	CreateRayEventData(DirectX::XMFLOAT2 p_MousePos, DirectX::XMFLOAT2 p_Resolution) 
+		: m_MousePos(p_MousePos), m_Resolution(p_Resolution)
+	{
+	}
+
+	virtual const Type &getEventType(void) const override
+	{
+		return sk_EventType;
+	}
+
+	virtual Ptr copy(void) const override
+	{
+		return Ptr(new CreateRayEventData(m_MousePos, m_Resolution));
+	}
+
+	virtual const char *getName(void) const override
+	{
+		return "CreateRayEventData";
+	}
+	virtual void serialize(std::ostream &p_Out) const override
+	{
+	}
+
+	DirectX::XMFLOAT2 getMousePos()
+	{
+		return m_MousePos;
+	}
+	DirectX::XMFLOAT2 getResolution()
+	{
+		return m_Resolution;
+	}
+};
+
+class CreatePickingEventData : public BaseEventData
+{
+private:
+	DirectX::XMFLOAT4 m_RayDir;
+	DirectX::XMFLOAT4 m_RayOrigin;
+
+public:
+	static const Type sk_EventType = (0x823bc110);
+
+
+	CreatePickingEventData(DirectX::XMFLOAT4 p_RayDir, DirectX::XMFLOAT4 p_RayOrigin) 
+		: m_RayDir(p_RayDir), m_RayOrigin(p_RayOrigin)
+	{
+	}
+
+	virtual const Type &getEventType(void) const override
+	{
+		return sk_EventType;
+	}
+
+	virtual Ptr copy(void) const override
+	{
+		return Ptr(new CreatePickingEventData(m_RayDir, m_RayOrigin));
+	}
+
+	virtual const char *getName(void) const override
+	{
+		return "CreatePickingEventData";
+	}
+	virtual void serialize(std::ostream &p_Out) const override
+	{
+	}
+
+	DirectX::XMFLOAT4 getRayDir()
+	{
+		return m_RayDir;
+	}
+	DirectX::XMFLOAT4 getRayOrigin()
+	{
+		return m_RayOrigin;
+	}
+};
+
 class UpdateLightPositionEventData : public BaseEventData
 {
 private:
@@ -2172,4 +2340,5 @@ public:
 		return m_Intensity;
 	}
 };
+
 #pragma warning(pop)

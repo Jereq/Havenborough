@@ -18,6 +18,11 @@ cbuffer cbWorld : register(b1)
 	float4x4 cWorld;
 };
 
+cbuffer cbColorTone : register(b2)
+{
+	float3 color;
+};
+
 struct VSIn
 {
 	float4 position	: POSITION;
@@ -51,5 +56,5 @@ PSIn VS(VSIn p_Input)
 //############################
 PSOut PS(PSIn p_Input)
 {
-	return PSFunction(p_Input, cView, diffuseTex, normalTex, textureSampler);
+	return PSFunction(p_Input, cView, color, diffuseTex, normalTex, textureSampler);
 }
