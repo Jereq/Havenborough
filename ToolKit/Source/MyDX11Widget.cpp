@@ -352,6 +352,17 @@ void MyDX11Widget::pick(IEventData::Ptr p_Data)
 	m_EventManager->triggerTriggerEvent(IEventData::Ptr(new CreatePickingEventData(fRayDir, fRayOrigin)));
 }
 
+void MyDX11Widget::selectPie(IEventData::Ptr p_Data)
+{
+	std::shared_ptr<PowerPieSelectEventData> pie = std::static_pointer_cast<PowerPieSelectEventData>(p_Data);
+
+	m_Graphics->set2D_ObjectPosition(m_GUI["PiePiece"], Vector3(m_PowerPie.position.x, m_PowerPie.position.y, (float)DRAW::HIGH));
+	Vector4 color(0.9101f, 0.f, 0.f, 1.f);
+	m_Graphics->set2D_ObjectColor(m_GUI["PiePiece"], color);
+
+	m_Graphics->set2D_ObjectRotationZ(m_GUI["PiePiece"], m_PowerPie.angle * pie->getIndex());
+}
+
 static const std::string f_Icons[] =
 {
 	"Translate",
@@ -363,18 +374,6 @@ static const std::string f_Icons[] =
 	//"EyeNO",
 	"Eye",
 };
-
-
-void MyDX11Widget::selectPie(IEventData::Ptr p_Data)
-{
-	std::shared_ptr<PowerPieSelectEventData> pie = std::static_pointer_cast<PowerPieSelectEventData>(p_Data);
-
-	m_Graphics->set2D_ObjectPosition(m_GUI["PiePiece"], Vector3(m_PowerPie.position.x, m_PowerPie.position.y, (float)DRAW::HIGH));
-	Vector4 color(0.9101f, 0.f, 0.f, 1.f);
-	m_Graphics->set2D_ObjectColor(m_GUI["PiePiece"], color);
-
-	m_Graphics->set2D_ObjectRotationZ(m_GUI["PiePiece"], m_PowerPie.angle * pie->getIndex());
-}
 
 void MyDX11Widget::activatePowerPie(IEventData::Ptr p_Data)
 {
