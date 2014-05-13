@@ -18,6 +18,9 @@ win32 {
     TEMPLATE = vcapp
     INCLUDEPATH = "$${DXSDK_DIR}/Include"
     LIBS += -L"$${DXSDK_DIR}Lib/x86"
+
+    QMAKE_CXXFLAGS_DEBUG += -wd4996
+    QMAKE_CXXFLAGS_RELEASE += -wd4996
 }
 
 INCLUDEPATH += "$(SolutionDir)Common/Source"
