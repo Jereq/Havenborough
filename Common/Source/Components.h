@@ -1274,6 +1274,72 @@ public:
 		p_Printer.CloseElement();
 	}
 
+	void setPosition(Vector3 p_Position)
+	{
+		m_Light.position = p_Position;
+		m_Owner->getEventManager()->queueEvent(IEventData::Ptr(new UpdateLightPositionEventData(m_Light.id, p_Position)));
+	}
+
+	const Vector3& getPosition() const
+	{
+		return m_Light.position;
+	}
+
+	void setDirection(Vector3 p_Direction)
+	{
+		m_Light.direction = p_Direction;
+		m_Owner->getEventManager()->queueEvent(IEventData::Ptr(new UpdateLightDirectionEventData(m_Light.id, p_Direction)));
+	}
+
+	const Vector3& getDirection() const
+	{
+		return m_Light.direction;
+	}
+
+	void setColor(Vector3 p_Color)
+	{
+		m_Light.color = p_Color;
+		m_Owner->getEventManager()->queueEvent(IEventData::Ptr(new UpdateLightColorEventData(m_Light.id, p_Color)));
+	}
+
+	const Vector3& getColor() const
+	{
+		return m_Light.color;
+	}
+
+	void setSpotLightAngles(Vector2 p_Angles)
+	{
+		m_Light.spotlightAngles = p_Angles;
+		m_Owner->getEventManager()->queueEvent(IEventData::Ptr(new UpdateLightAngleEventData(m_Light.id, p_Angles)));
+	}
+
+	const Vector2& getSpotLightAngles() const
+	{
+		return m_Light.spotlightAngles;
+	}
+
+	void setRange(float p_Range)
+	{
+		m_Light.range = p_Range;
+		m_Owner->getEventManager()->queueEvent(IEventData::Ptr(new UpdateLightRangeEventData(m_Light.id, p_Range)));
+	}
+
+	const float& getRange() const
+	{
+		return m_Light.range;
+	}
+
+	void setIntensity(float p_Intensity)
+	{
+		m_Light.intensity = p_Intensity;
+		m_Owner->getEventManager()->queueEvent(IEventData::Ptr(new UpdateLightRangeEventData(m_Light.id, p_Intensity)));
+	}
+
+	const float& getIntensity() const
+	{
+		return m_Light.intensity;
+	}
+
 	/**
 	 * Get the unique id of the light.
 	 *
