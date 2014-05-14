@@ -183,8 +183,6 @@ void MainWindow::on_actionOpen_triggered()
 	QString fullFilePath = QFileDialog::getOpenFileName(this, tr("Open Level"), "./assets/levels/", tr("Level Files (*.xml *.btxl)"));
 	if (!fullFilePath.isNull())
 	{
-		ui->m_ObjectTree->clearTree();
-		
 		loadLevel(fullFilePath.toStdString());
 	}
 }
