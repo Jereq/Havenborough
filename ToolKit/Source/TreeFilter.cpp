@@ -17,6 +17,17 @@ TreeFilter::TreeFilter(std::string p_FilterName)
 	setToolTip(0, "Filter: " + QString::fromStdString(m_Filterame));
 }
 
+TreeFilter::TreeFilter(std::string p_FilterName, const boost::uuids::uuid& p_Id)
+	: m_Id(p_Id)
+{
+	m_Filterame = p_FilterName;
+
+    setText(0, QString::fromStdString(m_Filterame));
+    setFlags(Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled | Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+    setIcon(0, QIcon(":/Icons/Assets/Filter.png"));
+	setToolTip(0, "Filter: " + QString::fromStdString(m_Filterame));
+}
+
 const boost::uuids::uuid& TreeFilter::getID() const
 {
 	return m_Id;

@@ -8,6 +8,7 @@
 #include <Components.h>
 #include <Level.h>
 
+#include "Tree.h"
 #include "XMLLevel.h"
 
 ObjectManager::ObjectManager(ActorFactory::ptr p_ActorFactory, EventManager* p_EventManager, ResourceManager* p_ResourceManager, Tree* p_ObjectTree)
@@ -30,15 +31,25 @@ void ObjectManager::update(float p_DeltaTime)
 
 void ObjectManager::loadLevel(const std::string& p_Filename)
 {
-	m_ActorList = ActorList();
-
-	Level level(m_ResourceManager, m_ActorFactory.get(), m_EventManager);
 	std::ifstream istream(p_Filename, std::ifstream::binary);
-	level.loadLevel(istream, ActorList::ptr(&m_ActorList, [](void const*){}));
 
-	for(const auto &actor : m_ActorList)
+	boost::filesystem::path filePath(p_Filename);
+	if (filePath.extension() == ".xml")
 	{
-		emit actorAdded("", actor.second);
+		XMLLevel levelLoader(m_ActorList, m_ObjectTree);
+		levelLoader.load(istream, m_ActorFactory);
+	}
+	else
+	{
+		m_ObjectTree->clearTree();
+		m_ActorList = ActorList();
+		Level level(m_ResourceManager, m_ActorFactory.get(), m_EventManager);
+		level.loadLevel(istream, ActorList::ptr(&m_ActorList, [](void const*){}));
+
+		for(const auto &actor : m_ActorList)
+		{
+			emit actorAdded("", actor.second);
+		}
 	}
 }
 
@@ -70,11 +81,6 @@ Actor::ptr ObjectManager::getActorFromBodyHandle(BodyHandle p_BodyHandle)
 
 void ObjectManager::addObject(const std::string& p_ObjectName, const Vector3& p_Position)
 {
-	if (m_ActorList.begin() == m_ActorList.end())
-	{
-		m_ActorList.addActor(m_ActorFactory->createDirectionalLight(Vector3(0.1f, -0.8f, 0.2f), Vector3(1.f, 1.f, 1.f), 1.f));
-	}
-
 	auto description = m_ObjectDescriptions.find(p_ObjectName);
 	if (description == m_ObjectDescriptions.end())
 	{

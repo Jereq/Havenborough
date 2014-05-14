@@ -14,6 +14,7 @@ private:
   public:
     explicit TreeFilter();
     TreeFilter(std::string p_FilterName);
+	TreeFilter(std::string p_FilterName, const boost::uuids::uuid& p_Id);
 
 	const boost::uuids::uuid& getID() const;
 	void setName(std::string p_ObjectName);

@@ -183,8 +183,6 @@ void MainWindow::on_actionOpen_triggered()
 	QString fullFilePath = QFileDialog::getOpenFileName(this, tr("Open Level"), "./assets/levels/", tr("Level Files (*.xml *.btxl)"));
 	if (!fullFilePath.isNull())
 	{
-		ui->m_ObjectTree->clearTree();
-		
 		loadLevel(fullFilePath.toStdString());
 	}
 }
@@ -537,7 +535,10 @@ void MainWindow::saveLevel(const std::string& p_Filename)
 
 void MainWindow::addObject(QTableWidgetItem* p_ObjectItem)
 {
-	m_ObjectManager->addObject(p_ObjectItem->text().toStdString(), Vector3(rand() % 1000, rand() % 1000, rand() % 1000));
+	const Vector3& cameraPos = ui->m_RenderWidget->getCamera().getPosition();
+	const Vector3& lookDir = ui->m_RenderWidget->getCamera().getForward();
+	const Vector3 addPos = cameraPos + lookDir * 500.f;
+	m_ObjectManager->addObject(p_ObjectItem->text().toStdString(), addPos);
 }
 
 void MainWindow::initializeSystems()
