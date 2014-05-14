@@ -2,17 +2,16 @@
 
 #include <QMainWindow>
 #include <QTimer>
+#include <QShortcut>
 
 #include <Actor.h>
 #include <EventManager.h>
 #include <Utilities\XMFloatUtil.h>
-
 #ifndef Q_MOC_RUN
 #include <ResourceManager.h>
 #endif
 
-#include <vector>
-#include <QShortcut>
+#include <map>
 
 class QTableWidgetItem;
 class QTreeWidgetItem;
@@ -44,7 +43,7 @@ private:
 	IPhysics* m_Physics;
     std::vector<QGroupBox*> m_Boxes;
 
-	QShortcut* m_Deselect;
+	std::map<std::string, QShortcut*> m_Hotkey;
 	
 public:
 	explicit MainWindow(QWidget *parent = 0);
@@ -99,5 +98,6 @@ private:
 
 	void initializeSystems();
 	void uninitializeSystems();
+	void initializeHotkeys();
 	void pick(IEventData::Ptr p_Data);
 };

@@ -56,7 +56,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	signalAndSlotsDefinitions();
     pushBoxes();
-
+	
     //Timer
 	m_Timer.setInterval(1000 / 60);
 	m_Timer.setSingleShot(false);
@@ -65,16 +65,16 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	m_ObjectManager->loadDescriptionsFromFolder("assets/Objects");
 
-	m_Deselect = nullptr;
-	m_Deselect = new QShortcut(QKeySequence("Ctrl+D"), this);
-	QObject::connect(m_Deselect, SIGNAL(activated()), this, SLOT(deselect()));
+	initializeHotkeys();
 }
 
 MainWindow::~MainWindow()
 {
-	if(m_Deselect)
-		delete m_Deselect;
-
+	for(auto &key : m_Hotkey)
+	{
+		delete key.second;
+		key.second = nullptr;
+	}
 	uninitializeSystems();
 	delete ui;
 }
@@ -615,6 +615,18 @@ void MainWindow::uninitializeSystems()
 		IPhysics::deletePhysics(m_Physics);
 		m_Physics = nullptr;
 	}
+}
+
+void MainWindow::initializeHotkeys()
+{
+	using std::map;
+	using std::pair;
+	using std::string;
+	
+	m_Hotkey.insert(pair<string, QShortcut*>("deselect_ctrl+d", new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_D), this)));
+	QObject::connect(m_Hotkey["deselect_ctrl+d"], SIGNAL(activated()), this, SLOT(deselect()));
+	m_Hotkey.insert(pair<string, QShortcut*>("deselect_escape", new QShortcut(QKeySequence(Qt::Key_Escape), this)));
+	QObject::connect(m_Hotkey["deselect_escape"], SIGNAL(activated()), this, SLOT(deselect()));
 }
 
 void MainWindow::sortPropertiesBoxes()
