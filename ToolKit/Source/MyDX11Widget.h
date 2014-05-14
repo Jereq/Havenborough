@@ -79,4 +79,13 @@ private:
 	void createPowerPieElement();
 	void preLoadModels();
 
+
+	void updateLightColor(IEventData::Ptr p_Data);
+	void updateLightDirection(IEventData::Ptr p_Data);
+	void updateLightPosition(IEventData::Ptr p_Data);
+	void updateLightAngle(IEventData::Ptr p_Data);
+	void updateLightRange(IEventData::Ptr p_Data);
+	void updateLightIntensity(IEventData::Ptr p_Data);
+
+	LightClass* findLight(int p_Id);
 };

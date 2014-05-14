@@ -40,6 +40,14 @@ void MyDX11Widget::initialize(EventManager* p_EventManager, ResourceManager* p_R
 	m_EventManager->addListener(EventListenerDelegate(this, &MyDX11Widget::selectPie), PowerPieSelectEventData::sk_EventType);
 	m_EventManager->addListener(EventListenerDelegate(this, &MyDX11Widget::pick), CreateRayEventData::sk_EventType);
 
+	m_EventManager->addListener(EventListenerDelegate(this, &MyDX11Widget::updateLightColor), UpdateLightColorEventData::sk_EventType);
+	m_EventManager->addListener(EventListenerDelegate(this, &MyDX11Widget::updateLightDirection), UpdateLightDirectionEventData::sk_EventType);
+	m_EventManager->addListener(EventListenerDelegate(this, &MyDX11Widget::updateLightPosition), UpdateLightPositionEventData::sk_EventType);
+	m_EventManager->addListener(EventListenerDelegate(this, &MyDX11Widget::updateLightAngle), UpdateLightAngleEventData::sk_EventType);
+	m_EventManager->addListener(EventListenerDelegate(this, &MyDX11Widget::updateLightRange), UpdateLightRangeEventData::sk_EventType);
+	m_EventManager->addListener(EventListenerDelegate(this, &MyDX11Widget::updateLightIntensity), UpdateLightIntensityEventData::sk_EventType);
+
+
 	m_ResourceIDs.push_back(m_ResourceManager->loadResource("particleSystem", "TestParticle"));
 	
 	m_PowerPie = PowerPie();
@@ -452,4 +460,81 @@ void MyDX11Widget::preLoadModels()
 	}
 
 	createPowerPieElement();
+}
+
+void MyDX11Widget::updateLightColor(IEventData::Ptr p_Data)
+{
+	std::shared_ptr<UpdateLightColorEventData> data = std::static_pointer_cast<UpdateLightColorEventData>(p_Data);
+	LightClass* light = findLight(data->getId());
+
+	if(light)
+	{
+		light->color = data->getColor();
+	}
+}
+
+void MyDX11Widget::updateLightDirection(IEventData::Ptr p_Data)
+{
+	std::shared_ptr<UpdateLightDirectionEventData> data = std::static_pointer_cast<UpdateLightDirectionEventData>(p_Data);
+	LightClass* light = findLight(data->getId());
+	
+	if(light)
+	{
+		DirectX::XMStoreFloat3(&light->direction, DirectX::XMVector3Normalize(DirectX::XMVectorSet(data->getDirection().x,data->getDirection().y,data->getDirection().z, 0.f)));
+		//light->direction = data->getDirection();
+	}
+}
+
+void MyDX11Widget::updateLightPosition(IEventData::Ptr p_Data)
+{
+	std::shared_ptr<UpdateLightPositionEventData> data = std::static_pointer_cast<UpdateLightPositionEventData>(p_Data);
+	LightClass* light = findLight(data->getId());
+
+	if(light)
+	{
+		light->position = data->getPosition();
+	}
+}
+
+void MyDX11Widget::updateLightAngle(IEventData::Ptr p_Data)
+{
+	std::shared_ptr<UpdateLightAngleEventData> data = std::static_pointer_cast<UpdateLightAngleEventData>(p_Data);
+	LightClass* light = findLight(data->getId());
+
+	if(light)
+	{
+		light->spotlightAngles = data->getAngle();
+	}
+}
+
+void MyDX11Widget::updateLightRange(IEventData::Ptr p_Data)
+{
+	std::shared_ptr<UpdateLightRangeEventData> data = std::static_pointer_cast<UpdateLightRangeEventData>(p_Data);
+	LightClass* light = findLight(data->getId());
+
+	if(light)
+	{
+		light->range = data->getRange();
+	}
+}
+
+void MyDX11Widget::updateLightIntensity(IEventData::Ptr p_Data)
+{
+	std::shared_ptr<UpdateLightIntensityEventData> data = std::static_pointer_cast<UpdateLightIntensityEventData>(p_Data);
+	LightClass* light = findLight(data->getId());
+
+	if(light)
+	{
+		light->intensity = data->getIntensity();
+	}
+}
+
+LightClass* MyDX11Widget::findLight(int p_Id)
+{
+	for(auto &light : m_Lights)
+	{
+		if(light.id == p_Id)
+			return &light;
+	}
+	return nullptr;
 }

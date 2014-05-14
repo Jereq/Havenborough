@@ -11,8 +11,11 @@
 #include <ResourceManager.h>
 #endif
 
+#include <vector>
+
 class QTableWidgetItem;
 class QTreeWidgetItem;
+class QGroupBox;
 
 class AnimationLoader;
 class IGraphics;
@@ -38,6 +41,7 @@ private:
 	std::unique_ptr<AnimationLoader> m_AnimationLoader;
 	IGraphics* m_Graphics;
 	IPhysics* m_Physics;
+    std::vector<QGroupBox*> m_Boxes;
 	
 public:
 	explicit MainWindow(QWidget *parent = 0);
@@ -45,49 +49,49 @@ public:
 
 private:
 	void signalAndSlotsDefinitions();
+    void pushBoxes();
+    void sortPropertiesBoxes();
 
 private slots:
-    void on_actionObject_Tree_triggered();
-
+	// Engine changes
+	void addObject(QTableWidgetItem* p_ObjectItem);
+	void onActorAdded(std::string p_ObjectType, Actor::ptr p_Actor);
 	void idle();
 
-    void on_actionExit_triggered();
-
-    void on_actionOpen_triggered();
-
-    void on_actionSave_triggered();
-	
+	// Property changes
 	void splitCameraPosition(Vector3 p_cameraPosition);
-
     void setCameraPosition();
 
-    void on_actionProperties_triggered();
-
-    void on_actionAdd_Object_triggered();
-
-    void on_m_ObjectTree_itemSelectionChanged();
-
-    void on_actionParticle_Tree_triggered();
-
-    void on_actionLight_Tree_triggered();
-
     void setObjectScale();
-
     void setObjectRotation();
-
     void setObjectPosition();
 
-	void addObject(QTableWidgetItem* p_ObjectItem);
+	void setLightPosition();
+	void setLightColor();
+	void setLightDirection();
+	void setLightAngles();
+	void setLightRange();
+	void setLightIntensity();
 
-    void on_m_ObjectTree_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
-	void onActorAdded(std::string p_ObjectType, Actor::ptr p_Actor);
+	// QT object changes
+	void on_m_ObjectTree_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
+    void on_m_ObjectTree_itemSelectionChanged();
 
+	// QT Triggers
+	void on_actionProperties_triggered();
+    void on_actionAdd_Object_triggered();
+	void on_actionObject_Tree_triggered();
+	void on_actionExit_triggered();
+    void on_actionOpen_triggered();
+    void on_actionSave_triggered();
+    void on_actionGo_To_Selected_triggered();
 signals:
     void setCameraPositionSignal(Vector3 p_CameraPosition);
 
 private:
 	void onFrame(float p_DeltaTime);
 	void loadLevel(const std::string& p_Filename);
+	void saveLevel(const std::string& p_Filename);
 
 	void initializeSystems();
 	void uninitializeSystems();

@@ -1110,6 +1110,7 @@ class LightComponent : public LightInterface
 {
 private:
 	LightClass m_Light;
+	Vector3 m_Offset;
 
 public:
 	~LightComponent() override
@@ -1119,6 +1120,8 @@ public:
 
 	void initialize(const tinyxml2::XMLElement* p_Data) override
 	{
+		int tempId = m_Light.id;
+
 		if (p_Data->Attribute("Type", "Point"))
 		{
 			Vector3 position(0.f, 0.f, 0.f);
@@ -1144,6 +1147,7 @@ public:
 			}
 
 			m_Light = LightClass::createPointLight(position, range, color);
+			m_Light.id = tempId;
 		}
 		else if (p_Data->Attribute("Type", "Spot"))
 		{
@@ -1155,13 +1159,14 @@ public:
 
 			p_Data->QueryAttribute("Range", &range);
 
-			const tinyxml2::XMLElement* pos = p_Data->FirstChildElement("Position");
+			/*const tinyxml2::XMLElement* pos = p_Data->FirstChildElement("Position");
 			if (pos)
 			{
 				pos->QueryAttribute("x", &position.x);
 				pos->QueryAttribute("y", &position.y);
 				pos->QueryAttribute("z", &position.z);
-			}
+			}*/
+			m_Offset = Vector3(0,0,0);
 
 			const tinyxml2::XMLElement* dir = p_Data->FirstChildElement("Direction");
 			if (dir)
@@ -1187,6 +1192,7 @@ public:
 			}
 
 			m_Light = LightClass::createSpotLight(position, direction, angles, range, color);
+			m_Light.id = tempId;
 		}
 		else if (p_Data->Attribute("Type", "Directional"))
 		{
@@ -1214,6 +1220,7 @@ public:
 			}
 			
 			m_Light = LightClass::createDirectionalLight(direction, color, intensity);
+			m_Light.id = tempId;
 		}
 		else
 		{
@@ -1267,6 +1274,78 @@ public:
 		};
 		pushColor(p_Printer, "Color", m_Light.color);
 		p_Printer.CloseElement();
+	}
+
+	//void setPosition(Vector3 p_Position)
+	//{
+	//	m_Light.position = p_Position;
+	//	m_Owner->getEventManager()->queueEvent(IEventData::Ptr(new UpdateLightPositionEventData(m_Light.id, p_Position)));
+	//}
+
+	void setPosition(Vector3 p_Position) override
+	{
+		m_Light.position = p_Position + m_Offset;
+		m_Owner->getEventManager()->queueEvent(IEventData::Ptr(new UpdateLightPositionEventData(m_Light.id, m_Light.position)));
+	}
+
+	const Vector3& getPosition() const
+	{
+		return m_Light.position;
+	}
+
+	void setDirection(Vector3 p_Direction)
+	{
+		m_Light.direction = p_Direction;
+		m_Owner->getEventManager()->queueEvent(IEventData::Ptr(new UpdateLightDirectionEventData(m_Light.id, p_Direction)));
+	}
+
+	const Vector3& getDirection() const
+	{
+		return m_Light.direction;
+	}
+
+	void setColor(Vector3 p_Color)
+	{
+		m_Light.color = p_Color;
+		m_Owner->getEventManager()->queueEvent(IEventData::Ptr(new UpdateLightColorEventData(m_Light.id, p_Color)));
+	}
+
+	const Vector3& getColor() const
+	{
+		return m_Light.color;
+	}
+
+	void setSpotLightAngles(Vector2 p_Angles)
+	{
+		m_Light.spotlightAngles = p_Angles;
+		m_Owner->getEventManager()->queueEvent(IEventData::Ptr(new UpdateLightAngleEventData(m_Light.id, p_Angles)));
+	}
+
+	const Vector2& getSpotLightAngles() const
+	{
+		return m_Light.spotlightAngles;
+	}
+
+	void setRange(float p_Range)
+	{
+		m_Light.range = p_Range;
+		m_Owner->getEventManager()->queueEvent(IEventData::Ptr(new UpdateLightRangeEventData(m_Light.id, p_Range)));
+	}
+
+	const float& getRange() const
+	{
+		return m_Light.range;
+	}
+
+	void setIntensity(float p_Intensity)
+	{
+		m_Light.intensity = p_Intensity;
+		m_Owner->getEventManager()->queueEvent(IEventData::Ptr(new UpdateLightRangeEventData(m_Light.id, p_Intensity)));
+	}
+
+	const float& getIntensity() const
+	{
+		return m_Light.intensity;
 	}
 
 	/**

@@ -8,10 +8,13 @@
 #include <Components.h>
 #include <Level.h>
 
-ObjectManager::ObjectManager(ActorFactory::ptr p_ActorFactory, EventManager* p_EventManager, ResourceManager* p_ResourceManager)
+#include "XMLLevel.h"
+
+ObjectManager::ObjectManager(ActorFactory::ptr p_ActorFactory, EventManager* p_EventManager, ResourceManager* p_ResourceManager, Tree* p_ObjectTree)
 	: m_ActorFactory(p_ActorFactory),
 	m_EventManager(p_EventManager),
-	m_ResourceManager(p_ResourceManager)
+	m_ResourceManager(p_ResourceManager),
+	m_ObjectTree(p_ObjectTree)
 {
 }
 
@@ -35,38 +38,15 @@ void ObjectManager::loadLevel(const std::string& p_Filename)
 
 	for(const auto &actor : m_ActorList)
 	{
-		std::weak_ptr<ModelComponent> model = actor.second->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
-		std::shared_ptr<ModelComponent> smodel = model.lock();
-		if(smodel)
-		{
-			emit actorAdded(smodel->getMeshName(), actor.second);
-			continue;
-		}
-		std::weak_ptr<LightComponent> lmodel = actor.second->getComponent<LightComponent>(LightInterface::m_ComponentId);
-		std::shared_ptr<LightComponent> slmodel = lmodel.lock();
-		if(slmodel)
-		{
-			std::string lightype = "Unknown";
-			switch(slmodel->getType())
-			{
-			case LightClass::Type::DIRECTIONAL: lightype = "Directional"; break;
-			case LightClass::Type::SPOT: lightype = "Spot"; break;
-			case LightClass::Type::POINT: lightype = "Point"; break;
-			}
-		
-			emit actorAdded(lightype, actor.second);
-			continue;
-		}
-		std::weak_ptr<ParticleComponent> pmodel = actor.second->getComponent<ParticleComponent>(ParticleInterface::m_ComponentId);
-		std::shared_ptr<ParticleComponent> spmodel = pmodel.lock();
-		if(spmodel)
-		{
-			emit actorAdded(spmodel->getEffectName(), actor.second);
-			continue;
-		}
-
-		emit actorAdded("Object", actor.second);
+		emit actorAdded("", actor.second);
 	}
+}
+
+void ObjectManager::saveLevel(const std::string& p_Filename)
+{
+	XMLLevel levelSaver(m_ActorList, m_ObjectTree);
+	std::ofstream outStream(p_Filename, std::ios_base::binary);
+	levelSaver.save(outStream);
 }
 
 Actor::ptr ObjectManager::getActor(Actor::Id p_Id)
@@ -165,4 +145,9 @@ void ObjectManager::loadDescriptionsFromFolder(const std::string& p_Path)
 
 		registerObjectDescription(descName, root);
 	}
+}
+
+void ObjectManager::actorRemoved(int actorID)
+{
+	m_ActorList.removeActor(actorID);
 }
