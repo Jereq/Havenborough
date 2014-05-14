@@ -12,6 +12,7 @@
 #endif
 
 #include <vector>
+#include <QShortcut>
 
 class QTableWidgetItem;
 class QTreeWidgetItem;
@@ -42,6 +43,8 @@ private:
 	IGraphics* m_Graphics;
 	IPhysics* m_Physics;
     std::vector<QGroupBox*> m_Boxes;
+
+	QShortcut* m_Deselect;
 	
 public:
 	explicit MainWindow(QWidget *parent = 0);
@@ -72,6 +75,7 @@ private slots:
 	void setLightAngles();
 	void setLightRange();
 	void setLightIntensity();
+	void deselect();
 
 	// QT object changes
 	void on_m_ObjectTree_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);

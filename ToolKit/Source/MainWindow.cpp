@@ -64,10 +64,17 @@ MainWindow::MainWindow(QWidget *parent) :
 	m_Timer.start();
 
 	m_ObjectManager->loadDescriptionsFromFolder("assets/Objects");
+
+	m_Deselect = nullptr;
+	m_Deselect = new QShortcut(QKeySequence("Ctrl+D"), this);
+	QObject::connect(m_Deselect, SIGNAL(activated()), this, SLOT(deselect()));
 }
 
 MainWindow::~MainWindow()
 {
+	if(m_Deselect)
+		delete m_Deselect;
+
 	uninitializeSystems();
 	delete ui;
 }
@@ -240,9 +247,6 @@ void MainWindow::on_m_ObjectTree_itemSelectionChanged()
 
     if(currItem && currItem->isSelected())
     {
-		Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
-		std::weak_ptr<ModelComponent> pmodel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
-		std::shared_ptr<ModelComponent> spmodel = pmodel.lock();
 		if(currItem->isSelected() && spmodel)
 		{
 			ui->PositionBox->show();
@@ -334,6 +338,11 @@ void MainWindow::on_m_ObjectTree_itemSelectionChanged()
 		    }
 		}
 	}
+	else if (spmodel)
+	{
+		spmodel->setColorTone(Vector3(1.0f, 1.0f, 1.0f));
+	}
+
     sortPropertiesBoxes();
 }
 
@@ -399,8 +408,6 @@ void MainWindow::setLightPosition()
         if(currItem->isSelected() && cItem)
 		{
 			Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
-			//std::weak_ptr<LightComponent> light = actor->getComponent<LightComponent>(LightInterface::m_ComponentId);
-			//std::shared_ptr<LightComponent> slight = light.lock();
 			actor->setPosition(Vector3(ui->m_LightPositionXBox->value(),ui->m_LightPositionYBox->value(),ui->m_LightPositionZBox->value()));
 		}
 	}
@@ -487,6 +494,27 @@ void MainWindow::setLightIntensity()
 			std::weak_ptr<LightComponent> light = actor->getComponent<LightComponent>(LightInterface::m_ComponentId);
 			std::shared_ptr<LightComponent> slight = light.lock();
 			slight->setIntensity(ui->m_LightAdditionalBox1->value());
+		}
+	}
+}
+
+void MainWindow::deselect()
+{
+	QTreeWidgetItem *currItem = ui->m_ObjectTree->currentItem();
+
+	if(currItem)
+	{
+		TreeItem *cItem = dynamic_cast<TreeItem*>(currItem);
+        if(currItem->isSelected() && cItem)
+		{
+			Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
+			std::weak_ptr<ModelComponent> model = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
+			std::shared_ptr<ModelComponent> spmodel = model.lock();
+			if(spmodel)
+			{
+				spmodel->setColorTone(Vector3(1.0f, 1.0f, 1.0f));
+				ui->m_ObjectTree->clearSelection();
+			}
 		}
 	}
 }
