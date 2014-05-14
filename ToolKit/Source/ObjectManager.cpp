@@ -81,11 +81,6 @@ Actor::ptr ObjectManager::getActorFromBodyHandle(BodyHandle p_BodyHandle)
 
 void ObjectManager::addObject(const std::string& p_ObjectName, const Vector3& p_Position)
 {
-	if (m_ActorList.begin() == m_ActorList.end())
-	{
-		m_ActorList.addActor(m_ActorFactory->createDirectionalLight(Vector3(0.1f, -0.8f, 0.2f), Vector3(1.f, 1.f, 1.f), 1.f));
-	}
-
 	auto description = m_ObjectDescriptions.find(p_ObjectName);
 	if (description == m_ObjectDescriptions.end())
 	{

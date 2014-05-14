@@ -41,6 +41,7 @@ public:
 	virtual void present() {}
 
 	virtual void onFrame(float p_DeltaTime);
+	const Camera& getCamera() const;
 
 protected:
 	QPaintEngine* paintEngine() const { return nullptr; }
