@@ -52,7 +52,7 @@ void MyDX11Widget::initialize(EventManager* p_EventManager, ResourceManager* p_R
 	
 	m_PowerPie = PowerPie();
 	preLoadModels();
-
+	m_ToolManager.initialize(m_EventManager);
 }
 
 void MyDX11Widget::uninitialize()

@@ -6,6 +6,7 @@
 #include "Camera.h"
 #include "FlyControl.h"
 #include "KeyboardControl.h"
+#include "ToolManager.h"
 
 class EventManager;
 class IGraphics;
@@ -47,7 +48,7 @@ protected:
 	QPointF m_MouseDirPrev;
 	EventManager* m_EventManager;
 	ResourceManager* m_ResourceManager;
-
+	ToolManager m_ToolManager;
 
 public:
 	DXWidget(QWidget* parent = nullptr, Qt::WindowFlags flags = 0);

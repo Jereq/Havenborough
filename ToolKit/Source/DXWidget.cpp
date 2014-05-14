@@ -46,6 +46,7 @@ void DXWidget::resizeEvent(QResizeEvent* p_Event)
 		QWidget::resizeEvent(p_Event);
 	}
 	onResize(newSize.width(), newSize.height());
+	m_ToolManager.updateScreenSize(newSize.width(), newSize.height());
 }
 
 void DXWidget::keyPressEvent(QKeyEvent* e)
@@ -84,8 +85,8 @@ void DXWidget::mousePressEvent(QMouseEvent* e)
 	{
 		if ((e->buttons() & Qt::LeftButton) && !(e->buttons() & Qt::RightButton))
 		{
-			m_EventManager->triggerTriggerEvent(IEventData::Ptr(new CreateRayEventData(DirectX::XMFLOAT2(e->localPos().x(), e->localPos().y()),
-																						DirectX::XMFLOAT2(width(), height()))));
+			m_ToolManager.updateMousePos(e->localPos().x(), e->localPos().y());
+			m_ToolManager.OnPress();
 			//showStatus(tr("Tumble Tool: LMB Drag: Use LMB or MMB to tumble"));
 			setCursor(Qt::OpenHandCursor);
 		}
@@ -119,6 +120,7 @@ void DXWidget::mouseMoveEvent(QMouseEvent* e)
 			QPointF delta = (e->localPos() - m_PrevMousePos) / (float)height() * DirectX::XM_PI;
 			m_Camera.rotate(delta.x(), delta.y(), 0.f);
 			update();
+			m_ToolManager.OnMove();
 		}
 		else if ((e->buttons() & Qt::RightButton) && !(e->buttons() & Qt::LeftButton))
 		{
@@ -173,6 +175,12 @@ void DXWidget::mouseReleaseEvent(QMouseEvent* e)
 {
 	setCursor(Qt::ArrowCursor);
 	//showStatus("");
+	if ((e->buttons() & Qt::LeftButton) && !(e->buttons() & Qt::RightButton))
+	{
+		m_ToolManager.OnRelease();
+		//showStatus(tr("Tumble Tool: LMB Drag: Use LMB or MMB to tumble"));
+	}
+
 
 	std::shared_ptr<MouseEventDataPie> pie(new MouseEventDataPie(Vector2(0.f, 0.f), false));
 	m_EventManager->queueEvent(pie);
@@ -181,7 +189,6 @@ void DXWidget::mouseReleaseEvent(QMouseEvent* e)
 	int y = m_MouseStartPos.y();
 	QPoint temp = mapToGlobal(QPoint(x, y));
 	//QCursor::setPos(temp);
-	
 	
 	QWidget::mouseReleaseEvent(e);
 }
