@@ -44,16 +44,8 @@ void Tree::removeItem()
 
 void Tree::objectCreated(std::string p_MeshName, int p_ActorId, int p_Type)
 {
-	if(m_ObjectCount.count(p_MeshName) > 0)
-		m_ObjectCount.at(p_MeshName)++;
-	else
-	{
-		m_ObjectCount.insert(std::pair<std::string, int>(p_MeshName, 0));
-
-		emit addTableObject(p_MeshName);
-	}
-
-	addTopLevelItem(new TreeItem(p_MeshName + "_" + std::to_string(m_ObjectCount.at(p_MeshName)), p_ActorId, p_Type));
+	addTopLevelItem(new TreeItem(p_MeshName + "_" + std::to_string(m_ObjectCount[p_MeshName]), p_ActorId, p_Type));
+	++m_ObjectCount[p_MeshName];
 }
 
 void Tree::changeObjectName(QTreeWidgetItem *p_Item, int p_Column)

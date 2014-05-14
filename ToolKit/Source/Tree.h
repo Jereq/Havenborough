@@ -26,7 +26,6 @@ public slots:
 	void changeObjectName(QTreeWidgetItem *p_Item, int p_Column);
 
 signals:
-	void addTableObject(std::string p_ObjectName);
 	void removeActor(int id);
 
 private:
