@@ -115,7 +115,6 @@ void MainWindow::signalAndSlotsDefinitions()
 	QObject::connect(ui->m_ObjectTreeRemoveButton, SIGNAL(clicked()), ui->m_ObjectTree, SLOT(removeItem()));
 
 	//Signals and slots for connecting the Tree item creation to the table
-	QObject::connect(ui->m_ObjectTree, SIGNAL(addTableObject(std::string)), ui->m_ObjectTable, SLOT(addObject(std::string)));
 	QObject::connect(m_ObjectManager.get(), SIGNAL(objectTypeCreated(std::string)), ui->m_ObjectTable, SLOT(addObject(std::string)));
 
     //Signals and slots for connecting the light position editing to the light
