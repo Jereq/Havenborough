@@ -17,10 +17,8 @@ void Tree::clearTree()
 
 void Tree::selectItem(int p_ActorId)
 {
-	QTreeWidgetItem *previous = currentItem();
-	
 	QTreeWidgetItem *currItem;
-              	int tempId = p_ActorId;
+    int tempId = p_ActorId;
 	for(int i = 0; i < topLevelItemCount(); i++)
 	{
 		currItem = topLevelItem(i);
@@ -141,16 +139,16 @@ void Tree::selectItemTraverse(QTreeWidgetItem* currItem, int& p_ActorId)
     {
         for (int i = 0; i < currItem->childCount(); i++)
         {
-			QTreeWidgetItem *currChild = currItem->takeChild(i);
+			QTreeWidgetItem *currChild = currItem->child(i);
 			TreeItem *item = dynamic_cast<TreeItem*>(currChild);
 
 			if(item && item->getActorId() == p_ActorId)
 			{
-				setCurrentIndex(indexFromItem(currItem));
+				setCurrentIndex(indexFromItem(currChild));
 				break;
 			}
-			else if(currItem->childCount() > 0)
-				selectItemTraverse(currItem, p_ActorId);
+			else if(currChild->childCount() > 0)
+				selectItemTraverse(currChild, p_ActorId);
         }
     }
 }
