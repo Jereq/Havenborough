@@ -1,0 +1,9 @@
+<ObjectDescription Name="Directional Light">
+  <Object>
+    <Light Type="Directional">
+      <Direction x="0.3" y="-0.8" z="0.2"/>
+      <Intensity Intensity="1.0"/>
+      <Color r="1.0" g="1.0" b="1.0"/>
+    </Light>
+  </Object>
+</ObjectDescription>

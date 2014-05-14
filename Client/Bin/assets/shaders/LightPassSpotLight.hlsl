@@ -36,7 +36,7 @@ VSLightOutput SpotLightVS(VSLightInput input)
 		float4(0,0,l,0),
 		float4(0,0,0,1)
 	};
-	float4x4 rotate = calcRotationMatrix(input.lightDirection, input.lightPos);
+	float4x4 rotate = calcRotationMatrix(normalize(input.lightDirection), input.lightPos);
 	float4x4 trans = {
 		float4(1,0,0,t.x),
 		float4(0,1,0,t.y),
@@ -50,16 +50,6 @@ VSLightOutput SpotLightVS(VSLightInput input)
 	pos = mul(trans, pos);
 
 	float3 direction = input.lightDirection;
-	if((direction.x == 0.f && direction.z == 0.f ) && (direction.y == 1.f || direction.y == -1.f))
-	{
-		float neg = 1.f;
-		if(direction.y < 0)
-			neg = -1.f;
-		direction.x = 0.001f * neg;
-		direction.z = 0.001f * neg;
-		direction.y = 0.998f * neg;
-		direction = normalize(direction);
-	}
 
 	VSLightOutput output;
 	output.vposition		= mul(projection, mul(view, pos));
@@ -126,7 +116,13 @@ float4x4 calcRotationMatrix(float3 direction, float3 position)
 {
 	float3 fwd = direction;
 	float3 up = float3(0,1,0);
-	float3 side = normalize(cross(up,fwd));
+	float3 side = cross(up,fwd);
+	if (dot(side, side) < 0.001f)
+	{
+		float3 notUp = float3(1.f, 0.f, 0.f);
+		side = cross(notUp, fwd);
+	}
+	side = normalize(side);
 	up = normalize(cross(side,fwd));
 
 	float4x4 rotation = {float4(side.x,side.y,side.z,0),
