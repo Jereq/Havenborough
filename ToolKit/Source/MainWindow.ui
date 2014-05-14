@@ -457,6 +457,9 @@
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+      <property name="autoFillBackground">
+       <bool>false</bool>
+      </property>
      </widget>
     </item>
    </layout>
@@ -467,8 +470,33 @@
      <x>0</x>
      <y>0</y>
      <width>1920</width>
-     <height>21</height>
+     <height>18</height>
     </rect>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QMenuBar{
+	     background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                       stop:0 #083c62, stop:1 #041e31);
+}
+
+ QMenuBar::item {
+     spacing: 3px; /* spacing between menu bar items */
+     padding: 1px 4px;
+     background: transparent;
+     border-radius: 4px;
+	color: rgb(255, 255, 255);
+ }
+
+ QMenuBar::item:selected { /* when selected using mouse or keyboard */
+     background: #a8a8a8;
+ }
+
+ QMenuBar::item:pressed {
+     background: #888888;
+ }</string>
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
@@ -548,6 +576,28 @@
          <property name="toolTip">
           <string>Add a new filter</string>
          </property>
+         <property name="styleSheet">
+          <string notr="true"> QPushButton {
+     background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                       stop: 0 #083c62, stop: 1 #083c62);
+	color: rgb(255, 255,255);
+ }
+
+ QPushButton:pressed {
+     background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                       stop: 0 #dadbde, stop: 1 #f6f7fa);
+	
+	color: rgb(0, 0,0);
+ }
+
+ QPushButton:flat {
+     border: none; /* no border for a flat push button */
+ }
+
+ QPushButton:default {
+     border-color: navy; /* make the default button prominent */
+ }</string>
+         </property>
          <property name="text">
           <string>Add Filter</string>
          </property>
@@ -558,6 +608,28 @@
          <property name="toolTip">
           <string>Remove item(s) or filter(s)</string>
          </property>
+         <property name="styleSheet">
+          <string notr="true"> QPushButton {
+     background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                       stop: 0 #083c62, stop: 1 #083c62);
+	color: rgb(255, 255,255);
+ }
+
+ QPushButton:pressed {
+     background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                       stop: 0 #dadbde, stop: 1 #f6f7fa);
+	
+	color: rgb(0, 0,0);
+ }
+
+ QPushButton:flat {
+     border: none; /* no border for a flat push button */
+ }
+
+ QPushButton:default {
+     border-color: navy; /* make the default button prominent */
+ }</string>
+         </property>
          <property name="text">
           <string>Remove</string>
          </property>
@@ -567,6 +639,97 @@
      </item>
      <item row="0" column="0">
       <widget class="Tree" name="m_ObjectTree">
+       <property name="palette">
+        <palette>
+         <active>
+          <colorrole role="Button">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>197</red>
+             <green>197</green>
+             <blue>197</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Base">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>197</red>
+             <green>197</green>
+             <blue>197</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Window">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>197</red>
+             <green>197</green>
+             <blue>197</blue>
+            </color>
+           </brush>
+          </colorrole>
+         </active>
+         <inactive>
+          <colorrole role="Button">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>197</red>
+             <green>197</green>
+             <blue>197</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Base">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>197</red>
+             <green>197</green>
+             <blue>197</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Window">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>197</red>
+             <green>197</green>
+             <blue>197</blue>
+            </color>
+           </brush>
+          </colorrole>
+         </inactive>
+         <disabled>
+          <colorrole role="Button">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>197</red>
+             <green>197</green>
+             <blue>197</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Base">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>197</red>
+             <green>197</green>
+             <blue>197</blue>
+            </color>
+           </brush>
+          </colorrole>
+          <colorrole role="Window">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>197</red>
+             <green>197</green>
+             <blue>197</blue>
+            </color>
+           </brush>
+          </colorrole>
+         </disabled>
+        </palette>
+       </property>
        <property name="styleSheet">
         <string notr="true"> QTreeView::branch:has-siblings:!adjoins-item {
      border-image: url(:/Pictures/Assets/stylesheet-vline.png) 0;
@@ -590,7 +753,11 @@
  QTreeView::branch:open:has-children:has-siblings  {
          border-image: none;
          image:url(:/Pictures/Assets/stylesheet-branch-open.png);
- }</string>
+ }
+
+QTreeView{
+	background:rgb(197, 197, 197);
+}</string>
        </property>
        <property name="verticalScrollBarPolicy">
         <enum>Qt::ScrollBarAsNeeded</enum>
@@ -637,6 +804,15 @@
        <property name="palette">
         <palette>
          <active>
+          <colorrole role="Text">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>0</red>
+             <green>0</green>
+             <blue>0</blue>
+            </color>
+           </brush>
+          </colorrole>
           <colorrole role="Base">
            <brush brushstyle="SolidPattern">
             <color alpha="255">
@@ -648,6 +824,15 @@
           </colorrole>
          </active>
          <inactive>
+          <colorrole role="Text">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>0</red>
+             <green>0</green>
+             <blue>0</blue>
+            </color>
+           </brush>
+          </colorrole>
           <colorrole role="Base">
            <brush brushstyle="SolidPattern">
             <color alpha="255">
@@ -659,6 +844,15 @@
           </colorrole>
          </inactive>
          <disabled>
+          <colorrole role="Text">
+           <brush brushstyle="SolidPattern">
+            <color alpha="255">
+             <red>4</red>
+             <green>30</green>
+             <blue>49</blue>
+            </color>
+           </brush>
+          </colorrole>
           <colorrole role="Base">
            <brush brushstyle="SolidPattern">
             <color alpha="255">
@@ -739,6 +933,11 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <property name="styleSheet">
+      <string notr="true">QGroupBox{
+	color: rgb(255, 255, 255);
+}</string>
+     </property>
      <property name="title">
       <string>Camera Position</string>
      </property>
@@ -747,6 +946,11 @@
        <layout class="QGridLayout" name="gridLayout_2">
         <item row="1" column="0">
          <widget class="QLabel" name="label_3">
+          <property name="styleSheet">
+           <string notr="true">QLabel{
+	color: rgb(255, 255, 255);
+}</string>
+          </property>
           <property name="text">
            <string>Y</string>
           </property>
@@ -757,6 +961,11 @@
         </item>
         <item row="2" column="0">
          <widget class="QLabel" name="label_2">
+          <property name="styleSheet">
+           <string notr="true">QLabel{
+	color: rgb(255, 255, 255);
+}</string>
+          </property>
           <property name="text">
            <string>Z</string>
           </property>
@@ -767,6 +976,11 @@
         </item>
         <item row="0" column="0">
          <widget class="QLabel" name="label">
+          <property name="styleSheet">
+           <string notr="true">QLabel{
+	color: rgb(255, 255, 255);
+}</string>
+          </property>
           <property name="text">
            <string>X</string>
           </property>
@@ -881,6 +1095,11 @@
        <height>111</height>
       </rect>
      </property>
+     <property name="styleSheet">
+      <string notr="true">QGroupBox{
+	color: rgb(255, 255, 255);
+}</string>
+     </property>
      <property name="title">
       <string>Position</string>
      </property>
@@ -896,6 +1115,11 @@
       <layout class="QGridLayout" name="gridLayout_5">
        <item row="1" column="0">
         <widget class="QLabel" name="label_5">
+         <property name="styleSheet">
+          <string notr="true">QLabel{
+	color: rgb(255, 255, 255);
+}</string>
+         </property>
          <property name="text">
           <string>Y</string>
          </property>
@@ -906,6 +1130,11 @@
        </item>
        <item row="2" column="0">
         <widget class="QLabel" name="label_6">
+         <property name="styleSheet">
+          <string notr="true">QLabel{
+	color: rgb(255, 255, 255);
+}</string>
+         </property>
          <property name="text">
           <string>Z</string>
          </property>
@@ -916,6 +1145,11 @@
        </item>
        <item row="0" column="0">
         <widget class="QLabel" name="label_4">
+         <property name="styleSheet">
+          <string notr="true">QLabel{
+	color: rgb(255, 255, 255);
+}</string>
+         </property>
          <property name="text">
           <string>X</string>
          </property>
@@ -1020,6 +1254,11 @@
        <height>111</height>
       </rect>
      </property>
+     <property name="styleSheet">
+      <string notr="true">QGroupBox{
+	color: rgb(255, 255, 255);
+}</string>
+     </property>
      <property name="title">
       <string>Scale</string>
      </property>
@@ -1035,6 +1274,11 @@
       <layout class="QGridLayout" name="gridLayout_6">
        <item row="1" column="0">
         <widget class="QLabel" name="label_7">
+         <property name="styleSheet">
+          <string notr="true">QLabel{
+	color: rgb(255, 255, 255);
+}</string>
+         </property>
          <property name="text">
           <string>Y</string>
          </property>
@@ -1045,6 +1289,11 @@
        </item>
        <item row="2" column="0">
         <widget class="QLabel" name="label_8">
+         <property name="styleSheet">
+          <string notr="true">QLabel{
+	color: rgb(255, 255, 255);
+}</string>
+         </property>
          <property name="text">
           <string>Z</string>
          </property>
@@ -1055,6 +1304,11 @@
        </item>
        <item row="0" column="0">
         <widget class="QLabel" name="label_9">
+         <property name="styleSheet">
+          <string notr="true">QLabel{
+	color: rgb(255, 255, 255);
+}</string>
+         </property>
          <property name="text">
           <string>X</string>
          </property>
@@ -1168,6 +1422,11 @@
        <height>111</height>
       </rect>
      </property>
+     <property name="styleSheet">
+      <string notr="true">QGroupBox{
+	color: rgb(255, 255, 255);
+}</string>
+     </property>
      <property name="title">
       <string>Rotation</string>
      </property>
@@ -1183,6 +1442,11 @@
       <layout class="QGridLayout" name="gridLayout_7">
        <item row="0" column="0">
         <widget class="QLabel" name="label_10">
+         <property name="styleSheet">
+          <string notr="true">QLabel{
+	color: rgb(255, 255, 255);
+}</string>
+         </property>
          <property name="text">
           <string>X</string>
          </property>
@@ -1193,6 +1457,11 @@
        </item>
        <item row="1" column="0">
         <widget class="QLabel" name="label_11">
+         <property name="styleSheet">
+          <string notr="true">QLabel{
+	color: rgb(255, 255, 255);
+}</string>
+         </property>
          <property name="text">
           <string>Y</string>
          </property>
@@ -1203,6 +1472,11 @@
        </item>
        <item row="2" column="0">
         <widget class="QLabel" name="label_12">
+         <property name="styleSheet">
+          <string notr="true">QLabel{
+	color: rgb(255, 255, 255);
+}</string>
+         </property>
          <property name="text">
           <string>Z</string>
          </property>
@@ -1332,6 +1606,11 @@
        <height>111</height>
       </rect>
      </property>
+     <property name="styleSheet">
+      <string notr="true">QGroupBox{
+	color: rgb(255, 255, 255);
+}</string>
+     </property>
      <property name="title">
       <string>Color</string>
      </property>
@@ -1347,6 +1626,11 @@
       <layout class="QGridLayout" name="gridLayout_8">
        <item row="2" column="0">
         <widget class="QLabel" name="label_15">
+         <property name="styleSheet">
+          <string notr="true">QLabel{
+	color: rgb(255, 255, 255);
+}</string>
+         </property>
          <property name="text">
           <string>Blue</string>
          </property>
@@ -1357,6 +1641,11 @@
        </item>
        <item row="0" column="0">
         <widget class="QLabel" name="label_13">
+         <property name="styleSheet">
+          <string notr="true">QLabel{
+	color: rgb(255, 255, 255);
+}</string>
+         </property>
          <property name="text">
           <string>Red</string>
          </property>
@@ -1367,6 +1656,11 @@
        </item>
        <item row="1" column="0">
         <widget class="QLabel" name="label_14">
+         <property name="styleSheet">
+          <string notr="true">QLabel{
+	color: rgb(255, 255, 255);
+}</string>
+         </property>
          <property name="text">
           <string>Green</string>
          </property>
@@ -1432,6 +1726,11 @@
        <height>111</height>
       </rect>
      </property>
+     <property name="styleSheet">
+      <string notr="true">QGroupBox{
+	color: rgb(255, 255, 255);
+}</string>
+     </property>
      <property name="title">
       <string>Direction</string>
      </property>
@@ -1447,6 +1746,11 @@
       <layout class="QGridLayout" name="gridLayout_11">
        <item row="2" column="0">
         <widget class="QLabel" name="label_16">
+         <property name="styleSheet">
+          <string notr="true">QLabel{
+	color: rgb(255, 255, 255);
+}</string>
+         </property>
          <property name="text">
           <string>Z</string>
          </property>
@@ -1457,6 +1761,11 @@
        </item>
        <item row="0" column="0">
         <widget class="QLabel" name="label_17">
+         <property name="styleSheet">
+          <string notr="true">QLabel{
+	color: rgb(255, 255, 255);
+}</string>
+         </property>
          <property name="text">
           <string>X</string>
          </property>
@@ -1467,6 +1776,11 @@
        </item>
        <item row="1" column="0">
         <widget class="QLabel" name="label_18">
+         <property name="styleSheet">
+          <string notr="true">QLabel{
+	color: rgb(255, 255, 255);
+}</string>
+         </property>
          <property name="text">
           <string>Y</string>
          </property>
@@ -1541,6 +1855,11 @@
        <height>51</height>
       </rect>
      </property>
+     <property name="styleSheet">
+      <string notr="true">QGroupBox{
+	color: rgb(255, 255, 255);
+}</string>
+     </property>
      <property name="title">
       <string>Additional</string>
      </property>
@@ -1556,6 +1875,11 @@
       <layout class="QGridLayout" name="gridLayout_12">
        <item row="0" column="0">
         <widget class="QLabel" name="label_20">
+         <property name="styleSheet">
+          <string notr="true">QLabel{
+	color: rgb(255, 255, 255);
+}</string>
+         </property>
          <property name="text">
           <string>Intensity</string>
          </property>
@@ -1595,6 +1919,11 @@
        <height>51</height>
       </rect>
      </property>
+     <property name="styleSheet">
+      <string notr="true">QGroupBox{
+	color: rgb(255, 255, 255);
+}</string>
+     </property>
      <property name="title">
       <string>Additional</string>
      </property>
@@ -1610,6 +1939,11 @@
       <layout class="QGridLayout" name="gridLayout_13">
        <item row="0" column="0">
         <widget class="QLabel" name="label_21">
+         <property name="styleSheet">
+          <string notr="true">QLabel{
+	color: rgb(255, 255, 255);
+}</string>
+         </property>
          <property name="text">
           <string>Range</string>
          </property>
@@ -1649,6 +1983,11 @@
        <height>91</height>
       </rect>
      </property>
+     <property name="styleSheet">
+      <string notr="true">QGroupBox{
+	color: rgb(255, 255, 255);
+}</string>
+     </property>
      <property name="title">
       <string>Angles</string>
      </property>
@@ -1664,6 +2003,11 @@
       <layout class="QGridLayout" name="gridLayout_14">
        <item row="0" column="0">
         <widget class="QLabel" name="label_22">
+         <property name="styleSheet">
+          <string notr="true">QLabel{
+	color: rgb(255, 255, 255);
+}</string>
+         </property>
          <property name="text">
           <string>X</string>
          </property>
@@ -1706,6 +2050,11 @@
        </item>
        <item row="1" column="0">
         <widget class="QLabel" name="label_23">
+         <property name="styleSheet">
+          <string notr="true">QLabel{
+	color: rgb(255, 255, 255);
+}</string>
+         </property>
          <property name="text">
           <string>Y</string>
          </property>
@@ -1726,6 +2075,11 @@
        <height>111</height>
       </rect>
      </property>
+     <property name="styleSheet">
+      <string notr="true">QGroupBox{
+	color: rgb(255, 255, 255);
+}</string>
+     </property>
      <property name="title">
       <string>Position</string>
      </property>
@@ -1741,6 +2095,11 @@
       <layout class="QGridLayout" name="gridLayout_15">
        <item row="1" column="0">
         <widget class="QLabel" name="label_19">
+         <property name="styleSheet">
+          <string notr="true">QLabel{
+	color: rgb(255, 255, 255);
+}</string>
+         </property>
          <property name="text">
           <string>Y</string>
          </property>
@@ -1751,6 +2110,11 @@
        </item>
        <item row="2" column="0">
         <widget class="QLabel" name="label_24">
+         <property name="styleSheet">
+          <string notr="true">QLabel{
+	color: rgb(255, 255, 255);
+}</string>
+         </property>
          <property name="text">
           <string>Z</string>
          </property>
@@ -1761,6 +2125,11 @@
        </item>
        <item row="0" column="0">
         <widget class="QLabel" name="label_25">
+         <property name="styleSheet">
+          <string notr="true">QLabel{
+	color: rgb(255, 255, 255);
+}</string>
+         </property>
          <property name="text">
           <string>X</string>
          </property>
