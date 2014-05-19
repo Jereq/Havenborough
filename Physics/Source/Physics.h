@@ -66,6 +66,7 @@ public:
 	Vector3 getBodyPosition(BodyHandle p_Body) override;
 
 	Vector3 getBodySize(BodyHandle p_Body) override;
+	float getSurroundingSphereRadius(BodyHandle p_Body) override;
 
 	void setBodyPosition(BodyHandle p_Body, Vector3 p_Position) override;
 	void setBodyVolumePosition(BodyHandle p_Body, unsigned p_Volume, Vector3 p_Position) override;
