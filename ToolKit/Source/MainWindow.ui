@@ -921,6 +921,12 @@
        </item>
        <item row="1" column="1">
         <widget class="QDoubleSpinBox" name="m_LightColorYBox">
+         <property name="maximumSize">
+          <size>
+           <width>71</width>
+           <height>16777215</height>
+          </size>
+         </property>
          <property name="decimals">
           <number>3</number>
          </property>
@@ -934,6 +940,12 @@
        </item>
        <item row="2" column="1">
         <widget class="QDoubleSpinBox" name="m_LightColorZBox">
+         <property name="maximumSize">
+          <size>
+           <width>71</width>
+           <height>16777215</height>
+          </size>
+         </property>
          <property name="decimals">
           <number>3</number>
          </property>
@@ -947,6 +959,12 @@
        </item>
        <item row="0" column="1">
         <widget class="QDoubleSpinBox" name="m_LightColorXBox">
+         <property name="maximumSize">
+          <size>
+           <width>71</width>
+           <height>16777215</height>
+          </size>
+         </property>
          <property name="decimals">
           <number>3</number>
          </property>
@@ -1015,6 +1033,12 @@
        </item>
        <item row="1" column="1">
         <widget class="QDoubleSpinBox" name="m_LightDirectionYBox">
+         <property name="maximumSize">
+          <size>
+           <width>71</width>
+           <height>16777215</height>
+          </size>
+         </property>
          <property name="decimals">
           <number>3</number>
          </property>
@@ -1031,6 +1055,12 @@
        </item>
        <item row="2" column="1">
         <widget class="QDoubleSpinBox" name="m_LightDirectionZBox">
+         <property name="maximumSize">
+          <size>
+           <width>71</width>
+           <height>16777215</height>
+          </size>
+         </property>
          <property name="decimals">
           <number>3</number>
          </property>
@@ -1246,6 +1276,12 @@
        </item>
        <item row="1" column="1">
         <widget class="QDoubleSpinBox" name="m_LightAngleYBox">
+         <property name="maximumSize">
+          <size>
+           <width>71</width>
+           <height>16777215</height>
+          </size>
+         </property>
          <property name="decimals">
           <number>3</number>
          </property>
