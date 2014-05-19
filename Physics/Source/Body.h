@@ -128,7 +128,7 @@ public:
 	* Is the body a Edge(static)?
 	* @return a bool, if the body is an edge.
 	*/
-	bool getIsEdge();
+	bool getIsEdge() const;
 	/**
 	* Set if the all volumes in the body should have collision response
 	* @param p_State, true if the volumes should react to collision otherwise false.
@@ -205,7 +205,7 @@ public:
 	* Return the BodyHandle index of the body, its unique number.
 	* @return m_Handle;
 	*/
-	virtual BodyHandle getHandle() { return m_Handle; }
+	virtual BodyHandle getHandle() const { return m_Handle; }
 	/*
 	* reset the BodyHandleCounter. Only use when clearing the body list in physics
 	*/

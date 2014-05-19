@@ -259,7 +259,7 @@ bool Body::getIsImmovable() const
 {
 	return m_IsImmovable;
 }
-bool Body::getIsEdge()
+bool Body::getIsEdge() const
 {
 	return m_IsEdge;
 }

@@ -91,6 +91,8 @@ private slots:
     void on_actionOpen_triggered();
     void on_actionSave_triggered();
     void on_actionGo_To_Selected_triggered();
+    void on_actionHelp_window_triggered();
+
 signals:
     void setCameraPositionSignal(Vector3 p_CameraPosition);
 
