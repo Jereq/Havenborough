@@ -75,14 +75,20 @@ void Tree::addFilter()
         else
         {
             if(currItemParent)
+            {
                 currItemParent->addChild(newFilter);
+            }
             else
-                addTopLevelItem(newFilter);
+            {
+                insertTopLevelItem(0, newFilter);
+                setCurrentItem(newFilter);
+            }
         }
     }
     else
     {
-        addTopLevelItem(newFilter);
+        insertTopLevelItem(0, newFilter);
+        setCurrentItem(newFilter);
     }
 }
 
