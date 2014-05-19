@@ -577,6 +577,15 @@ Vector3 Physics::getBodySize(BodyHandle p_Body)
 	return temp * 100.f;
 }
 
+float Physics::getSurroundingSphereRadius(BodyHandle p_Body)
+{
+	Body* body = findBody(p_Body);
+	if(!body)
+		throw PhysicsException("Error! Trying to get size on non existing body! BodyHandle =" + std::to_string(p_Body), __LINE__, __FILE__);
+
+	return body->getSurroundingSphere()->getRadius() * 100.0f;
+}
+
 void Physics::setBodyPosition( BodyHandle p_Body, Vector3 p_Position)
 {
 	Body* body = findBody(p_Body);

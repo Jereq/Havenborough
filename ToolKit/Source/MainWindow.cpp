@@ -725,6 +725,38 @@ void MainWindow::on_actionGo_To_Selected_triggered()
     if(currItem->isSelected())
     {
 		Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
-		emit setCameraPositionSignal(actor->getPosition());
+		if(actor)
+		{
+			std::weak_ptr<BoundingMeshComponent> wBM = actor->getComponent<BoundingMeshComponent>(PhysicsInterface::m_ComponentId);
+			if(!wBM.expired())
+			{
+				std::shared_ptr<BoundingMeshComponent> sBM = wBM.lock();
+				float radius = m_Physics->getSurroundingSphereRadius(sBM->getBodyHandle());
+				float fov = m_Graphics->getFOV();
+				float distanceToCenter = radius / sinf(fov * 0.5f);
+
+				using namespace DirectX;
+
+				XMFLOAT4X4 view = m_Graphics->getView();
+
+				XMVECTOR dir = XMVectorSet(view._31,view._32,view._33,0.f);
+				XMVECTOR camPos, objectPos;
+				objectPos = XMLoadFloat3(&actor->getPosition());
+
+				camPos = objectPos + (-dir * distanceToCenter);
+				XMFLOAT3 xmCamPos;
+				XMStoreFloat3(&xmCamPos, camPos);
+
+				emit setCameraPositionSignal(xmCamPos);
+			}
+			else
+			{
+				emit setCameraPositionSignal(actor->getPosition());
+			}
+		}
+	}
+	else
+	{
+		emit setCameraPositionSignal(Vector3(0,0,0));
 	}
 }
