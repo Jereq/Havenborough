@@ -338,6 +338,11 @@ public:
 	{
 		return m_Physics->getBodyOnSomething(m_Body);
 	}
+
+	float getRadius() const
+	{
+		return m_Radius;
+	}
 };
 
 /**
