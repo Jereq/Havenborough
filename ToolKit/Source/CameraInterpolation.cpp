@@ -21,7 +21,10 @@ void CameraInterpolation::update(float p_dt)
 
 		m_CurrentTimer += p_dt;
 		if(m_CurrentTimer > m_Timer)
+		{
+			emit setCameraPositionSignal(m_EndPos);
 			m_Active = false;
+		}
 	}
 }
 

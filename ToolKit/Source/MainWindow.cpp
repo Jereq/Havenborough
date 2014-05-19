@@ -719,11 +719,17 @@ void MainWindow::on_actionGo_To_Selected_triggered()
 {
 	QTreeWidgetItem *currItem = ui->m_ObjectTree->currentItem();
 	if(!currItem)
+	{
+		m_CamInt.createPath(ui->m_RenderWidget->getCamera().getPosition(), Vector3(0,0,0), 0.5f);
 		return;
+	}
 
 	TreeItem *cItem = dynamic_cast<TreeItem*>(currItem);
 	if(!cItem)
+	{
+		m_CamInt.createPath(ui->m_RenderWidget->getCamera().getPosition(), Vector3(0,0,0), 0.5f);
 		return;
+	}
 	
     if(currItem->isSelected())
     {
@@ -756,12 +762,12 @@ void MainWindow::on_actionGo_To_Selected_triggered()
 			}
 			else
 			{
-				emit setCameraPositionSignal(actor->getPosition());
+				m_CamInt.createPath(ui->m_RenderWidget->getCamera().getPosition(), actor->getPosition(), 0.5f);
 			}
 		}
 	}
 	else
 	{
-		emit setCameraPositionSignal(Vector3(0,0,0));
+		m_CamInt.createPath(ui->m_RenderWidget->getCamera().getPosition(), Vector3(0,0,0), 0.5f);
 	}
 }
