@@ -28,6 +28,7 @@ int main(int argc, char *argv[])
 
    qApp->setStyleSheet("QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }");
 
+   w.showMaximized();
 	w.show();
 
 	return a.exec();
