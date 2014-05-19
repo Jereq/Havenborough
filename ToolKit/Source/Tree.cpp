@@ -70,7 +70,8 @@ void Tree::addFilter()
 
         if(cFilter)
         {
-            currItem->addChild(newFilter);
+            currItem->insertChild(0, newFilter);
+            setCurrentItem(newFilter);
         }
         else
         {
