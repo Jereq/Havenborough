@@ -57,6 +57,9 @@ MainWindow::MainWindow(QWidget *parent) :
 	signalAndSlotsDefinitions();
     pushBoxes();
 
+    ui->m_HelpWidget->hide();
+    ui->m_HelpWidget->setFloating(true);
+
     //Timer
 	m_Timer.setInterval(1000 / 60);
 	m_Timer.setSingleShot(false);
@@ -759,4 +762,11 @@ void MainWindow::on_actionGo_To_Selected_triggered()
 	{
 		emit setCameraPositionSignal(Vector3(0,0,0));
 	}
+}
+
+void MainWindow::on_actionHelp_window_triggered()
+{
+    ui->m_HelpWidget->show();
+
+    ui->m_HelpWidget->setGeometry(200, 200, 300, 500);
 }
