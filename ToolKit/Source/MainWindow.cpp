@@ -25,6 +25,12 @@
 
 #include <EventData.h>
 
+#undef min
+
+#include <QProgressDialog>
+#include <QFutureWatcher>
+#include <QtConcurrent>
+
 
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
@@ -68,6 +74,11 @@ MainWindow::MainWindow(QWidget *parent) :
 	m_Deselect = nullptr;
 	m_Deselect = new QShortcut(QKeySequence("Ctrl+D"), this);
 	QObject::connect(m_Deselect, SIGNAL(activated()), this, SLOT(deselect()));
+
+	m_LevelLoaded = false;
+	progress = new QProgressBar(ui->statusBar);
+	ui->statusBar->addWidget(progress);
+
 }
 
 MainWindow::~MainWindow()
@@ -91,7 +102,7 @@ void MainWindow::signalAndSlotsDefinitions()
     QObject::connect(this, SIGNAL(setCameraPositionSignal(Vector3)), ui->m_RenderWidget, SLOT(CameraPositionSet(Vector3)));
 
     //Signals and slots for connecting the object creation to the trees
-	QObject::connect(m_ObjectManager.get(), SIGNAL(actorAdded(std::string,  Actor::ptr)), this, SLOT(onActorAdded(std::string, Actor::ptr)));
+	QObject::connect(m_ObjectManager.get(), SIGNAL(actorAdded(std::string,  Actor::ptr)), this, SLOT(onActorAdded(std::string, Actor::ptr)), Qt::DirectConnection);
 
     //Signals and slots for connecting the object scale editing to the object
     QObject::connect(ui->m_ObjectScaleXBox, SIGNAL(editingFinished()), this, SLOT(setObjectScale()));
@@ -183,7 +194,32 @@ void MainWindow::on_actionOpen_triggered()
 	QString fullFilePath = QFileDialog::getOpenFileName(this, tr("Open Level"), "./assets/levels/", tr("Level Files (*.xml *.btxl)"));
 	if (!fullFilePath.isNull())
 	{
-		loadLevel(fullFilePath.toStdString());
+		m_LevelLoaded = false;
+		deselect();
+        //QProgressDialog dialog;
+        //dialog.setLabelText(QString("Loading level..."));
+		QFutureWatcher<void> futureWatcher;
+		progress->setAlignment(Qt::AlignRight);
+		progress->show();
+		//progress->setValue(50);
+
+        QObject::connect(&futureWatcher, SIGNAL(finished()), progress, SLOT(hide()));
+        QObject::connect(&futureWatcher, SIGNAL(finished()), this, SLOT(levelLoaded()));
+        QObject::connect(progress, SIGNAL(canceled()), &futureWatcher, SLOT(cancel()));
+        QObject::connect(&futureWatcher, SIGNAL(progressRangeChanged(int,int)), progress, SLOT(setRange(int,int)));
+        QObject::connect(&futureWatcher, SIGNAL(progressValueChanged(int)), progress, SLOT(setValue(int)));
+		using namespace QtConcurrent;
+
+        futureWatcher.setFuture(QtConcurrent::run(std::bind(&MainWindow::loadLevel, this, fullFilePath.toStdString())));
+
+        //dialog.exec();
+
+        futureWatcher.waitForFinished();
+		//dialog.show();
+		//dialog.setValue(0);
+		//loadLevel(fullFilePath.toStdString());
+		//dialog.setValue(dialog.maximum());
+		//m_LevelLoaded = true;
 	}
 }
 
@@ -516,11 +552,17 @@ void MainWindow::deselect()
 	}
 }
 
+void MainWindow::levelLoaded()
+{
+	m_LevelLoaded = true;
+}
+
 void MainWindow::onFrame(float p_DeltaTime)
 {
 	m_EventManager.processEvents();
 	
-	m_ObjectManager->update(p_DeltaTime);
+	if(m_LevelLoaded)
+		m_ObjectManager->update(p_DeltaTime);
 }
 
 void MainWindow::loadLevel(const std::string& p_Filename)

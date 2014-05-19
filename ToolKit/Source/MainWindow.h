@@ -13,6 +13,8 @@
 
 #include <vector>
 #include <QShortcut>
+#include <QProgressBar> 
+
 
 class QTableWidgetItem;
 class QTreeWidgetItem;
@@ -22,6 +24,8 @@ class AnimationLoader;
 class IGraphics;
 class IPhysics;
 class ObjectManager;
+
+
 
 namespace Ui {
 class MainWindow;
@@ -45,6 +49,8 @@ private:
     std::vector<QGroupBox*> m_Boxes;
 
 	QShortcut* m_Deselect;
+	bool m_LevelLoaded;
+	QProgressBar *progress;
 	
 public:
 	explicit MainWindow(QWidget *parent = 0);
@@ -76,6 +82,7 @@ private slots:
 	void setLightRange();
 	void setLightIntensity();
 	void deselect();
+	void levelLoaded();
 
 	// QT object changes
 	void on_m_ObjectTree_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);

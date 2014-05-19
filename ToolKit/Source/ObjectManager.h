@@ -14,6 +14,7 @@ class ActorFactory;
 class EventManager;
 class ResourceManager;
 class Tree;
+class QProgressDialog;
 
 class ObjectManager : public QObject
 {
