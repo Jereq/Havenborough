@@ -13,6 +13,7 @@
 
 #include <vector>
 #include <QShortcut>
+#include "CameraInterpolation.h"
 
 class QTableWidgetItem;
 class QTreeWidgetItem;
@@ -45,6 +46,7 @@ private:
     std::vector<QGroupBox*> m_Boxes;
 
 	QShortcut* m_Deselect;
+	CameraInterpolation m_CamInt;
 	
 public:
 	explicit MainWindow(QWidget *parent = 0);

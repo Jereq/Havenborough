@@ -544,7 +544,6 @@
    <addaction name="menuOptions"/>
    <addaction name="menuHelp"/>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
   <widget class="QDockWidget" name="m_ObjectDockableWidget">
    <property name="windowTitle">
     <string>Object Tree</string>
@@ -2221,6 +2220,7 @@ QTreeView{
     </widget>
    </widget>
   </widget>
+  <widget class="QStatusBar" name="statusBar"/>
   <action name="actionOpen">
    <property name="text">
     <string>Open</string>
