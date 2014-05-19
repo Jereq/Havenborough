@@ -865,37 +865,37 @@ BodyHandle Physics::rayCast(const XMFLOAT4 &p_RayDirection, const XMFLOAT4 &p_Ra
 	rayOriginConv.z *= 0.01f;
 
 	float dist = FLT_MAX;
-	BodyHandle body = 0;
+	BodyHandle closestBody = (BodyHandle)-1;
 
-	for(auto& bodyPair : m_Bodies)
+	for(auto& body : m_Bodies)
 	{
-		Body &b = bodyPair.second;
+		const Body &b = body.second;
 		if(!b.getIsImmovable())
 			continue;
 		if(b.getIsEdge())
 			continue;
 		
 		float tempDist;
-		if(b.getVolume()->getType() == BoundingVolume::Type::HULL)
-			tempDist = Collision::rayTriangleIntersect((Hull&)*b.getVolume(), p_RayDirection, rayOriginConv);
-		else if(b.getVolume(0)->getType() == BoundingVolume::Type::SPHERE)
-			tempDist = Collision::raySphereIntersect((Sphere&)*b.getVolume(0), p_RayDirection, rayOriginConv);
+		const BoundingVolume* volume = b.getVolume();
+		if (volume->getType() == BoundingVolume::Type::HULL)
+			tempDist = Collision::rayTriangleIntersect((Hull&)*volume, p_RayDirection, rayOriginConv);
+		else if(volume->getType() == BoundingVolume::Type::SPHERE)
+			tempDist = Collision::raySphereIntersect((Sphere&)*volume, p_RayDirection, rayOriginConv);
 
 		
 		if(tempDist > 0.f && tempDist < dist)
 		{
 			dist = tempDist;
-			body = b.getHandle();
+			closestBody = b.getHandle();
 		}
 	}
 
-	Body *b = findBody(body);
-	if(!body)
+	if(dist == FLT_MAX)
 	{
 		return 0;
 	}
 
-	return body;
+	return closestBody;
 }
 
 bool Physics::validBody(BodyHandle p_BodyHandle)
