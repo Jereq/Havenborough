@@ -718,6 +718,13 @@ public:
 	 * @param p_FOV, new FOV the game will use.
 	 */
 	virtual void setFOV(float p_FOV) = 0;
+
+	/**
+	 * Gets the current FOV
+	 *
+	 * @return The current FOV.
+	 */
+	virtual float getFOV() const = 0;
 	
 	/**
 	 * Gets the current transposed view matrix.

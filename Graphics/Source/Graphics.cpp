@@ -1234,6 +1234,11 @@ void Graphics::setFOV(float p_FOV)
 	}
 }
 
+float Graphics::getFOV() const
+{
+	return m_FOV;
+}
+
 DirectX::XMFLOAT4X4 Graphics::getView() const
 {
 	return m_ViewMatrix;
