@@ -755,4 +755,8 @@ void MainWindow::on_actionGo_To_Selected_triggered()
 			}
 		}
 	}
+	else
+	{
+		emit setCameraPositionSignal(Vector3(0,0,0));
+	}
 }
