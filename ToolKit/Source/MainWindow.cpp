@@ -223,16 +223,13 @@ void MainWindow::on_m_ObjectTree_itemSelectionChanged()
 		return;
 	emit deselectAll();
 
-	//for(auto &item : selectedItems)
-	for(int i = selectedItems.size() -1; i >= 0; i--)
+	for(auto &item : selectedItems)
 	{
-		TreeFilter *treeFilter = dynamic_cast<TreeFilter*>(selectedItems.at(i));
+		TreeFilter *treeFilter = dynamic_cast<TreeFilter*>(item);
 		if(!treeFilter)
 			continue;
-
-		QItemSelectionModel::SelectionFlag flag = QItemSelectionModel::Select;
 		
-		ui->m_ObjectTree->selectAllChilds(selectedItems.at(i), flag);
+		ui->m_ObjectTree->selectAllChilds(item, QItemSelectionModel::Select);
 	}
 
 	selectedItems = ui->m_ObjectTree->selectedItems();
