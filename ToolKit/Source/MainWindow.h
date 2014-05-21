@@ -92,6 +92,8 @@ private slots:
     void on_actionGo_To_Selected_triggered();
     void on_actionHelp_window_triggered();
 
+    void on_m_FileSystemTreeView_clicked(const QModelIndex &index);
+
 signals:
     void setCameraPositionSignal(Vector3 p_CameraPosition);
 

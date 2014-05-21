@@ -21,6 +21,8 @@ public:
 	void setViews(QTreeView* dirView, QListView* fileView);
 	void attachDirectoryView(QTreeView* target);
 
+    void directoryViewClicked(const QModelIndex &index);
+
 private:
 	void attachViews();
 

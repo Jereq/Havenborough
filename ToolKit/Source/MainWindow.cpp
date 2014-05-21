@@ -774,3 +774,8 @@ void MainWindow::on_actionHelp_window_triggered()
 
     ui->m_HelpWidget->setGeometry(200, 200, 300, 500);
 }
+
+void MainWindow::on_m_FileSystemTreeView_clicked(const QModelIndex &index)
+{
+    m_FileSystemDialog->directoryViewClicked(index);
+}
