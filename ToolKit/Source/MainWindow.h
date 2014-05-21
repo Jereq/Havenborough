@@ -12,6 +12,8 @@
 #endif
 
 #include <vector>
+#include <QShortcut>
+#include "CameraInterpolation.h"
 
 class QTableWidgetItem;
 class QTreeWidgetItem;
@@ -42,6 +44,9 @@ private:
 	IGraphics* m_Graphics;
 	IPhysics* m_Physics;
     std::vector<QGroupBox*> m_Boxes;
+
+	QShortcut* m_Deselect;
+	CameraInterpolation m_CamInt;
 	
 public:
 	explicit MainWindow(QWidget *parent = 0);
@@ -72,6 +77,7 @@ private slots:
 	void setLightAngles();
 	void setLightRange();
 	void setLightIntensity();
+	void deselect();
 
 	// QT object changes
 	void on_m_ObjectTree_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
@@ -85,6 +91,8 @@ private slots:
     void on_actionOpen_triggered();
     void on_actionSave_triggered();
     void on_actionGo_To_Selected_triggered();
+    void on_actionHelp_window_triggered();
+
 signals:
     void setCameraPositionSignal(Vector3 p_CameraPosition);
 

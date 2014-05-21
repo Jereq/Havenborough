@@ -7,11 +7,15 @@
     <x>0</x>
     <y>0</y>
     <width>1920</width>
-    <height>1080</height>
+    <height>1000</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Havenborough ToolSet</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../Resources.qrc">
+    <normaloff>:/Icons/Client/Bin/Havenborough.ico</normaloff>:/Icons/Client/Bin/Havenborough.ico</iconset>
   </property>
   <property name="animated">
    <bool>false</bool>
@@ -38,6 +42,9 @@
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+      <property name="autoFillBackground">
+       <bool>false</bool>
+      </property>
      </widget>
     </item>
    </layout>
@@ -50,6 +57,12 @@
      <width>1920</width>
      <height>21</height>
     </rect>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
@@ -81,6 +94,7 @@
     <property name="title">
      <string>Help</string>
     </property>
+    <addaction name="actionHelp_window"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -97,7 +111,6 @@
    <addaction name="menuOptions"/>
    <addaction name="menuHelp"/>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
   <widget class="QDockWidget" name="m_ObjectDockableWidget">
    <property name="windowTitle">
     <string>Object Tree</string>
@@ -148,31 +161,6 @@
      </item>
      <item row="0" column="0">
       <widget class="Tree" name="m_ObjectTree">
-       <property name="styleSheet">
-        <string notr="true"> QTreeView::branch:has-siblings:!adjoins-item {
-     border-image: url(:/Pictures/Assets/stylesheet-vline.png) 0;
- }
-
- QTreeView::branch:has-siblings:adjoins-item {
-     border-image:url(:/Pictures/Assets/stylesheet-branch-more.png) 0;
- }
-
- QTreeView::branch:!has-children:!has-siblings:adjoins-item {
-     border-image: url(:/Pictures/Assets/stylesheet-branch-end.png) 0;
- }
-
- QTreeView::branch:has-children:!has-siblings:closed,
- QTreeView::branch:closed:has-children:has-siblings {
-         border-image: none;
-         image:url(:/Pictures/Assets/stylesheet-branch-closed.png);
- }
-
- QTreeView::branch:open:has-children:!has-siblings,
- QTreeView::branch:open:has-children:has-siblings  {
-         border-image: none;
-         image:url(:/Pictures/Assets/stylesheet-branch-open.png);
- }</string>
-       </property>
        <property name="verticalScrollBarPolicy">
         <enum>Qt::ScrollBarAsNeeded</enum>
        </property>
@@ -283,6 +271,9 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
      <property name="title">
       <string>Camera Position</string>
      </property>
@@ -291,6 +282,9 @@
        <layout class="QGridLayout" name="gridLayout_2">
         <item row="1" column="0">
          <widget class="QLabel" name="label_3">
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
           <property name="text">
            <string>Y</string>
           </property>
@@ -301,6 +295,9 @@
         </item>
         <item row="2" column="0">
          <widget class="QLabel" name="label_2">
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
           <property name="text">
            <string>Z</string>
           </property>
@@ -311,6 +308,9 @@
         </item>
         <item row="0" column="0">
          <widget class="QLabel" name="label">
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
           <property name="text">
            <string>X</string>
           </property>
@@ -345,6 +345,9 @@
           <property name="maximum">
            <double>999999.000000000000000</double>
           </property>
+          <property name="singleStep">
+           <double>100.000000000000000</double>
+          </property>
          </widget>
         </item>
         <item row="1" column="1">
@@ -373,6 +376,9 @@
           <property name="maximum">
            <double>999999.000000000000000</double>
           </property>
+          <property name="singleStep">
+           <double>100.000000000000000</double>
+          </property>
          </widget>
         </item>
         <item row="2" column="1">
@@ -400,6 +406,9 @@
           </property>
           <property name="maximum">
            <double>999999.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>100.000000000000000</double>
           </property>
          </widget>
         </item>
@@ -482,6 +491,9 @@
          <property name="maximum">
           <double>999999.000000000000000</double>
          </property>
+         <property name="singleStep">
+          <double>10.000000000000000</double>
+         </property>
         </widget>
        </item>
        <item row="1" column="1">
@@ -507,6 +519,9 @@
          <property name="maximum">
           <double>999999.000000000000000</double>
          </property>
+         <property name="singleStep">
+          <double>10.000000000000000</double>
+         </property>
         </widget>
        </item>
        <item row="2" column="1">
@@ -531,6 +546,9 @@
          </property>
          <property name="maximum">
           <double>999999.000000000000000</double>
+         </property>
+         <property name="singleStep">
+          <double>10.000000000000000</double>
          </property>
         </widget>
        </item>
@@ -612,6 +630,9 @@
          <property name="maximum">
           <double>999999.000000000000000</double>
          </property>
+         <property name="singleStep">
+          <double>0.100000000000000</double>
+         </property>
          <property name="value">
           <double>1.000000000000000</double>
          </property>
@@ -640,6 +661,9 @@
          <property name="maximum">
           <double>999999.000000000000000</double>
          </property>
+         <property name="singleStep">
+          <double>0.100000000000000</double>
+         </property>
          <property name="value">
           <double>1.000000000000000</double>
          </property>
@@ -667,6 +691,9 @@
          </property>
          <property name="maximum">
           <double>999999.000000000000000</double>
+         </property>
+         <property name="singleStep">
+          <double>0.100000000000000</double>
          </property>
          <property name="value">
           <double>1.000000000000000</double>
@@ -754,6 +781,9 @@
          <property name="maximum">
           <double>6.280000000000000</double>
          </property>
+         <property name="singleStep">
+          <double>0.100000000000000</double>
+         </property>
          <property name="value">
           <double>0.000000000000000</double>
          </property>
@@ -782,6 +812,9 @@
          <property name="maximum">
           <double>6.280000000000000</double>
          </property>
+         <property name="singleStep">
+          <double>0.100000000000000</double>
+         </property>
         </widget>
        </item>
        <item row="1" column="1">
@@ -806,6 +839,9 @@
          </property>
          <property name="maximum">
           <double>6.280000000000000</double>
+         </property>
+         <property name="singleStep">
+          <double>0.100000000000000</double>
          </property>
         </widget>
        </item>
@@ -885,21 +921,39 @@
        </item>
        <item row="1" column="1">
         <widget class="QDoubleSpinBox" name="m_LightColorYBox">
+         <property name="maximumSize">
+          <size>
+           <width>71</width>
+           <height>16777215</height>
+          </size>
+         </property>
          <property name="decimals">
           <number>3</number>
          </property>
          <property name="maximum">
-          <double>1.000000000000000</double>
+          <double>1000000000.000000000000000</double>
+         </property>
+         <property name="singleStep">
+          <double>0.100000000000000</double>
          </property>
         </widget>
        </item>
        <item row="2" column="1">
         <widget class="QDoubleSpinBox" name="m_LightColorZBox">
+         <property name="maximumSize">
+          <size>
+           <width>71</width>
+           <height>16777215</height>
+          </size>
+         </property>
          <property name="decimals">
           <number>3</number>
          </property>
          <property name="maximum">
-          <double>1.000000000000000</double>
+          <double>1000000000.000000000000000</double>
+         </property>
+         <property name="singleStep">
+          <double>0.100000000000000</double>
          </property>
         </widget>
        </item>
@@ -915,7 +969,10 @@
           <number>3</number>
          </property>
          <property name="maximum">
-          <double>1.000000000000000</double>
+          <double>1000000000.000000000000000</double>
+         </property>
+         <property name="singleStep">
+          <double>0.100000000000000</double>
          </property>
         </widget>
        </item>
@@ -976,6 +1033,12 @@
        </item>
        <item row="1" column="1">
         <widget class="QDoubleSpinBox" name="m_LightDirectionYBox">
+         <property name="maximumSize">
+          <size>
+           <width>71</width>
+           <height>16777215</height>
+          </size>
+         </property>
          <property name="decimals">
           <number>3</number>
          </property>
@@ -984,11 +1047,20 @@
          </property>
          <property name="maximum">
           <double>1.000000000000000</double>
+         </property>
+         <property name="singleStep">
+          <double>0.100000000000000</double>
          </property>
         </widget>
        </item>
        <item row="2" column="1">
         <widget class="QDoubleSpinBox" name="m_LightDirectionZBox">
+         <property name="maximumSize">
+          <size>
+           <width>71</width>
+           <height>16777215</height>
+          </size>
+         </property>
          <property name="decimals">
           <number>3</number>
          </property>
@@ -997,6 +1069,9 @@
          </property>
          <property name="maximum">
           <double>1.000000000000000</double>
+         </property>
+         <property name="singleStep">
+          <double>0.100000000000000</double>
          </property>
         </widget>
        </item>
@@ -1016,6 +1091,9 @@
          </property>
          <property name="maximum">
           <double>1.000000000000000</double>
+         </property>
+         <property name="singleStep">
+          <double>0.100000000000000</double>
          </property>
         </widget>
        </item>
@@ -1046,6 +1124,9 @@
       <layout class="QGridLayout" name="gridLayout_12">
        <item row="0" column="0">
         <widget class="QLabel" name="label_20">
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
          <property name="text">
           <string>Intensity</string>
          </property>
@@ -1068,6 +1149,9 @@
          <property name="maximum">
           <double>1.000000000000000</double>
          </property>
+         <property name="singleStep">
+          <double>0.100000000000000</double>
+         </property>
         </widget>
        </item>
       </layout>
@@ -1081,6 +1165,9 @@
        <width>171</width>
        <height>51</height>
       </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
      </property>
      <property name="title">
       <string>Additional</string>
@@ -1097,6 +1184,9 @@
       <layout class="QGridLayout" name="gridLayout_13">
        <item row="0" column="0">
         <widget class="QLabel" name="label_21">
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
          <property name="text">
           <string>Range</string>
          </property>
@@ -1119,6 +1209,9 @@
          <property name="maximum">
           <double>999999999.000000000000000</double>
          </property>
+         <property name="singleStep">
+          <double>10.000000000000000</double>
+         </property>
         </widget>
        </item>
       </layout>
@@ -1132,6 +1225,9 @@
        <width>171</width>
        <height>91</height>
       </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
      </property>
      <property name="title">
       <string>Angles</string>
@@ -1148,6 +1244,9 @@
       <layout class="QGridLayout" name="gridLayout_14">
        <item row="0" column="0">
         <widget class="QLabel" name="label_22">
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
          <property name="text">
           <string>X</string>
          </property>
@@ -1170,20 +1269,35 @@
          <property name="maximum">
           <double>6.280000000000000</double>
          </property>
+         <property name="singleStep">
+          <double>0.100000000000000</double>
+         </property>
         </widget>
        </item>
        <item row="1" column="1">
         <widget class="QDoubleSpinBox" name="m_LightAngleYBox">
+         <property name="maximumSize">
+          <size>
+           <width>71</width>
+           <height>16777215</height>
+          </size>
+         </property>
          <property name="decimals">
           <number>3</number>
          </property>
          <property name="maximum">
           <double>6.280000000000000</double>
          </property>
+         <property name="singleStep">
+          <double>0.100000000000000</double>
+         </property>
         </widget>
        </item>
        <item row="1" column="0">
         <widget class="QLabel" name="label_23">
+         <property name="styleSheet">
+          <string notr="true"/>
+         </property>
          <property name="text">
           <string>Y</string>
          </property>
@@ -1270,6 +1384,9 @@
          <property name="maximum">
           <double>999999.000000000000000</double>
          </property>
+         <property name="singleStep">
+          <double>10.000000000000000</double>
+         </property>
         </widget>
        </item>
        <item row="1" column="1">
@@ -1294,6 +1411,9 @@
          </property>
          <property name="maximum">
           <double>999999.000000000000000</double>
+         </property>
+         <property name="singleStep">
+          <double>10.000000000000000</double>
          </property>
         </widget>
        </item>
@@ -1320,11 +1440,58 @@
          <property name="maximum">
           <double>999999.000000000000000</double>
          </property>
+         <property name="singleStep">
+          <double>10.000000000000000</double>
+         </property>
         </widget>
        </item>
       </layout>
      </widget>
     </widget>
+   </widget>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QDockWidget" name="m_HelpWidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="windowTitle">
+    <string>Help</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_2">
+    <layout class="QGridLayout" name="gridLayout_9">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item row="0" column="0">
+      <widget class="QTextBrowser" name="textBrowser">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="acceptDrops">
+        <bool>false</bool>
+       </property>
+       <property name="inputMethodHints">
+        <set>Qt::ImhNone</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
   </widget>
   <action name="actionOpen">
@@ -1407,6 +1574,14 @@
     <string>Home</string>
    </property>
   </action>
+  <action name="actionHelp_window">
+   <property name="text">
+    <string>Show the help window</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+H</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -1431,12 +1606,6 @@
   <tabstop>m_ObjectTree</tabstop>
   <tabstop>m_ObjectTreeAddButton</tabstop>
   <tabstop>m_ObjectTreeRemoveButton</tabstop>
-  <tabstop>m_LightTree</tabstop>
-  <tabstop>m_LightTreeAddButton</tabstop>
-  <tabstop>m_LightTreeRemoveButton</tabstop>
-  <tabstop>m_ParticleTree</tabstop>
-  <tabstop>m_ParticleTreeAddButton</tabstop>
-  <tabstop>m_ParticleTreeRemoveButton</tabstop>
   <tabstop>m_ObjectTable</tabstop>
   <tabstop>m_CameraPositionXBox</tabstop>
   <tabstop>m_CameraPositionYBox</tabstop>
@@ -1451,7 +1620,9 @@
   <tabstop>m_ObjectRotationZBox</tabstop>
   <tabstop>m_ObjectRotationYBox</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="../Resources.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>m_ObjectTable</sender>

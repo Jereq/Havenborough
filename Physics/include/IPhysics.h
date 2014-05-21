@@ -125,6 +125,14 @@ public:
 	virtual Vector3 getBodySize(BodyHandle p_Body) =0;
 
 	/**
+	 * Used to get the radius of the sphere surrounding the body.
+	 *
+	 * @param p_Body is an identifier to know what to work with.
+	 * @return a float with the radius of the body in cm
+	 */
+	virtual float getSurroundingSphereRadius(BodyHandle p_Body) =0;
+
+	/**
 	 * Edit the position of the target body and its bounding volume.
 	 *
 	 * @param p_Body are what body to work with

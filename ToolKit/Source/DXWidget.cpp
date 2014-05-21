@@ -31,6 +31,11 @@ void DXWidget::onFrame(float p_DeltaTime)
 
 }
 
+const Camera& DXWidget::getCamera() const
+{
+	return m_Camera;
+}
+
 void DXWidget::paintEvent(QPaintEvent* e)
 {
 	Q_UNUSED(e);

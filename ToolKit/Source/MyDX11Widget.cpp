@@ -86,6 +86,7 @@ void MyDX11Widget::render()
 		m_Graphics->renderModel(mesh.modelId);
 	}
 
+	bool usingDirectional = false;
 	for(auto &light : m_Lights)
 	{
 		switch(light.type)
@@ -93,6 +94,7 @@ void MyDX11Widget::render()
 		case LightClass::Type::DIRECTIONAL:
 			{
 				m_Graphics->useFrameDirectionalLight(light.color, light.direction, light.intensity);
+				usingDirectional = true;
 				break;
 			}
 		case LightClass::Type::POINT:
@@ -109,6 +111,11 @@ void MyDX11Widget::render()
 				break;
 			}
 		}
+	}
+
+	if (!usingDirectional)
+	{
+		m_Graphics->useFrameDirectionalLight(Vector3(1.f, 1.f, 1.f), Vector3(0.1f, -0.8f, 0.2f), 0.1f);
 	}
 
 	m_Graphics->renderSkydome();

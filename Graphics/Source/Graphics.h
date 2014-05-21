@@ -220,6 +220,7 @@ public:
 	void enableShadowMap(bool p_State) override;
 	void setShadowMapResolution(int p_ShadowMapResolution) override;
 	void setFOV(float p_FOV) override;
+	float getFOV() const override;
 
 	DirectX::XMFLOAT4X4 getView() const override;
 	DirectX::XMFLOAT4X4 getProj() const override;

@@ -9,5 +9,6 @@
     <qresource prefix="/Icons">
         <file>Assets/Filter.png</file>
         <file>Assets/object.png</file>
+        <file>../Client/Bin/Havenborough.ico</file>
     </qresource>
 </RCC>

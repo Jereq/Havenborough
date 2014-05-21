@@ -57,6 +57,9 @@ MainWindow::MainWindow(QWidget *parent) :
 	signalAndSlotsDefinitions();
     pushBoxes();
 
+    ui->m_HelpWidget->hide();
+    ui->m_HelpWidget->setFloating(true);
+
     //Timer
 	m_Timer.setInterval(1000 / 60);
 	m_Timer.setSingleShot(false);
@@ -64,10 +67,17 @@ MainWindow::MainWindow(QWidget *parent) :
 	m_Timer.start();
 
 	m_ObjectManager->loadDescriptionsFromFolder("assets/Objects");
+
+	m_Deselect = nullptr;
+	m_Deselect = new QShortcut(QKeySequence("Ctrl+D"), this);
+	QObject::connect(m_Deselect, SIGNAL(activated()), this, SLOT(deselect()));
 }
 
 MainWindow::~MainWindow()
 {
+	if(m_Deselect)
+		delete m_Deselect;
+
 	uninitializeSystems();
 	delete ui;
 }
@@ -82,6 +92,7 @@ void MainWindow::signalAndSlotsDefinitions()
     QObject::connect(ui->m_CameraPositionZBox, SIGNAL(editingFinished()), this, SLOT(setCameraPosition()));
 
     QObject::connect(this, SIGNAL(setCameraPositionSignal(Vector3)), ui->m_RenderWidget, SLOT(CameraPositionSet(Vector3)));
+	QObject::connect(&m_CamInt, SIGNAL(setCameraPositionSignal(Vector3)), ui->m_RenderWidget, SLOT(CameraPositionSet(Vector3)));
 
     //Signals and slots for connecting the object creation to the trees
 	QObject::connect(m_ObjectManager.get(), SIGNAL(actorAdded(std::string,  Actor::ptr)), this, SLOT(onActorAdded(std::string, Actor::ptr)));
@@ -108,7 +119,6 @@ void MainWindow::signalAndSlotsDefinitions()
 	QObject::connect(ui->m_ObjectTreeRemoveButton, SIGNAL(clicked()), ui->m_ObjectTree, SLOT(removeItem()));
 
 	//Signals and slots for connecting the Tree item creation to the table
-	QObject::connect(ui->m_ObjectTree, SIGNAL(addTableObject(std::string)), ui->m_ObjectTable, SLOT(addObject(std::string)));
 	QObject::connect(m_ObjectManager.get(), SIGNAL(objectTypeCreated(std::string)), ui->m_ObjectTable, SLOT(addObject(std::string)));
 
     //Signals and slots for connecting the light position editing to the light
@@ -177,8 +187,6 @@ void MainWindow::on_actionOpen_triggered()
 	QString fullFilePath = QFileDialog::getOpenFileName(this, tr("Open Level"), "./assets/levels/", tr("Level Files (*.xml *.btxl)"));
 	if (!fullFilePath.isNull())
 	{
-		ui->m_ObjectTree->clearTree();
-		
 		loadLevel(fullFilePath.toStdString());
 	}
 }
@@ -240,9 +248,6 @@ void MainWindow::on_m_ObjectTree_itemSelectionChanged()
 
     if(currItem && currItem->isSelected())
     {
-		Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
-		std::weak_ptr<ModelComponent> pmodel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
-		std::shared_ptr<ModelComponent> spmodel = pmodel.lock();
 		if(currItem->isSelected() && spmodel)
 		{
 			ui->PositionBox->show();
@@ -334,6 +339,11 @@ void MainWindow::on_m_ObjectTree_itemSelectionChanged()
 		    }
 		}
 	}
+	else if (spmodel)
+	{
+		spmodel->setColorTone(Vector3(1.0f, 1.0f, 1.0f));
+	}
+
     sortPropertiesBoxes();
 }
 
@@ -399,8 +409,6 @@ void MainWindow::setLightPosition()
         if(currItem->isSelected() && cItem)
 		{
 			Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
-			//std::weak_ptr<LightComponent> light = actor->getComponent<LightComponent>(LightInterface::m_ComponentId);
-			//std::shared_ptr<LightComponent> slight = light.lock();
 			actor->setPosition(Vector3(ui->m_LightPositionXBox->value(),ui->m_LightPositionYBox->value(),ui->m_LightPositionZBox->value()));
 		}
 	}
@@ -491,11 +499,34 @@ void MainWindow::setLightIntensity()
 	}
 }
 
+void MainWindow::deselect()
+{
+	QTreeWidgetItem *currItem = ui->m_ObjectTree->currentItem();
+
+	if(currItem)
+	{
+		TreeItem *cItem = dynamic_cast<TreeItem*>(currItem);
+        if(currItem->isSelected() && cItem)
+		{
+			Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
+			std::weak_ptr<ModelComponent> model = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
+			std::shared_ptr<ModelComponent> spmodel = model.lock();
+			if(spmodel)
+			{
+				spmodel->setColorTone(Vector3(1.0f, 1.0f, 1.0f));
+				ui->m_ObjectTree->clearSelection();
+			}
+		}
+	}
+}
+
 void MainWindow::onFrame(float p_DeltaTime)
 {
 	m_EventManager.processEvents();
 	
 	m_ObjectManager->update(p_DeltaTime);
+
+	m_CamInt.update(p_DeltaTime);
 }
 
 void MainWindow::loadLevel(const std::string& p_Filename)
@@ -510,7 +541,10 @@ void MainWindow::saveLevel(const std::string& p_Filename)
 
 void MainWindow::addObject(QTableWidgetItem* p_ObjectItem)
 {
-	m_ObjectManager->addObject(p_ObjectItem->text().toStdString(), Vector3(rand() % 1000, rand() % 1000, rand() % 1000));
+	const Vector3& cameraPos = ui->m_RenderWidget->getCamera().getPosition();
+	const Vector3& lookDir = ui->m_RenderWidget->getCamera().getForward();
+	const Vector3 addPos = cameraPos + lookDir * 500.f;
+	m_ObjectManager->addObject(p_ObjectItem->text().toStdString(), addPos);
 }
 
 void MainWindow::initializeSystems()
@@ -688,15 +722,62 @@ void MainWindow::on_actionGo_To_Selected_triggered()
 {
 	QTreeWidgetItem *currItem = ui->m_ObjectTree->currentItem();
 	if(!currItem)
+	{
+		m_CamInt.createPath(ui->m_RenderWidget->getCamera().getPosition(), Vector3(0,0,0), 0.5f);
 		return;
+	}
 
 	TreeItem *cItem = dynamic_cast<TreeItem*>(currItem);
 	if(!cItem)
+	{
+		m_CamInt.createPath(ui->m_RenderWidget->getCamera().getPosition(), Vector3(0,0,0), 0.5f);
 		return;
+	}
 	
     if(currItem->isSelected())
     {
 		Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
-		emit setCameraPositionSignal(actor->getPosition());
+		if(actor)
+		{
+			std::weak_ptr<BoundingMeshComponent> wBM = actor->getComponent<BoundingMeshComponent>(PhysicsInterface::m_ComponentId);
+			if(!wBM.expired())
+			{
+				std::shared_ptr<BoundingMeshComponent> sBM = wBM.lock();
+				float radius = m_Physics->getSurroundingSphereRadius(sBM->getBodyHandle());
+				float fov = m_Graphics->getFOV();
+				float distanceToCenter = radius / sinf(fov * 0.5f);
+
+				using namespace DirectX;
+
+				XMFLOAT4X4 view = m_Graphics->getView();
+
+				XMVECTOR dir = XMVectorSet(view._31,view._32,view._33,0.f);
+				XMVECTOR camPos, objectPos;
+				objectPos = XMLoadFloat3(&actor->getPosition());
+
+				camPos = objectPos + (-dir * distanceToCenter);
+				XMFLOAT3 xmCamPos;
+				XMStoreFloat3(&xmCamPos, camPos);
+
+				m_CamInt.createPath(ui->m_RenderWidget->getCamera().getPosition(), xmCamPos, 0.5f);
+
+				//emit setCameraPositionSignal(xmCamPos);
+			}
+			else
+			{
+				m_CamInt.createPath(ui->m_RenderWidget->getCamera().getPosition(), actor->getPosition(), 0.5f);
+			}
+		}
 	}
+	else
+	{
+		m_CamInt.createPath(ui->m_RenderWidget->getCamera().getPosition(), Vector3(0,0,0), 0.5f);
+	}
+}
+
+void MainWindow::on_actionHelp_window_triggered()
+{
+    ui->m_HelpWidget->show();
+
+    ui->m_HelpWidget->setGeometry(200, 200, 300, 500);
 }

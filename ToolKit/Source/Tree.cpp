@@ -17,10 +17,8 @@ void Tree::clearTree()
 
 void Tree::selectItem(int p_ActorId)
 {
-	QTreeWidgetItem *previous = currentItem();
-	
 	QTreeWidgetItem *currItem;
-              	int tempId = p_ActorId;
+    int tempId = p_ActorId;
 	for(int i = 0; i < topLevelItemCount(); i++)
 	{
 		currItem = topLevelItem(i);
@@ -44,16 +42,8 @@ void Tree::removeItem()
 
 void Tree::objectCreated(std::string p_MeshName, int p_ActorId, int p_Type)
 {
-	if(m_ObjectCount.count(p_MeshName) > 0)
-		m_ObjectCount.at(p_MeshName)++;
-	else
-	{
-		m_ObjectCount.insert(std::pair<std::string, int>(p_MeshName, 0));
-
-		emit addTableObject(p_MeshName);
-	}
-
-	addTopLevelItem(new TreeItem(p_MeshName + "_" + std::to_string(m_ObjectCount.at(p_MeshName)), p_ActorId, p_Type));
+	addTopLevelItem(new TreeItem(p_MeshName + "_" + std::to_string(m_ObjectCount[p_MeshName]), p_ActorId, p_Type));
+	++m_ObjectCount[p_MeshName];
 }
 
 void Tree::changeObjectName(QTreeWidgetItem *p_Item, int p_Column)
@@ -80,19 +70,26 @@ void Tree::addFilter()
 
         if(cFilter)
         {
-            currItem->addChild(newFilter);
+            currItem->insertChild(0, newFilter);
+            setCurrentItem(newFilter);
         }
         else
         {
             if(currItemParent)
+            {
                 currItemParent->addChild(newFilter);
+            }
             else
-                addTopLevelItem(newFilter);
+            {
+                insertTopLevelItem(0, newFilter);
+                setCurrentItem(newFilter);
+            }
         }
     }
     else
     {
-        addTopLevelItem(newFilter);
+        insertTopLevelItem(0, newFilter);
+        setCurrentItem(newFilter);
     }
 }
 
@@ -141,16 +138,16 @@ void Tree::selectItemTraverse(QTreeWidgetItem* currItem, int& p_ActorId)
     {
         for (int i = 0; i < currItem->childCount(); i++)
         {
-			QTreeWidgetItem *currChild = currItem->takeChild(i);
+			QTreeWidgetItem *currChild = currItem->child(i);
 			TreeItem *item = dynamic_cast<TreeItem*>(currChild);
 
 			if(item && item->getActorId() == p_ActorId)
 			{
-				setCurrentIndex(indexFromItem(currItem));
+				setCurrentIndex(indexFromItem(currChild));
 				break;
 			}
-			else if(currItem->childCount() > 0)
-				selectItemTraverse(currItem, p_ActorId);
+			else if(currChild->childCount() > 0)
+				selectItemTraverse(currChild, p_ActorId);
         }
     }
 }
