@@ -80,7 +80,6 @@ private slots:
 	void shortcutDeselect();
 
 	// QT object changes
-	void on_m_ObjectTree_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
     void on_m_ObjectTree_itemSelectionChanged();
 
 	// QT Triggers
