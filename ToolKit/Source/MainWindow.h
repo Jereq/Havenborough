@@ -46,6 +46,7 @@ private:
 
 	std::map<std::string, QShortcut*> m_Hotkey;
 	CameraInterpolation m_CamInt;
+	Vector3 previousPosition;
 	
 public:
 	explicit MainWindow(QWidget *parent = 0);
@@ -108,4 +109,6 @@ private:
 
 	void itemPropertiesChanged(void);
 	void hideItemProperties(void);
+
+	Vector3 findMiddlePoint(QList<QTreeWidgetItem*> p_Items);
 };

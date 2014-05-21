@@ -277,18 +277,50 @@ void MainWindow::setObjectScale()
 
 void MainWindow::setObjectPosition()
 {
-    QTreeWidgetItem *currItem = ui->m_ObjectTree->currentItem();
+	using namespace DirectX;
 
-    if(currItem)
-    {
-        TreeItem *cItem = dynamic_cast<TreeItem*>(currItem);
+	QList<QTreeWidgetItem*> selectedItems = ui->m_ObjectTree->selectedItems();
+	Vector3 newPos = Vector3(ui->m_ObjectPositionXBox->value(),ui->m_ObjectPositionYBox->value(),ui->m_ObjectPositionZBox->value());
 
-        if(currItem->isSelected() && cItem && cItem->getType() == TreeItem::TreeItemType::MODEL)
-        {
-			Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
-			actor->setPosition(Vector3(ui->m_ObjectPositionXBox->value(),ui->m_ObjectPositionYBox->value(),ui->m_ObjectPositionZBox->value()));
-        }
-    }
+	if(newPos == previousPosition)
+		return;
+
+	previousPosition = newPos;
+
+	Vector3 originalPosition = findMiddlePoint(selectedItems);
+	XMVECTOR difference = XMLoadFloat3(&newPos) - XMLoadFloat3(&originalPosition);
+
+	for( auto *item : selectedItems)
+	{
+		TreeItem *cItem = dynamic_cast<TreeItem*>(item);
+		if(!cItem)
+			continue;
+
+		Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
+		if(!actor)
+			continue;
+
+		XMVECTOR oldPosition = XMLoadFloat3(&actor->getPosition());
+		oldPosition += difference;
+		Vector3 newPosition;
+		XMStoreFloat3(&newPosition, oldPosition);
+		actor->setPosition(newPosition);
+	}
+	
+
+
+   // QTreeWidgetItem *currItem = ui->m_ObjectTree->currentItem();
+
+   // if(currItem)
+   // {
+   //     TreeItem *cItem = dynamic_cast<TreeItem*>(currItem);
+
+   //     if(currItem->isSelected() && cItem && cItem->getType() == TreeItem::TreeItemType::MODEL)
+   //     {
+			//Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
+			//actor->setPosition(Vector3(ui->m_ObjectPositionXBox->value(),ui->m_ObjectPositionYBox->value(),ui->m_ObjectPositionZBox->value()));
+   //     }
+   // }
 }
 
 void MainWindow::setObjectRotation()
@@ -641,7 +673,7 @@ void MainWindow::on_actionGo_To_Selected_triggered()
 				float radius = m_Physics->getSurroundingSphereRadius(sBM->getBodyHandle());
 				float fov = m_Graphics->getFOV();
 				float distanceToCenter = radius / sinf(fov * 0.5f);
-
+				
 				using namespace DirectX;
 
 				XMFLOAT4X4 view = m_Graphics->getView();
@@ -679,6 +711,8 @@ void MainWindow::on_actionHelp_window_triggered()
 
 void MainWindow::itemPropertiesChanged(void)
 {
+	using namespace DirectX;
+
 	QList<QTreeWidgetItem*> selectedItems = ui->m_ObjectTree->selectedItems();
 	if(selectedItems.size() > 1)
 	{
@@ -688,6 +722,12 @@ void MainWindow::itemPropertiesChanged(void)
 		ui->ScaleBox->show();
 		ui->RotationBox->show();
 
+
+		Vector3 position = findMiddlePoint(selectedItems);
+
+		ui->m_ObjectPositionXBox->setValue(position.x);
+		ui->m_ObjectPositionYBox->setValue(position.y);
+		ui->m_ObjectPositionZBox->setValue(position.z);
 	}
 	else
 	{
@@ -815,4 +855,60 @@ void MainWindow::hideItemProperties(void)
 	ui->AdditionalBox_2->hide();
 	ui->AngleBox->hide();
 	ui->PositionBox_2->hide();
+}
+
+Vector3 MainWindow::findMiddlePoint(QList<QTreeWidgetItem*> p_Items)
+{
+	using namespace DirectX;
+
+	XMVECTOR sharedMidPoint;
+	XMVECTOR minPoint = g_XMZero;
+	XMVECTOR maxPoint = g_XMZero;
+	XMVECTOR position;
+
+	TreeItem *item = dynamic_cast<TreeItem*>(p_Items.front());
+	if(!item)
+		throw std::exception("No actor found when trying to find middle point");
+
+	Actor::ptr actor = m_ObjectManager->getActor(item->getActorId());
+	if(!actor)
+		throw std::exception("No actor found when trying to find middle point");
+
+	std::weak_ptr<BoundingMeshComponent> wBM = actor->getComponent<BoundingMeshComponent>(PhysicsInterface::m_ComponentId);
+	if(wBM.expired())
+		throw std::exception("The actor did not have a boundingMeshComponent when trying to find middle point");
+
+	std::shared_ptr<BoundingMeshComponent> sBM = wBM.lock();	
+	minPoint = maxPoint = XMLoadFloat3(&(m_Physics->getBodyPosition(sBM->getBodyHandle())));
+
+	if(p_Items.size() > 1)
+	{
+		for(auto &widgetItem : p_Items)
+		{
+			TreeItem *item = dynamic_cast<TreeItem*>(widgetItem);
+			if(!item)
+				continue;
+
+			Actor::ptr actor = m_ObjectManager->getActor(item->getActorId());
+			if(!actor)
+				continue;
+
+			std::weak_ptr<BoundingMeshComponent> wBM = actor->getComponent<BoundingMeshComponent>(PhysicsInterface::m_ComponentId);
+			if(wBM.expired())
+				continue;
+
+			std::shared_ptr<BoundingMeshComponent> sBM = wBM.lock();	
+			position = XMLoadFloat3(&(m_Physics->getBodyPosition(sBM->getBodyHandle())));
+			maxPoint = XMVectorMax(position, maxPoint);
+			minPoint = XMVectorMin(position, minPoint);
+		}
+		sharedMidPoint = minPoint + (maxPoint - minPoint) * 0.5f;
+	}
+	else
+		sharedMidPoint = maxPoint;
+		
+	Vector3 midPosition;
+	XMStoreFloat3(&midPosition, sharedMidPoint);
+
+	return midPosition;
 }
