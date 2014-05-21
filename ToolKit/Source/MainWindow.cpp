@@ -21,7 +21,6 @@
 #include "ObjectManager.h"
 #include "TreeItem.h"
 #include "TreeFilter.h"
-#include "TableItem.h"
 #include "qFileSystemModelDialog.h"
 
 #include <EventData.h>
