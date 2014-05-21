@@ -10,7 +10,15 @@
         <Resource Name="LoadingScreen" Path="assets/textures/LoadingScreen.dds"/>
         <Resource Name="Crosshair" Path="assets/textures/Dot.png"/>
         <Resource Name="PowerPie" Path="assets/textures/PowerPie.png"/>
-        <Resource Name="PiePiece" Path="assets/textures/PiePiece.png"/>
+      <Resource Name="PiePiece" Path="assets/textures/PiePiece.png"/>
+      <Resource Name="Translate" Path="assets/textures/translate_2.png"/>
+      <Resource Name="Camera" Path="assets/textures/camera.png"/>
+      <Resource Name="Copy" Path="assets/textures/copy.png"/>
+      <Resource Name="EyeNO" Path="assets/textures/eyeNO.png"/>
+      <Resource Name="Paste" Path="assets/textures/paste.png"/>
+      <Resource Name="Rotate" Path="assets/textures/rotate.png"/>
+      <Resource Name="Resize" Path="assets/textures/resize.png"/>
+      <Resource Name="Eye" Path="assets/textures/eye.png"/>
     </ResourceType>
     <ResourceType Type="sound">
         <Resource Name="Fire" Path="assets/sounds/sfx/Fire.mp3"/>

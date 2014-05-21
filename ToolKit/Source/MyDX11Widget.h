@@ -16,22 +16,14 @@ private:
 	bool m_PowerPieActive;
 	std::map<std::string, int> m_GUI;
 
-	struct PowerPie
+	std::vector<Vector2> m_RelativeIconPositions;
+
+	enum class DRAW
 	{
-		Vector2 position;
-		bool isActive;
-		Vector4 selectedColor;
-		Vector4 pieColor;
-
-
-		PowerPie()
-		{
-			position = Vector2(0.f, 0.f);
-			isActive = false;
-		}
+		LOW,
+		MEDIUM,
+		HIGH
 	};
-
-	PowerPie m_PowerPie;
 
 	struct ReachIK
 	{

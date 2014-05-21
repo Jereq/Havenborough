@@ -13,6 +13,7 @@
 
 #include <vector>
 #include <QShortcut>
+#include "CameraInterpolation.h"
 
 class QTableWidgetItem;
 class QTreeWidgetItem;
@@ -47,6 +48,7 @@ private:
 
 	QShortcut* m_Deselect;
     QFileSystemModelDialog* m_FileSystemDialog;
+	CameraInterpolation m_CamInt;
 public:
 	explicit MainWindow(QWidget *parent = 0);
 	~MainWindow();

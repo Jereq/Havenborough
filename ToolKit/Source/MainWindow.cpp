@@ -96,6 +96,7 @@ void MainWindow::signalAndSlotsDefinitions()
     QObject::connect(ui->m_CameraPositionZBox, SIGNAL(editingFinished()), this, SLOT(setCameraPosition()));
 
     QObject::connect(this, SIGNAL(setCameraPositionSignal(Vector3)), ui->m_RenderWidget, SLOT(CameraPositionSet(Vector3)));
+	QObject::connect(&m_CamInt, SIGNAL(setCameraPositionSignal(Vector3)), ui->m_RenderWidget, SLOT(CameraPositionSet(Vector3)));
 
     //Signals and slots for connecting the object creation to the trees
 	QObject::connect(m_ObjectManager.get(), SIGNAL(actorAdded(std::string,  Actor::ptr)), this, SLOT(onActorAdded(std::string, Actor::ptr)));
@@ -520,6 +521,8 @@ void MainWindow::onFrame(float p_DeltaTime)
 	m_EventManager.processEvents();
 	
 	m_ObjectManager->update(p_DeltaTime);
+
+	m_CamInt.update(p_DeltaTime);
 }
 
 void MainWindow::loadLevel(const std::string& p_Filename)
@@ -707,11 +710,17 @@ void MainWindow::on_actionGo_To_Selected_triggered()
 {
 	QTreeWidgetItem *currItem = ui->m_ObjectTree->currentItem();
 	if(!currItem)
+	{
+		m_CamInt.createPath(ui->m_RenderWidget->getCamera().getPosition(), Vector3(0,0,0), 0.5f);
 		return;
+	}
 
 	TreeItem *cItem = dynamic_cast<TreeItem*>(currItem);
 	if(!cItem)
+	{
+		m_CamInt.createPath(ui->m_RenderWidget->getCamera().getPosition(), Vector3(0,0,0), 0.5f);
 		return;
+	}
 	
     if(currItem->isSelected())
     {
@@ -738,17 +747,19 @@ void MainWindow::on_actionGo_To_Selected_triggered()
 				XMFLOAT3 xmCamPos;
 				XMStoreFloat3(&xmCamPos, camPos);
 
-				emit setCameraPositionSignal(xmCamPos);
+				m_CamInt.createPath(ui->m_RenderWidget->getCamera().getPosition(), xmCamPos, 0.5f);
+
+				//emit setCameraPositionSignal(xmCamPos);
 			}
 			else
 			{
-				emit setCameraPositionSignal(actor->getPosition());
+				m_CamInt.createPath(ui->m_RenderWidget->getCamera().getPosition(), actor->getPosition(), 0.5f);
 			}
 		}
 	}
 	else
 	{
-		emit setCameraPositionSignal(Vector3(0,0,0));
+		m_CamInt.createPath(ui->m_RenderWidget->getCamera().getPosition(), Vector3(0,0,0), 0.5f);
 	}
 }
 

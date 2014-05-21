@@ -111,7 +111,6 @@
    <addaction name="menuOptions"/>
    <addaction name="menuHelp"/>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
   <widget class="QDockWidget" name="m_ObjectDockableWidget">
    <property name="windowTitle">
     <string>Object Tree</string>
@@ -1404,6 +1403,7 @@
     </widget>
    </widget>
   </widget>
+  <widget class="QStatusBar" name="statusBar"/>
   <widget class="QDockWidget" name="m_HelpWidget">
    <property name="sizePolicy">
     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">

@@ -49,10 +49,10 @@ void MyDX11Widget::initialize(EventManager* p_EventManager, ResourceManager* p_R
 
 
 	m_ResourceIDs.push_back(m_ResourceManager->loadResource("particleSystem", "TestParticle"));
-
-	preLoadModels();
-
+	
 	m_PowerPie = PowerPie();
+	preLoadModels();
+	m_ToolManager.initialize(m_EventManager);
 }
 
 void MyDX11Widget::uninitialize()
@@ -72,9 +72,14 @@ void MyDX11Widget::render()
 	{
 		m_Graphics->render2D_Object(m_GUI["PowerPie"]);
 		m_Graphics->render2D_Object(m_GUI["PiePiece"]);
+		m_Graphics->render2D_Object(m_GUI["Translate"]);
+		m_Graphics->render2D_Object(m_GUI["Resize"]);
+		m_Graphics->render2D_Object(m_GUI["Rotate"]);
+		m_Graphics->render2D_Object(m_GUI["Copy"]);
+		m_Graphics->render2D_Object(m_GUI["Paste"]);
+		m_Graphics->render2D_Object(m_GUI["Camera"]);
+		m_Graphics->render2D_Object(m_GUI["Eye"]);
 	}
-
-
 
 	for (auto& mesh : m_Models)
 	{
@@ -366,28 +371,45 @@ void MyDX11Widget::selectPie(IEventData::Ptr p_Data)
 {
 	std::shared_ptr<PowerPieSelectEventData> pie = std::static_pointer_cast<PowerPieSelectEventData>(p_Data);
 
-	m_Graphics->set2D_ObjectPosition(m_GUI["PiePiece"], Vector3(m_PowerPie.position.x, m_PowerPie.position.y, 5.f));
+	m_Graphics->set2D_ObjectPosition(m_GUI["PiePiece"], Vector3(m_PowerPie.position.x, m_PowerPie.position.y, (float)DRAW::HIGH));
 	Vector4 color(0.9101f, 0.f, 0.f, 1.f);
 	m_Graphics->set2D_ObjectColor(m_GUI["PiePiece"], color);
 
-	m_Graphics->set2D_ObjectRotationZ(m_GUI["PiePiece"], -0.785398163f * pie->getIndex());
-
-
+	m_Graphics->set2D_ObjectRotationZ(m_GUI["PiePiece"], m_PowerPie.angle * pie->getIndex());
 }
+
+static const std::string f_Icons[] =
+{
+	"Translate",
+	"Rotate",
+	"Resize",
+	"Copy",
+	"Paste",
+	"Camera",
+	//"EyeNO",
+	"Eye",
+};
 
 void MyDX11Widget::activatePowerPie(IEventData::Ptr p_Data)
 {
 	std::shared_ptr<MouseEventDataPie> pie = std::static_pointer_cast<MouseEventDataPie>(p_Data);
 
 	Vector2 pos = pie->getMousePos();
+	
+	m_PowerPie.position = pos;
+	m_PowerPie.isActive = pie->getPieStatus();
 
-	m_Graphics->set2D_ObjectPosition(m_GUI["PowerPie"], Vector3(pos.x, pos.y, 0.f));
+	m_Graphics->set2D_ObjectPosition(m_GUI["PowerPie"], Vector3(pos.x, pos.y, (float)DRAW::LOW));
 
 	Vector4 color(0.9101f, 0.8632f, 0.0937f, 0.f);
 	m_Graphics->set2D_ObjectColor(m_GUI["PiePiece"], color);
-
-	m_PowerPie.position = pos;
-	m_PowerPie.isActive = pie->getPieStatus();
+	
+	unsigned int index = 0;
+	for (const std::string &icons : f_Icons)
+	{
+		m_Graphics->set2D_ObjectPosition(m_GUI[icons], Vector3(pos.x + m_RelativeIconPositions[index].x, pos.y + m_RelativeIconPositions[index].y, (float)DRAW::MEDIUM));
+		index++;
+	}
 }
 
 void MyDX11Widget::createPowerPieElement()
@@ -404,6 +426,27 @@ void MyDX11Widget::createPowerPieElement()
 
 	m_GUI.insert(std::pair<std::string, int>("PiePiece", m_Graphics->create2D_Object(position, Vector2(128.f, 128.f), scale, 0.f, "PiePiece")));
 	m_Graphics->set2D_ObjectColor(m_GUI["PiePiece"], color);
+
+	position = Vector3(0.f, 0.f, 2.f);
+	color = Vector4(1.f, 1.f, 1.f, 1.f);
+	scale = Vector3(0.4f, 0.4f, 1.f);
+
+	m_PowerPie.nrOfElements = sizeof(f_Icons) / sizeof(std::string);
+	m_PowerPie.angle = -2*DirectX::XM_PI/m_PowerPie.nrOfElements;
+
+	DirectX::XMMATRIX rot = DirectX::XMMatrixRotationZ(m_PowerPie.angle);
+	DirectX::XMVECTOR vec = DirectX::XMVectorSet(0.f, 80.f, 0.f, 0.f);
+	float *x = &vec.m128_f32[0];
+	float *y = &vec.m128_f32[1];
+	
+	for (const std::string &icons : f_Icons)
+	{
+		m_GUI.insert(std::pair<std::string, int>(icons, m_Graphics->create2D_Object(position, Vector2(64.f, 64.f), scale, 0.f, icons.c_str())));
+		m_Graphics->set2D_ObjectColor(m_GUI[icons], color);
+
+		m_RelativeIconPositions.push_back(Vector2(*x, *y));
+		vec = DirectX::XMVector2Transform(vec, rot);
+	}
 }
 
 void MyDX11Widget::preLoadModels()
@@ -418,9 +461,13 @@ void MyDX11Widget::preLoadModels()
 		m_ResourceIDs.push_back(m_ResourceManager->loadResource("texture", texture));
 	}
 
+	for (const std::string &texture : f_Icons)
+	{
+		m_ResourceIDs.push_back(m_ResourceManager->loadResource("texture", texture));
+	}
+
 	createPowerPieElement();
 }
-
 
 void MyDX11Widget::updateLightColor(IEventData::Ptr p_Data)
 {
