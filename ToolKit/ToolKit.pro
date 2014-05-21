@@ -51,9 +51,9 @@ SOURCES += Source/main.cpp\
     Source/MyDX11Widget.cpp \
     Source/Tree.cpp \
     Source/XMLLevel.cpp \
-    Source/qFileSystemModelDialog.cpp
+    Source/qFileSystemModelDialog.cpp \
+    Source/ToolManager.cpp \
     Source/CameraInterpolation.cpp \
-    Source/ToolManager.cpp
 
 HEADERS  += Source/MainWindow.h \
     Source/TreeItem.h \
@@ -66,10 +66,11 @@ HEADERS  += Source/MainWindow.h \
     Source/ObjectManager.h \
     Source/Tree.h \
     Source/XMLLevel.h \
-    Source/qFileSystemModelDialog.h
+    Source/qFileSystemModelDialog.h \
+    Source/ToolManager.h \
+    Source/Tools.h \
     Source/CameraInterpolation.h \
     Source/ToolManager.h \
-    Source/Tools.h
 
 FORMS    += Source/MainWindow.ui
 
