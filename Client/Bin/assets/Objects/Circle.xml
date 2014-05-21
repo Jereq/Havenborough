@@ -1,0 +1,10 @@
+<ObjectDescription Name="Circle">
+    <Object>
+        <Model Mesh="Circle">
+            <Scale x="20" y="20" z="20"/>
+        </Model>
+        <MeshPhysics Mesh="Circle">
+            <Scale x="20" y="20" z="20"/>
+        </MeshPhysics>
+    </Object>
+</ObjectDescription>
