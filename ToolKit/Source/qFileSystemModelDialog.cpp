@@ -59,4 +59,7 @@ void QFileSystemModelDialog::directoryViewClicked(const QModelIndex &index)
     m_FileView->setRootIndex(fileModel->index(mPath));
 }
 
-// http://www.bogotobogo.com/Qt/Qt5_QTreeView_QFileSystemModel_ModelView_MVC.php
+std::string QFileSystemModelDialog::getObjectFilePath(const QModelIndex &index)
+{
+    return fileModel->fileInfo(index).absoluteFilePath().toStdString();
+}

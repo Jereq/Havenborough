@@ -779,3 +779,13 @@ void MainWindow::on_m_FileSystemTreeView_clicked(const QModelIndex &index)
 {
     m_FileSystemDialog->directoryViewClicked(index);
 }
+
+void MainWindow::on_m_FileSystemListView_doubleClicked(const QModelIndex &index)
+{
+    std::string filePath = m_FileSystemDialog->getObjectFilePath(index);
+
+	const Vector3& cameraPos = ui->m_RenderWidget->getCamera().getPosition();
+	const Vector3& lookDir = ui->m_RenderWidget->getCamera().getForward();
+	const Vector3 addPos = cameraPos + lookDir * 500.f;
+    m_ObjectManager->addObject(filePath, addPos);
+}

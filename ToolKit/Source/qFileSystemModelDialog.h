@@ -22,6 +22,7 @@ public:
 	void attachDirectoryView(QTreeView* target);
 
     void directoryViewClicked(const QModelIndex &index);
+    std::string getObjectFilePath(const QModelIndex &index);
 
 private:
 	void attachViews();

@@ -94,6 +94,8 @@ private slots:
 
     void on_m_FileSystemTreeView_clicked(const QModelIndex &index);
 
+    void on_m_FileSystemListView_doubleClicked(const QModelIndex &index);
+
 signals:
     void setCameraPositionSignal(Vector3 p_CameraPosition);
 
