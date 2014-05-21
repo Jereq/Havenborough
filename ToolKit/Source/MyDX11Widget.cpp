@@ -13,6 +13,18 @@ MyDX11Widget::~MyDX11Widget()
 	uninitialize();
 }
 
+static const std::string f_Icons[] =
+{
+	"Rotate",
+	"Translate",
+	"Resize",
+	"Copy",
+	"Paste",
+	//"Camera",
+	//"EyeNO",
+	//"Eye",
+};
+
 void MyDX11Widget::initialize(EventManager* p_EventManager, ResourceManager* p_ResourceManager, IGraphics* p_Graphics)
 {
 	m_EventManager = p_EventManager;
@@ -52,7 +64,7 @@ void MyDX11Widget::initialize(EventManager* p_EventManager, ResourceManager* p_R
 	
 	m_PowerPie = PowerPie();
 	preLoadModels();
-	m_ToolManager.initialize(m_EventManager);
+	m_ToolManager.initialize(m_EventManager, f_Icons);
 }
 
 void MyDX11Widget::uninitialize()
@@ -378,17 +390,7 @@ void MyDX11Widget::selectPie(IEventData::Ptr p_Data)
 	m_Graphics->set2D_ObjectRotationZ(m_GUI["PiePiece"], m_PowerPie.angle * pie->getIndex());
 }
 
-static const std::string f_Icons[] =
-{
-	"Translate",
-	"Rotate",
-	"Resize",
-	"Copy",
-	"Paste",
-	"Camera",
-	//"EyeNO",
-	"Eye",
-};
+
 
 void MyDX11Widget::activatePowerPie(IEventData::Ptr p_Data)
 {

@@ -1,5 +1,6 @@
 #include "ToolManager.h"
 
+
 ToolManager::ToolManager() :
 	m_EventManager(nullptr), m_CurrentTool(nullptr),
 	m_PreviusTool(nullptr)
@@ -10,41 +11,73 @@ ToolManager::~ToolManager()
 		
 }
 
-void ToolManager::initialize(EventManager *p_EventManager)
+void ToolManager::initialize(EventManager *p_EventManager, const std::string *p_Icons)
 {
 	m_EventManager = p_EventManager;
+	m_Icons = p_Icons;
 
+	m_ToolMap.insert(std::pair<std::string, Tool::Type>("Translate", Tool::Type::TRANSLATE));
+	m_ToolMap.insert(std::pair<std::string, Tool::Type>("Paste", Tool::Type::PASTE));
+	m_ToolMap.insert(std::pair<std::string, Tool::Type>("Copy", Tool::Type::COPY));
+	m_ToolMap.insert(std::pair<std::string, Tool::Type>("Rotate", Tool::Type::ROTATE));
+	m_ToolMap.insert(std::pair<std::string, Tool::Type>("Resize", Tool::Type::RESIZE));
+	m_ToolMap.insert(std::pair<std::string, Tool::Type>("Camera", Tool::Type::CAMERA));
+	m_ToolMap.insert(std::pair<std::string, Tool::Type>("Select", Tool::Type::SELECT));
+	m_ToolMap.insert(std::pair<std::string, Tool::Type>("Eye", Tool::Type::EYE));
+
+
+	
 	m_ToolList.push_back(new SelectTool);
+	m_ToolList.push_back(new TranslateTool);
 
 	for(auto &a : m_ToolList)
 	{
 		a->initialize(m_EventManager);
 	}
 
-	changeTool(Tool::Type::SELECT);
+	for(unsigned int i = 0; i < m_ToolList.size(); i++)
+	{
+		if(m_ToolList[i]->getToolType() == Tool::Type::SELECT)
+		{
+			m_PreviusTool = m_CurrentTool;
+			m_CurrentTool = m_ToolList[i];
+			break;
+		}
+	}
+
 	m_PreviusTool = m_CurrentTool;
 }
 
-void ToolManager::OnPress()
+void ToolManager::onPress()
 {
 	m_CurrentTool->onPress();
 }
 
-void ToolManager::OnMove()
+void ToolManager::onMove()
 {
 	m_CurrentTool->onMove();
 }
 
-void ToolManager::OnRelease()
+void ToolManager::onRelease()
 {
 	m_CurrentTool->onRelease();
 }
 
-void ToolManager::changeTool(Tool::Type p_Type)
+void ToolManager::changeTool(int p_Index)
 {
+	std::string tool = m_Icons[p_Index];
+	Tool::Type type;
+	if(m_ToolMap.count(tool) > 0)
+	{
+		type = m_ToolMap.at(tool);
+	}
+
+	if(type == m_CurrentTool->getToolType())
+		return;
+
 	for(unsigned int i = 0; i < m_ToolList.size(); i++)
 	{
-		if(m_ToolList[i]->getToolType() == p_Type)
+		if(m_ToolList[i]->getToolType() == type)
 		{
 			m_PreviusTool = m_CurrentTool;
 			m_CurrentTool = m_ToolList[i];

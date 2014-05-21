@@ -66,3 +66,19 @@ public:
 																					DirectX::XMFLOAT2(m_WindowSize.x, m_WindowSize.y))));
 	}
 };
+
+
+class TranslateTool : public Tool
+{
+private:
+
+
+public:
+	TranslateTool(){}
+	~TranslateTool(){}
+	void initialize(EventManager *p_EventManager) override
+	{
+		m_EventManager = p_EventManager;
+		m_Type = Tool::Type::TRANSLATE;
+	}
+};

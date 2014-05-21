@@ -35,7 +35,7 @@ protected:
 			isActive = false;
 		}
 	};
-	
+	int m_PieAngleIndex;
 	PowerPie m_PowerPie;
 
 	Camera m_Camera;
