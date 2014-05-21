@@ -161,6 +161,31 @@
      </item>
      <item row="0" column="0">
       <widget class="Tree" name="m_ObjectTree">
+       <property name="styleSheet">
+        <string notr="true"> QTreeView::branch:has-siblings:!adjoins-item {
+     border-image: url(:/Pictures/Assets/stylesheet-vline.png) 0;
+ }
+
+ QTreeView::branch:has-siblings:adjoins-item {
+     border-image: url(:/Pictures/Assets/stylesheet-branch-more.png) 0;
+ }
+
+ QTreeView::branch:!has-children:!has-siblings:adjoins-item {
+     border-image: url(:/Pictures/Assets/stylesheet-branch-end.png) 0;
+ }
+
+ QTreeView::branch:has-children:!has-siblings:closed,
+ QTreeView::branch:closed:has-children:has-siblings {
+         border-image: none;
+         image: url(:/Pictures/Assets/stylesheet-branch-closed.png);
+ }
+
+ QTreeView::branch:open:has-children:!has-siblings,
+ QTreeView::branch:open:has-children:has-siblings  {
+         border-image: none;
+         image: url(:/Pictures/Assets/stylesheet-branch-open.png);
+ }</string>
+       </property>
        <property name="verticalScrollBarPolicy">
         <enum>Qt::ScrollBarAsNeeded</enum>
        </property>
@@ -1461,6 +1486,43 @@
      </item>
      <item row="0" column="0">
       <widget class="QTreeView" name="m_FileSystemTreeView">
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>500</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"> QTreeView::branch:has-siblings:!adjoins-item {
+     border-image: url(:/Pictures/Assets/stylesheet-vline.png) 0;
+ }
+
+ QTreeView::branch:has-siblings:adjoins-item {
+     border-image: url(:/Pictures/Assets/stylesheet-branch-more.png) 0;
+ }
+
+ QTreeView::branch:!has-children:!has-siblings:adjoins-item {
+     border-image: url(:/Pictures/Assets/stylesheet-branch-end.png) 0;
+ }
+
+ QTreeView::branch:has-children:!has-siblings:closed,
+ QTreeView::branch:closed:has-children:has-siblings {
+         border-image: none;
+         image: url(:/Pictures/Assets/stylesheet-branch-closed.png);
+ }
+
+ QTreeView::branch:open:has-children:!has-siblings,
+ QTreeView::branch:open:has-children:has-siblings  {
+         border-image: none;
+         image: url(:/Pictures/Assets/stylesheet-branch-open.png);
+ }</string>
+       </property>
        <property name="verticalScrollBarPolicy">
         <enum>Qt::ScrollBarAsNeeded</enum>
        </property>
@@ -1591,7 +1653,6 @@
   <tabstop>m_ObjectTree</tabstop>
   <tabstop>m_ObjectTreeAddButton</tabstop>
   <tabstop>m_ObjectTreeRemoveButton</tabstop>
-  <tabstop>m_ObjectTable</tabstop>
   <tabstop>m_CameraPositionXBox</tabstop>
   <tabstop>m_CameraPositionYBox</tabstop>
   <tabstop>m_CameraPositionZBox</tabstop>
