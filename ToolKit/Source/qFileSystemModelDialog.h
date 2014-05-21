@@ -3,6 +3,8 @@
 
 #include <QDialog>
 #include <QFileSystemModel>
+#include <QTreeWidgetItem>
+#include <QListView>
 
 namespace Ui {
 class QFileSystemModelDialog;
@@ -13,16 +15,23 @@ class QFileSystemModelDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit QFileSystemModelDialog(QWidget *parent = 0);
+    explicit QFileSystemModelDialog(QWidget* parent);
     ~QFileSystemModelDialog();
 
-private:
-    Ui::QFileSystemModelDialog *ui;
+	void setViews(QTreeView* dirView, QListView* fileView);
+	void attachDirectoryView(QTreeView* target);
 
-    // Make two models instead of one
-    // to filter them separately
+private:
+	void attachViews();
+
+private:
+    // Make two models instead of one to filter them separately
     QFileSystemModel *dirModel;
     QFileSystemModel *fileModel;
+
+	// Get pointers to the views from the MainWindow
+	QTreeView* m_DirView;
+	QListView* m_FileView;
 };
 
 #endif // QFILESYSTEMMODELDIALOG_H

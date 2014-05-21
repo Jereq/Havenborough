@@ -22,6 +22,7 @@
 #include "TreeItem.h"
 #include "TreeFilter.h"
 #include "TableItem.h"
+#include "qFileSystemModelDialog.h"
 
 #include <EventData.h>
 
@@ -71,6 +72,9 @@ MainWindow::MainWindow(QWidget *parent) :
 	m_Deselect = nullptr;
 	m_Deselect = new QShortcut(QKeySequence("Ctrl+D"), this);
 	QObject::connect(m_Deselect, SIGNAL(activated()), this, SLOT(deselect()));
+
+    m_FileSystemDialog = new QFileSystemModelDialog(this);
+	m_FileSystemDialog->setViews(ui->m_FileSystemTreeView, ui->m_FileSystemListView);
 }
 
 MainWindow::~MainWindow()

@@ -22,6 +22,7 @@ class AnimationLoader;
 class IGraphics;
 class IPhysics;
 class ObjectManager;
+class QFileSystemModelDialog;
 
 namespace Ui {
 class MainWindow;
@@ -45,7 +46,7 @@ private:
     std::vector<QGroupBox*> m_Boxes;
 
 	QShortcut* m_Deselect;
-	
+    QFileSystemModelDialog* m_FileSystemDialog;
 public:
 	explicit MainWindow(QWidget *parent = 0);
 	~MainWindow();
