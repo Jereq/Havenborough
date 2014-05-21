@@ -54,7 +54,6 @@ void QFileSystemModelDialog::attachViews()
 void QFileSystemModelDialog::directoryViewClicked(const QModelIndex &index)
 {
     QString mPath = dirModel->fileInfo(index).absoluteFilePath();
-    std::string path = mPath.toStdString();
 	
     fileModel->setRootPath(mPath);
     m_FileView->setRootIndex(fileModel->index(mPath));
