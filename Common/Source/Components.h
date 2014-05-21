@@ -569,6 +569,21 @@ public:
 	{
 		return m_Physics->getBodyOnSomething(m_Body);
 	}
+
+	void setScale(const Vector3& p_Scale)
+	{
+		if (p_Scale.x == 0.f || p_Scale.y == 0.f || p_Scale.z == 0.f)
+		{
+			return;
+		}
+
+		Vector3 relativeScale;
+		relativeScale.x = p_Scale.x / m_Scale.x;
+		relativeScale.y = p_Scale.y / m_Scale.y;
+		relativeScale.z = p_Scale.z / m_Scale.z;
+		m_Scale = p_Scale;
+		m_Physics->setBodyScale(m_Body, relativeScale);
+	}
 };
 
 /**

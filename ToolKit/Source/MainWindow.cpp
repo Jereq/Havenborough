@@ -262,10 +262,22 @@ void MainWindow::setObjectScale()
 			std::weak_ptr<ModelComponent> pmodel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
             std::shared_ptr<ModelComponent> spmodel = pmodel.lock();
 
+			Vector3 scale(ui->m_ObjectScaleXBox->value(),ui->m_ObjectScaleYBox->value(),ui->m_ObjectScaleZBox->value());
+
             if(spmodel)
             {
-                spmodel->setScale(Vector3(ui->m_ObjectScaleXBox->value(),ui->m_ObjectScaleYBox->value(),ui->m_ObjectScaleZBox->value()));
+                spmodel->setScale(scale);
             }
+
+			std::shared_ptr<PhysicsInterface> physComp = actor->getComponent<PhysicsInterface>(PhysicsInterface::m_ComponentId).lock();
+			if (physComp)
+			{
+				std::shared_ptr<BoundingMeshComponent> meshComp = std::dynamic_pointer_cast<BoundingMeshComponent>(physComp);
+				if (meshComp)
+				{
+					meshComp->setScale(scale);
+				}
+			}
 		}
 	}
 }
