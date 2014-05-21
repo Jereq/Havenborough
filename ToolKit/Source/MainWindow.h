@@ -12,6 +12,7 @@
 #endif
 
 #include <map>
+#include "CameraInterpolation.h"
 
 class QTableWidgetItem;
 class QTreeWidgetItem;
@@ -44,6 +45,7 @@ private:
     std::vector<QGroupBox*> m_Boxes;
 
 	std::map<std::string, QShortcut*> m_Hotkey;
+	CameraInterpolation m_CamInt;
 	
 public:
 	explicit MainWindow(QWidget *parent = 0);
@@ -74,7 +76,8 @@ private slots:
 	void setLightAngles();
 	void setLightRange();
 	void setLightIntensity();
-	void deselect();
+	void deselectAllTreeItems();
+	void shortcutDeselect();
 
 	// QT object changes
 	void on_m_ObjectTree_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
@@ -88,8 +91,11 @@ private slots:
     void on_actionOpen_triggered();
     void on_actionSave_triggered();
     void on_actionGo_To_Selected_triggered();
+    void on_actionHelp_window_triggered();
+
 signals:
     void setCameraPositionSignal(Vector3 p_CameraPosition);
+	void deselectAll();
 
 private:
 	void onFrame(float p_DeltaTime);

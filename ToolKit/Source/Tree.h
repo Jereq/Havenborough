@@ -4,6 +4,9 @@
 #include <QTreeWidgetItem>
 #include <map>
 
+class TreeItem;
+class QMouseEvent;
+
 class Tree : public QTreeWidget
 {
 	Q_OBJECT
@@ -15,9 +18,9 @@ public:
     Tree(QWidget* parent);
 
 	void clearTree();
-
+	
 	void selectItem(int p_ActorId);
-
+	QList<TreeItem*> getAllTreeItems(void);
 public slots:
     void addFilter();
 	void removeItem();
@@ -27,10 +30,14 @@ public slots:
 
 signals:
 	void removeActor(int id);
+	void deselectAll();
 
 private:
     void removeChild(QTreeWidgetItem* currItem);
 	void selectItemTraverse(QTreeWidgetItem* currItem, int &p_ActorId);
+	void collectTreeItems(QTreeWidgetItem *currentItem, QList<TreeItem*> *itemList);
+
+	virtual void mousePressEvent(QMouseEvent *mouseEvent) override;
 };
 
 #endif // TREE_H

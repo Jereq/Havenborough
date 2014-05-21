@@ -52,7 +52,8 @@ SOURCES += Source/main.cpp\
     Source/MyDX11Widget.cpp \
     Source/Tree.cpp \
     Source/Table.cpp \
-    Source/XMLLevel.cpp
+    Source/XMLLevel.cpp \
+    Source/CameraInterpolation.cpp
 
 HEADERS  += Source/MainWindow.h \
     Source/TreeItem.h \
@@ -66,7 +67,8 @@ HEADERS  += Source/MainWindow.h \
     Source/TableItem.h \
     Source/Tree.h \
     Source/Table.h \
-    Source/XMLLevel.h
+    Source/XMLLevel.h \
+    Source/CameraInterpolation.h
 
 FORMS    += Source/MainWindow.ui
 

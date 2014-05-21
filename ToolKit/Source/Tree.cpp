@@ -3,6 +3,8 @@
 #include "TreeFilter.h"
 #include "TreeItem.h"
 
+#include <QMouseEvent>
+
 Tree::Tree(QWidget* parent) 
 	: QTreeWidget(parent)
 {
@@ -33,11 +35,35 @@ void Tree::selectItem(int p_ActorId)
 	}
 }
 
+QList<TreeItem*> Tree::getAllTreeItems()
+{
+	QList<TreeItem*> items;
+	QTreeWidgetItem *currentItem;
+
+	for(int i = 0; i < topLevelItemCount(); i++)
+	{
+		currentItem = topLevelItem(i);
+		TreeItem *item = dynamic_cast<TreeItem*>(currentItem);
+		if(item)
+		{
+			items.push_back(item);
+		}
+		else
+		{
+			collectTreeItems(currentItem, &items);
+		}
+	}
+
+	return items;
+}
+
 void Tree::removeItem()
 {
-	QTreeWidgetItem *currItem = currentItem();
-
-    removeChild(currItem);
+	QList<QTreeWidgetItem*> items = selectedItems();
+	for (auto &item : items)
+	{
+		removeChild(item);
+	}
 }
 
 void Tree::objectCreated(std::string p_MeshName, int p_ActorId, int p_Type)
@@ -70,19 +96,26 @@ void Tree::addFilter()
 
         if(cFilter)
         {
-            currItem->addChild(newFilter);
+            currItem->insertChild(0, newFilter);
+            setCurrentItem(newFilter);
         }
         else
         {
             if(currItemParent)
+            {
                 currItemParent->addChild(newFilter);
+            }
             else
-                addTopLevelItem(newFilter);
+            {
+                insertTopLevelItem(0, newFilter);
+                setCurrentItem(newFilter);
+            }
         }
     }
     else
     {
-        addTopLevelItem(newFilter);
+        insertTopLevelItem(0, newFilter);
+        setCurrentItem(newFilter);
     }
 }
 
@@ -142,5 +175,40 @@ void Tree::selectItemTraverse(QTreeWidgetItem* currItem, int& p_ActorId)
 			else if(currChild->childCount() > 0)
 				selectItemTraverse(currChild, p_ActorId);
         }
+    }
+}
+
+void Tree::collectTreeItems(QTreeWidgetItem *currentItem, QList<TreeItem*> *items)
+{
+	if(currentItem)
+    {
+        for (int i = 0; i < currentItem->childCount(); i++)
+        {
+			QTreeWidgetItem *currentChild = currentItem->child(i);
+			TreeItem *item = dynamic_cast<TreeItem*>(currentChild);
+			if(item)
+			{
+				items->push_back(item);
+			}
+			else
+			{
+				collectTreeItems(currentChild, items);
+			}
+		}
+    }
+}
+
+
+void Tree::mousePressEvent( QMouseEvent *mouseEvent)
+{
+	QModelIndex item = indexAt(mouseEvent->pos());
+    bool selected = selectionModel()->isSelected(indexAt(mouseEvent->pos()));
+    QTreeView::mousePressEvent(mouseEvent);
+    if ((item.row() == -1 && item.column() == -1) || selected)
+    {
+		emit deselectAll();
+        clearSelection();
+        const QModelIndex index;
+        selectionModel()->setCurrentIndex(index, QItemSelectionModel::Select);
     }
 }
