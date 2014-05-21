@@ -93,6 +93,12 @@ private slots:
     void on_actionGo_To_Selected_triggered();
     void on_actionHelp_window_triggered();
 
+    void on_actionPower_Pie_triggered();
+
+    void on_addButton_clicked();
+
+    void on_removeButton_clicked();
+
 signals:
     void setCameraPositionSignal(Vector3 p_CameraPosition);
 

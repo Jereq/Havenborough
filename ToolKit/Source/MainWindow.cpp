@@ -60,6 +60,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->m_HelpWidget->hide();
     ui->m_HelpWidget->setFloating(true);
 
+	ui->m_PowerOptions->hide();
+    ui->m_PowerOptions->setFloating(true);
+
     //Timer
 	m_Timer.setInterval(1000 / 60);
 	m_Timer.setSingleShot(false);
@@ -780,4 +783,34 @@ void MainWindow::on_actionHelp_window_triggered()
     ui->m_HelpWidget->show();
 
     ui->m_HelpWidget->setGeometry(200, 200, 300, 500);
+}
+
+void MainWindow::on_actionPower_Pie_triggered()
+{
+    ui->m_PowerOptions->show();
+
+    ui->m_PowerOptions->setGeometry(width()*0.5f - 300.f, height()*0.5f - 200.f, 600, 400);
+}
+
+void MainWindow::on_addButton_clicked()
+{
+	int size = ui->listAvailable->selectedItems().size();
+	if(size <= 0)
+		return;
+
+    QListWidgetItem *selected = ui->listAvailable->takeItem(ui->listAvailable->currentRow());
+	//selected->setFlags(Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled | Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+
+    ui->listOrder->addItem(selected);
+}
+
+void MainWindow::on_removeButton_clicked()
+{
+	int size = ui->listOrder->selectedItems().size();
+	if(size <= 0)
+		return;
+
+	QListWidgetItem *item = ui->listOrder->takeItem(ui->listOrder->currentRow());
+
+	ui->listAvailable->addItem(item);
 }
