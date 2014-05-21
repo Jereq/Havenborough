@@ -18,11 +18,13 @@ class QTableWidgetItem;
 class QTreeWidgetItem;
 class QGroupBox;
 
+class ActorFactory;
 class AnimationLoader;
 class IGraphics;
 class IPhysics;
 class ObjectManager;
 class QFileSystemModelDialog;
+class RotationTool;
 
 namespace Ui {
 class MainWindow;
@@ -41,6 +43,8 @@ private:
 	ResourceManager m_ResourceManager;
 	std::unique_ptr<ObjectManager> m_ObjectManager;
 	std::unique_ptr<AnimationLoader> m_AnimationLoader;
+	std::shared_ptr<ActorFactory> m_ActorFactory;
+	std::unique_ptr<RotationTool> m_RotationTool;
 	IGraphics* m_Graphics;
 	IPhysics* m_Physics;
     std::vector<QGroupBox*> m_Boxes;
@@ -71,6 +75,8 @@ private slots:
     void setObjectScale();
     void setObjectRotation();
     void setObjectPosition();
+
+	void addObjectRotation(Vector3 p_Rotation);
 
 	void setLightPosition();
 	void setLightColor();

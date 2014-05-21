@@ -50,7 +50,7 @@ public:
 	explicit MyDX11Widget(QWidget* parent = nullptr, Qt::WindowFlags flags = 0);
 	~MyDX11Widget() override;
 
-	void initialize(EventManager* p_EventManager, ResourceManager* p_ResourceManager, IGraphics* p_Graphics) override;
+	void initialize(EventManager* p_EventManager, ResourceManager* p_ResourceManager, IGraphics* p_Graphics, RotationTool* p_RotationTool) override;
 	void uninitialize() override;
 
 	void render() override;

@@ -11,6 +11,7 @@
 class EventManager;
 class IGraphics;
 class ResourceManager;
+class RotationTool;
 
 class DXWidget : public QWidget
 {
@@ -50,13 +51,15 @@ protected:
 	ResourceManager* m_ResourceManager;
 	ToolManager m_ToolManager;
 
+	RotationTool* m_RotationTool;
+
 public:
 	DXWidget(QWidget* parent = nullptr, Qt::WindowFlags flags = 0);
 
 
 	virtual ~DXWidget() {}
 
-	virtual void initialize(EventManager* p_EventManager, ResourceManager* p_ResourceManager, IGraphics* p_Graphics) = 0;
+	virtual void initialize(EventManager* p_EventManager, ResourceManager* p_ResourceManager, IGraphics* p_Graphics, RotationTool* p_RotationTool) = 0;
 	virtual void uninitialize() = 0;
 
 	virtual void render() {}
