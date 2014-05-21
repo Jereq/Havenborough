@@ -25,10 +25,6 @@ protected:
 		float nrOfElements;
 		float angle;
 
-		Vector4 selectedColor;
-		Vector4 pieColor;
-
-
 		PowerPie()
 		{
 			position = Vector2(0.f, 0.f);

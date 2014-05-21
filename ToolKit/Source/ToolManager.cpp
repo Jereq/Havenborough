@@ -65,6 +65,9 @@ void ToolManager::onRelease()
 
 void ToolManager::changeTool(int p_Index)
 {
+	if(p_Index < 0)
+		return;
+
 	std::string tool = m_Icons[p_Index];
 	Tool::Type type;
 	if(m_ToolMap.count(tool) > 0)

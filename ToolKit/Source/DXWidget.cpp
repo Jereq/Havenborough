@@ -152,6 +152,9 @@ void DXWidget::mouseMoveEvent(QMouseEvent* e)
 
 			a = floorf(a);
 			m_PieAngleIndex = a;
+			if(m_PieAngleIndex >= m_PowerPie.nrOfElements)
+				m_PieAngleIndex = -1;
+
 			std::shared_ptr<PowerPieSelectEventData> pie(new PowerPieSelectEventData(a));
 			m_EventManager->queueEvent(pie);
 

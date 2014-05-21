@@ -19,6 +19,7 @@
       <Resource Name="Rotate" Path="assets/textures/rotate.png"/>
       <Resource Name="Resize" Path="assets/textures/resize.png"/>
       <Resource Name="Eye" Path="assets/textures/eye.png"/>
+      <Resource Name="Select" Path="assets/textures/select.png"/>
     </ResourceType>
     <ResourceType Type="sound">
         <Resource Name="Fire" Path="assets/sounds/sfx/Fire.mp3"/>

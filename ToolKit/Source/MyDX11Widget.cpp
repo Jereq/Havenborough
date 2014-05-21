@@ -20,6 +20,7 @@ static const std::string f_Icons[] =
 	"Resize",
 	"Copy",
 	"Paste",
+	"Select",
 	//"Camera",
 	//"EyeNO",
 	//"Eye",
@@ -82,15 +83,13 @@ void MyDX11Widget::render()
 
 	if(m_PowerPie.isActive)
 	{
+		for (const std::string &icons : f_Icons)
+		{
+			m_Graphics->render2D_Object(m_GUI[icons]);
+		}
+			
 		m_Graphics->render2D_Object(m_GUI["PowerPie"]);
 		m_Graphics->render2D_Object(m_GUI["PiePiece"]);
-		m_Graphics->render2D_Object(m_GUI["Translate"]);
-		m_Graphics->render2D_Object(m_GUI["Resize"]);
-		m_Graphics->render2D_Object(m_GUI["Rotate"]);
-		m_Graphics->render2D_Object(m_GUI["Copy"]);
-		m_Graphics->render2D_Object(m_GUI["Paste"]);
-		m_Graphics->render2D_Object(m_GUI["Camera"]);
-		m_Graphics->render2D_Object(m_GUI["Eye"]);
 	}
 
 	for (auto& mesh : m_Models)
