@@ -35,6 +35,21 @@ void Tree::selectItem(int p_ActorId)
 	}
 }
 
+void Tree::selectAllChilds(QTreeWidgetItem *currentItem, QItemSelectionModel::SelectionFlag selectionMode)
+{
+	if(currentItem)
+    {
+        for (int i = 0; i < currentItem->childCount(); i++)
+        {
+			QTreeWidgetItem *currChild = currentItem->child(i);
+			selectionModel()->select(indexFromItem(currChild), selectionMode);
+
+			if(currChild->childCount() > 0)
+				selectAllChilds(currChild, selectionMode);
+        }
+    }
+}
+
 QList<TreeItem*> Tree::getAllTreeItems()
 {
 	QList<TreeItem*> items;
@@ -60,9 +75,9 @@ QList<TreeItem*> Tree::getAllTreeItems()
 void Tree::removeItem()
 {
 	QList<QTreeWidgetItem*> items = selectedItems();
-	for (auto &item : items)
+	for(int i = items.size()-1; i >= 0; i--)
 	{
-		removeChild(item);
+		removeChild(items.at(i));
 	}
 }
 
@@ -142,6 +157,7 @@ void Tree::removeChild(QTreeWidgetItem* currItem)
 				}
 
                 delete currChild;
+				currChild = nullptr;
 			}
         }
 
@@ -155,6 +171,7 @@ void Tree::removeChild(QTreeWidgetItem* currItem)
 		}
 
         delete currItem;
+		currItem = nullptr;
     }
 }
 
@@ -204,11 +221,9 @@ void Tree::mousePressEvent( QMouseEvent *mouseEvent)
 	QModelIndex item = indexAt(mouseEvent->pos());
     bool selected = selectionModel()->isSelected(indexAt(mouseEvent->pos()));
     QTreeView::mousePressEvent(mouseEvent);
-    if ((item.row() == -1 && item.column() == -1) || selected)
+    if ((item.row() == -1 && item.column() == -1))
     {
 		emit deselectAll();
         clearSelection();
-        const QModelIndex index;
-        selectionModel()->setCurrentIndex(index, QItemSelectionModel::Select);
     }
 }

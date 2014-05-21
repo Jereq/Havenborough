@@ -18,6 +18,7 @@ private:
 
 	const boost::uuids::uuid& getID() const;
 	void setName(std::string p_ObjectName);
+
 };
 
 #endif // TREEFILTER_H

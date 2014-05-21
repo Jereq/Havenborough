@@ -43,16 +43,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
 
     //Hide all value boxes per default
-    ui->PositionBox->hide();
-    ui->ScaleBox->hide();
-    ui->RotationBox->hide();
-
-    ui->ColorBox->hide();
-    ui->DirectionBox->hide();
-    ui->AdditionalBox_1->hide();
-    ui->AdditionalBox_2->hide();
-    ui->AngleBox->hide();
-    ui->PositionBox_2->hide();
+	hideItemProperties();
 
 	signalAndSlotsDefinitions();
     pushBoxes();
@@ -151,7 +142,6 @@ void MainWindow::signalAndSlotsDefinitions()
 
 	QObject::connect(ui->m_ObjectTree, SIGNAL(deselectAll()), this, SLOT(deselectAllTreeItems()));
 	QObject::connect(this, SIGNAL(deselectAll()), this, SLOT(deselectAllTreeItems()));
-
 }
 
 void MainWindow::pushBoxes()
@@ -233,6 +223,20 @@ void MainWindow::on_m_ObjectTree_itemSelectionChanged()
 		return;
 	emit deselectAll();
 
+	//for(auto &item : selectedItems)
+	for(int i = selectedItems.size() -1; i >= 0; i--)
+	{
+		TreeFilter *treeFilter = dynamic_cast<TreeFilter*>(selectedItems.at(i));
+		if(!treeFilter)
+			continue;
+
+		QItemSelectionModel::SelectionFlag flag = QItemSelectionModel::Select;
+		
+		ui->m_ObjectTree->selectAllChilds(selectedItems.at(i), flag);
+	}
+
+	selectedItems = ui->m_ObjectTree->selectedItems();
+
 	for(auto &item : selectedItems)
 	{
 		TreeItem *treeItem = dynamic_cast<TreeItem*>(item);
@@ -250,123 +254,7 @@ void MainWindow::on_m_ObjectTree_itemSelectionChanged()
 		spModel->setColorTone(Vector3(5.0f, 5.0f, 7.0f));
 	}
 
-	//QTreeWidgetItem *currItem = selectedItems.front();//ui->m_ObjectTree->currentItem();
-	//if(!currItem)
-	//	return;
-	//
-	//TreeItem *cItem = dynamic_cast<TreeItem*>(currItem);
-	//if(!cItem)
-	//	return;
-	//ui->PositionBox->hide();
- //   ui->ScaleBox->hide();
- //   ui->RotationBox->hide();
-
- //   ui->ColorBox->hide();
- //   ui->DirectionBox->hide();
- //   ui->AdditionalBox_1->hide();
- //   ui->AdditionalBox_2->hide();
- //   ui->AngleBox->hide();
- //   ui->PositionBox_2->hide();
-
-	//Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
-	//std::weak_ptr<ModelComponent> pmodel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
-	//std::shared_ptr<ModelComponent> spmodel = pmodel.lock();
-
- //   if(currItem && currItem->isSelected())
- //   {
-	//	if(currItem->isSelected() && spmodel)
-	//	{
-	//		ui->PositionBox->show();
-	//		ui->ScaleBox->show();
-	//		ui->RotationBox->show();
-	//		Vector3 scale = spmodel->getScale();
-	//		Vector3 position = spmodel->getPosition();
-	//		Vector3 rotation = spmodel->getRotation();
-
-	//		ui->m_ObjectScaleXBox->setValue(scale.x);
-	//		ui->m_ObjectScaleYBox->setValue(scale.y);
-	//		ui->m_ObjectScaleZBox->setValue(scale.z);
-
-	//		ui->m_ObjectPositionXBox->setValue(position.x);
-	//		ui->m_ObjectPositionYBox->setValue(position.y);
-	//		ui->m_ObjectPositionZBox->setValue(position.z);
-
-	//		ui->m_ObjectRotationXBox->setValue(rotation.x);
-	//		ui->m_ObjectRotationYBox->setValue(rotation.y);
-	//		ui->m_ObjectRotationZBox->setValue(rotation.z);
-	//		spmodel->setColorTone(Vector3(5,5,7));
-	//	}
-	//	else if (spmodel)
-	//	{
-	//		spmodel->setColorTone(Vector3(1.0f, 1.0f, 1.0f));
-	//	}
-
-	//	std::weak_ptr<LightComponent> light = actor->getComponent<LightComponent>(LightInterface::m_ComponentId);
-	//	std::shared_ptr<LightComponent> slight = light.lock();
-
-	//	if(slight)
-	//	{
-	//	    TreeItem *cItem = dynamic_cast<TreeItem*>(currItem);
-	//	    if(cItem)
-	//	    {
-	//	        ui->PositionBox_2->show();
-	//	        ui->ColorBox->show();
-
-	//			const Vector3& pos = actor->getPosition();
-	//			ui->m_LightPositionXBox->setValue(pos.x);
-	//			ui->m_LightPositionYBox->setValue(pos.y);
-	//			ui->m_LightPositionZBox->setValue(pos.z);
-
-	//			const Vector3& color = slight->getColor();
-	//			ui->m_LightColorXBox->setValue(color.x);
-	//			ui->m_LightColorYBox->setValue(color.y);
-	//			ui->m_LightColorZBox->setValue(color.z);
-
-	//	        TreeItem::TreeItemType type = cItem->getType();
-
-	//	        if(type == TreeItem::TreeItemType::POINTLIGHT)
-	//	        {
-	//	            ui->AdditionalBox_2->show();
-
-	//				const float &range = slight->getRange();
-	//				ui->m_LightAdditionalBox2->setValue(range);
-	//	        }
-	//	        else if(type == TreeItem::TreeItemType::DIRECTIONALLIGHT)
-	//	        {
-	//	            ui->AdditionalBox_1->show();
-	//				ui->DirectionBox->show();
-
-	//				const Vector3& dir = slight->getDirection();
-	//				ui->m_LightDirectionXBox->setValue(dir.x);
-	//				ui->m_LightDirectionYBox->setValue(dir.y);
-	//				ui->m_LightDirectionZBox->setValue(dir.z);
-
-	//				const float &intensity = slight->getIntensity();
-	//				ui->m_LightAdditionalBox1->setValue(intensity);
-	//	        }
-	//	        else
-	//	        {
-	//	            ui->AdditionalBox_2->show();
-	//	            ui->DirectionBox->show();
-	//	            ui->AngleBox->show();
-
-	//				const Vector3& dir = slight->getDirection();
-	//				ui->m_LightDirectionXBox->setValue(dir.x);
-	//				ui->m_LightDirectionYBox->setValue(dir.y);
-	//				ui->m_LightDirectionZBox->setValue(dir.z);
-
-	//				const Vector2 &angle = slight->getSpotLightAngles();
-	//				ui->m_LightAngleXBox->setValue(angle.x);
-	//				ui->m_LightAngleYBox->setValue(angle.y);
-
-	//				const float &range = slight->getRange();
-	//				ui->m_LightAdditionalBox2->setValue(range);
-	//	        }
-	//	    }
-	//	}
-	//}
-
-    sortPropertiesBoxes();
+	itemPropertiesChanged();
 }
 
 void MainWindow::setObjectScale()
@@ -523,6 +411,7 @@ void MainWindow::setLightIntensity()
 
 void MainWindow::deselectAllTreeItems()
 {
+	hideItemProperties();
 	QList<TreeItem*> allItems = ui->m_ObjectTree->getAllTreeItems();
 	for(auto &item : allItems)
 	{
@@ -726,6 +615,7 @@ void MainWindow::pick(IEventData::Ptr p_Data)
 
 	ui->m_ObjectTree->selectItem(actor->getId());
 }
+
 void MainWindow::on_actionGo_To_Selected_triggered()
 {
 	QTreeWidgetItem *currItem = ui->m_ObjectTree->currentItem();
@@ -788,4 +678,144 @@ void MainWindow::on_actionHelp_window_triggered()
     ui->m_HelpWidget->show();
 
     ui->m_HelpWidget->setGeometry(200, 200, 300, 500);
+}
+
+void MainWindow::itemPropertiesChanged(void)
+{
+	QList<QTreeWidgetItem*> selectedItems = ui->m_ObjectTree->selectedItems();
+	if(selectedItems.size() > 1)
+	{
+		hideItemProperties();
+
+		ui->PositionBox->show();
+		ui->ScaleBox->show();
+		ui->RotationBox->show();
+
+	}
+	else
+	{
+		QTreeWidgetItem *currItem = selectedItems.front();
+		if(!currItem)
+			return;
+	
+		TreeItem *cItem = dynamic_cast<TreeItem*>(currItem);
+		if(!cItem)
+			return;
+
+		hideItemProperties();
+
+		Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
+		std::weak_ptr<ModelComponent> pmodel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
+		std::shared_ptr<ModelComponent> spmodel = pmodel.lock();
+
+		if(currItem && currItem->isSelected())
+		{
+			if(currItem->isSelected() && spmodel)
+			{
+				ui->PositionBox->show();
+				ui->ScaleBox->show();
+				ui->RotationBox->show();
+				Vector3 scale = spmodel->getScale();
+				Vector3 position = spmodel->getPosition();
+				Vector3 rotation = spmodel->getRotation();
+
+				ui->m_ObjectScaleXBox->setValue(scale.x);
+				ui->m_ObjectScaleYBox->setValue(scale.y);
+				ui->m_ObjectScaleZBox->setValue(scale.z);
+
+				ui->m_ObjectPositionXBox->setValue(position.x);
+				ui->m_ObjectPositionYBox->setValue(position.y);
+				ui->m_ObjectPositionZBox->setValue(position.z);
+
+				ui->m_ObjectRotationXBox->setValue(rotation.x);
+				ui->m_ObjectRotationYBox->setValue(rotation.y);
+				ui->m_ObjectRotationZBox->setValue(rotation.z);
+				spmodel->setColorTone(Vector3(5,5,7));
+			}
+			else if (spmodel)
+			{
+				spmodel->setColorTone(Vector3(1.0f, 1.0f, 1.0f));
+			}
+
+			std::weak_ptr<LightComponent> light = actor->getComponent<LightComponent>(LightInterface::m_ComponentId);
+			std::shared_ptr<LightComponent> slight = light.lock();
+
+			if(slight)
+			{
+				TreeItem *cItem = dynamic_cast<TreeItem*>(currItem);
+				if(cItem)
+				{
+					ui->PositionBox_2->show();
+					ui->ColorBox->show();
+
+					const Vector3& pos = actor->getPosition();
+					ui->m_LightPositionXBox->setValue(pos.x);
+					ui->m_LightPositionYBox->setValue(pos.y);
+					ui->m_LightPositionZBox->setValue(pos.z);
+
+					const Vector3& color = slight->getColor();
+					ui->m_LightColorXBox->setValue(color.x);
+					ui->m_LightColorYBox->setValue(color.y);
+					ui->m_LightColorZBox->setValue(color.z);
+
+					TreeItem::TreeItemType type = cItem->getType();
+
+					if(type == TreeItem::TreeItemType::POINTLIGHT)
+					{
+						ui->AdditionalBox_2->show();
+
+						const float &range = slight->getRange();
+						ui->m_LightAdditionalBox2->setValue(range);
+					}
+					else if(type == TreeItem::TreeItemType::DIRECTIONALLIGHT)
+					{
+						ui->AdditionalBox_1->show();
+						ui->DirectionBox->show();
+
+						const Vector3& dir = slight->getDirection();
+						ui->m_LightDirectionXBox->setValue(dir.x);
+						ui->m_LightDirectionYBox->setValue(dir.y);
+						ui->m_LightDirectionZBox->setValue(dir.z);
+
+						const float &intensity = slight->getIntensity();
+						ui->m_LightAdditionalBox1->setValue(intensity);
+					}
+					else
+					{
+						ui->AdditionalBox_2->show();
+						ui->DirectionBox->show();
+						ui->AngleBox->show();
+
+						const Vector3& dir = slight->getDirection();
+						ui->m_LightDirectionXBox->setValue(dir.x);
+						ui->m_LightDirectionYBox->setValue(dir.y);
+						ui->m_LightDirectionZBox->setValue(dir.z);
+
+						const Vector2 &angle = slight->getSpotLightAngles();
+						ui->m_LightAngleXBox->setValue(angle.x);
+						ui->m_LightAngleYBox->setValue(angle.y);
+
+						const float &range = slight->getRange();
+						ui->m_LightAdditionalBox2->setValue(range);
+					}
+				}
+			}
+		}
+	}
+
+    sortPropertiesBoxes();
+}
+
+void MainWindow::hideItemProperties(void)
+{
+	ui->PositionBox->hide();
+	ui->ScaleBox->hide();
+	ui->RotationBox->hide();
+
+	ui->ColorBox->hide();
+	ui->DirectionBox->hide();
+	ui->AdditionalBox_1->hide();
+	ui->AdditionalBox_2->hide();
+	ui->AngleBox->hide();
+	ui->PositionBox_2->hide();
 }

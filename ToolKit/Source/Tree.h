@@ -20,7 +20,9 @@ public:
 	void clearTree();
 	
 	void selectItem(int p_ActorId);
+	void selectAllChilds(QTreeWidgetItem* currItem, QItemSelectionModel::SelectionFlag selectionMode);
 	QList<TreeItem*> getAllTreeItems(void);
+
 public slots:
     void addFilter();
 	void removeItem();

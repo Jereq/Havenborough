@@ -105,4 +105,7 @@ private:
 	void uninitializeSystems();
 	void initializeHotkeys();
 	void pick(IEventData::Ptr p_Data);
+
+	void itemPropertiesChanged(void);
+	void hideItemProperties(void);
 };
