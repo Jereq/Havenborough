@@ -58,7 +58,6 @@ private:
 
 private slots:
 	// Engine changes
-	void addObject(QTableWidgetItem* p_ObjectItem);
 	void onActorAdded(std::string p_ObjectType, Actor::ptr p_Actor);
 	void idle();
 
@@ -84,7 +83,6 @@ private slots:
 
 	// QT Triggers
 	void on_actionProperties_triggered();
-    void on_actionAdd_Object_triggered();
 	void on_actionObject_Tree_triggered();
 	void on_actionExit_triggered();
     void on_actionOpen_triggered();
@@ -95,6 +93,8 @@ private slots:
     void on_m_FileSystemTreeView_clicked(const QModelIndex &index);
 
     void on_m_FileSystemListView_doubleClicked(const QModelIndex &index);
+
+    void on_actionAdd_Object_triggered();
 
 signals:
     void setCameraPositionSignal(Vector3 p_CameraPosition);

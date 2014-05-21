@@ -121,9 +121,6 @@ void MainWindow::signalAndSlotsDefinitions()
     //Signals and slots for connecting the remove button creation to the trees
 	QObject::connect(ui->m_ObjectTreeRemoveButton, SIGNAL(clicked()), ui->m_ObjectTree, SLOT(removeItem()));
 
-	//Signals and slots for connecting the Tree item creation to the table
-	QObject::connect(m_ObjectManager.get(), SIGNAL(objectTypeCreated(std::string)), ui->m_ObjectTable, SLOT(addObject(std::string)));
-
     //Signals and slots for connecting the light position editing to the light
     QObject::connect(ui->m_LightPositionXBox, SIGNAL(editingFinished()), this, SLOT(setLightPosition()));
     QObject::connect(ui->m_LightPositionYBox, SIGNAL(editingFinished()), this, SLOT(setLightPosition()));
@@ -218,11 +215,6 @@ void MainWindow::setCameraPosition()
 void MainWindow::on_actionProperties_triggered()
 {
     ui->m_PropertiesDockableWidget->show();
-}
-
-void MainWindow::on_actionAdd_Object_triggered()
-{
-    ui->m_ObjectTableDockableWidget->show();
 }
 
 void MainWindow::on_m_ObjectTree_itemSelectionChanged()
@@ -540,14 +532,6 @@ void MainWindow::saveLevel(const std::string& p_Filename)
 	m_ObjectManager->saveLevel(p_Filename);
 }
 
-void MainWindow::addObject(QTableWidgetItem* p_ObjectItem)
-{
-	const Vector3& cameraPos = ui->m_RenderWidget->getCamera().getPosition();
-	const Vector3& lookDir = ui->m_RenderWidget->getCamera().getForward();
-	const Vector3 addPos = cameraPos + lookDir * 500.f;
-	m_ObjectManager->addObject(p_ObjectItem->text().toStdString(), addPos);
-}
-
 void MainWindow::initializeSystems()
 {
 	TweakSettings::initializeMaster();
@@ -788,4 +772,9 @@ void MainWindow::on_m_FileSystemListView_doubleClicked(const QModelIndex &index)
 	const Vector3& lookDir = ui->m_RenderWidget->getCamera().getForward();
 	const Vector3 addPos = cameraPos + lookDir * 500.f;
     m_ObjectManager->addObject(filePath, addPos);
+}
+
+void MainWindow::on_actionAdd_Object_triggered()
+{
+    ui->m_ObjectBrowser->show();
 }
