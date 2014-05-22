@@ -62,6 +62,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	ui->m_PowerOptions->hide();
     ui->m_PowerOptions->setFloating(true);
+	fillPowerPieOptions();
 
     //Timer
 	m_Timer.setInterval(1000 / 60);
@@ -645,6 +646,17 @@ void MainWindow::sortPropertiesBoxes()
     }
 }
 
+void MainWindow::fillPowerPieOptions()
+{
+	std::vector<std::string> v = ui->m_RenderWidget->getPieList();
+	QStringList qlist;
+
+	for(auto &s : v)
+	{
+		ui->listOrder->addItem(QString::fromStdString(s));
+	}
+}
+
 void MainWindow::on_m_ObjectTree_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous)
 {
     if(current)
@@ -795,22 +807,38 @@ void MainWindow::on_actionPower_Pie_triggered()
 void MainWindow::on_addButton_clicked()
 {
 	int size = ui->listAvailable->selectedItems().size();
+	QListWidgetItem *item;
 	if(size <= 0)
-		return;
+		item = ui->listAvailable->takeItem(ui->listAvailable->count() - 1);
+	else
+		item = ui->listAvailable->takeItem(ui->listAvailable->currentRow());
 
-    QListWidgetItem *selected = ui->listAvailable->takeItem(ui->listAvailable->currentRow());
 	//selected->setFlags(Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled | Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
-    ui->listOrder->addItem(selected);
+    ui->listOrder->addItem(item);
 }
 
 void MainWindow::on_removeButton_clicked()
 {
 	int size = ui->listOrder->selectedItems().size();
+	QListWidgetItem *item;
 	if(size <= 0)
-		return;
-
-	QListWidgetItem *item = ui->listOrder->takeItem(ui->listOrder->currentRow());
+		item = ui->listOrder->takeItem(ui->listOrder->count() - 1);
+	else
+		item = ui->listOrder->takeItem(ui->listOrder->currentRow());
 
 	ui->listAvailable->addItem(item);
+}
+void MainWindow::on_saveButton_clicked()
+{
+	QListWidget *list = ui->listOrder;
+	std::vector<std::string> tools;
+	for(int i = 0; i < list->count(); i++)
+	{
+		tools.push_back(list->item(i)->text().toStdString());
+	}
+
+	ui->m_RenderWidget->updatePowerPie(tools);
+
+	ui->m_PowerOptions->hide();
 }

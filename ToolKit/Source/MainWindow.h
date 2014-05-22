@@ -56,7 +56,7 @@ private:
 	void signalAndSlotsDefinitions();
     void pushBoxes();
     void sortPropertiesBoxes();
-
+	void fillPowerPieOptions();
 private slots:
 	// Engine changes
 	void addObject(QTableWidgetItem* p_ObjectItem);
@@ -98,6 +98,8 @@ private slots:
     void on_addButton_clicked();
 
     void on_removeButton_clicked();
+
+    void on_saveButton_clicked();
 
 signals:
     void setCameraPositionSignal(Vector3 p_CameraPosition);

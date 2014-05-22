@@ -11,11 +11,14 @@ private:
 	std::vector<Tool*> m_ToolList;
 	EventManager *m_EventManager;
 	std::map<std::string, Tool::Type> m_ToolMap;
-	const std::string *m_Icons;
+	std::vector<std::string> m_Order;
+
 public:
 	ToolManager();
 	~ToolManager();
-	void initialize(EventManager *p_EventManager, const std::string *p_Icons);
+
+	void initialize(EventManager *p_EventManager, std::vector<std::string> p_Order);
+	void updateToolOrder(std::vector<std::string> p_Order);
 	void onPress();
 	void onMove();
 	void onRelease();

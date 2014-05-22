@@ -25,6 +25,9 @@ protected:
 		float nrOfElements;
 		float angle;
 
+		std::vector<Vector2> m_RelativeIconPositions;
+		std::vector<std::string> m_ToolOrder;
+
 		PowerPie()
 		{
 			position = Vector2(0.f, 0.f);

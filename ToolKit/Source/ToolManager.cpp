@@ -11,10 +11,10 @@ ToolManager::~ToolManager()
 		
 }
 
-void ToolManager::initialize(EventManager *p_EventManager, const std::string *p_Icons)
+void ToolManager::initialize(EventManager *p_EventManager, std::vector<std::string> p_Order)
 {
 	m_EventManager = p_EventManager;
-	m_Icons = p_Icons;
+	updateToolOrder(p_Order);
 
 	m_ToolMap.insert(std::pair<std::string, Tool::Type>("Translate", Tool::Type::TRANSLATE));
 	m_ToolMap.insert(std::pair<std::string, Tool::Type>("Paste", Tool::Type::PASTE));
@@ -25,8 +25,6 @@ void ToolManager::initialize(EventManager *p_EventManager, const std::string *p_
 	m_ToolMap.insert(std::pair<std::string, Tool::Type>("Select", Tool::Type::SELECT));
 	m_ToolMap.insert(std::pair<std::string, Tool::Type>("Eye", Tool::Type::EYE));
 
-
-	
 	m_ToolList.push_back(new SelectTool);
 	m_ToolList.push_back(new TranslateTool);
 
@@ -46,6 +44,11 @@ void ToolManager::initialize(EventManager *p_EventManager, const std::string *p_
 	}
 
 	m_PreviusTool = m_CurrentTool;
+}
+
+void ToolManager::updateToolOrder(std::vector<std::string> p_Order)
+{
+	m_Order = p_Order;
 }
 
 void ToolManager::onPress()
@@ -68,7 +71,7 @@ void ToolManager::changeTool(int p_Index)
 	if(p_Index < 0)
 		return;
 
-	std::string tool = m_Icons[p_Index];
+	std::string tool = m_Order.at(p_Index);
 	Tool::Type type;
 	if(m_ToolMap.count(tool) > 0)
 	{
