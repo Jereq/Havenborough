@@ -2,27 +2,31 @@
 
 #include <QMainWindow>
 #include <QTimer>
+#include <QShortcut>
 
 #include <Actor.h>
 #include <EventManager.h>
 #include <Utilities\XMFloatUtil.h>
-
 #ifndef Q_MOC_RUN
 #include <ResourceManager.h>
 #endif
 
-#include <vector>
-#include <QShortcut>
+#include <map>
 #include "CameraInterpolation.h"
 
+class QFileSystemModelDialog;
+class QGroupBox;
 class QTableWidgetItem;
 class QTreeWidgetItem;
-class QGroupBox;
 
+
+class ActorFactory;
 class AnimationLoader;
 class IGraphics;
 class IPhysics;
 class ObjectManager;
+class TreeItem;
+class RotationTool;
 
 namespace Ui {
 class MainWindow;
@@ -41,11 +45,14 @@ private:
 	ResourceManager m_ResourceManager;
 	std::unique_ptr<ObjectManager> m_ObjectManager;
 	std::unique_ptr<AnimationLoader> m_AnimationLoader;
+	std::shared_ptr<ActorFactory> m_ActorFactory;
+	std::unique_ptr<RotationTool> m_RotationTool;
 	IGraphics* m_Graphics;
 	IPhysics* m_Physics;
     std::vector<QGroupBox*> m_Boxes;
 
-	QShortcut* m_Deselect;
+	std::map<std::string, QShortcut*> m_Hotkey;
+    QFileSystemModelDialog* m_FileSystemDialog;
 	CameraInterpolation m_CamInt;
 	
 public:
@@ -59,7 +66,6 @@ private:
 	void fillPowerPieOptions();
 private slots:
 	// Engine changes
-	void addObject(QTableWidgetItem* p_ObjectItem);
 	void onActorAdded(std::string p_ObjectType, Actor::ptr p_Actor);
 	void idle();
 
@@ -71,21 +77,22 @@ private slots:
     void setObjectRotation();
     void setObjectPosition();
 
+	void addObjectRotation(Vector3 p_Rotation);
+
 	void setLightPosition();
 	void setLightColor();
 	void setLightDirection();
 	void setLightAngles();
 	void setLightRange();
 	void setLightIntensity();
-	void deselect();
+	void deselectAllTreeItems();
+	void shortcutDeselect();
 
 	// QT object changes
-	void on_m_ObjectTree_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
     void on_m_ObjectTree_itemSelectionChanged();
 
 	// QT Triggers
 	void on_actionProperties_triggered();
-    void on_actionAdd_Object_triggered();
 	void on_actionObject_Tree_triggered();
 	void on_actionExit_triggered();
     void on_actionOpen_triggered();
@@ -101,8 +108,17 @@ private slots:
 
     void on_saveButton_clicked();
 
+    void on_m_FileSystemTreeView_clicked(const QModelIndex &index);
+
+    void on_m_FileSystemListView_doubleClicked(const QModelIndex &index);
+
+    void on_actionAdd_Object_triggered();
+
+    void on_actionSet_to_Default_Scale_triggered();
+
 signals:
     void setCameraPositionSignal(Vector3 p_CameraPosition);
+	void deselectAll();
 
 private:
 	void onFrame(float p_DeltaTime);
@@ -111,5 +127,11 @@ private:
 
 	void initializeSystems();
 	void uninitializeSystems();
+	void initializeHotkeys();
 	void pick(IEventData::Ptr p_Data);
+
+	void itemPropertiesChanged(void);
+	void hideItemProperties(void);
+
+	Vector3 findMiddlePoint(QList<TreeItem*> p_Items);
 };

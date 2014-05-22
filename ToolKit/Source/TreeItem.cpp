@@ -11,7 +11,8 @@ TreeItem::TreeItem(std::string p_ItemName, int p_ActorId, int p_Type)
     m_Type = (TreeItemType)p_Type;
 
     setText(0, QString::fromStdString(m_ItemName));
-    setFlags(Qt::ItemIsDragEnabled | Qt::ItemIsEditable | Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+    setFlags(Qt::ItemIsDragEnabled | Qt::ItemIsEditable | Qt::ItemIsSelectable |
+		Qt::ItemIsEnabled);
     setIcon(0, QIcon(":/Icons/Assets/object.png"));
 	setToolTip(0, "Object: " + QString::fromStdString(m_ItemName));
 }

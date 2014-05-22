@@ -5,11 +5,14 @@
 #include <QStatusBar>
 #include "EventData.h"
 
+#include "RotationTool.h"
+
 DXWidget::DXWidget(QWidget* parent, Qt::WindowFlags flags)
 	: QWidget(parent, flags),
 	m_FlyControl(&m_Camera, &m_Control),
 	m_EventManager(nullptr),
-	m_ResourceManager(nullptr)
+	m_ResourceManager(nullptr),
+	m_RotationTool(nullptr)
 {
 	setAttribute(Qt::WA_PaintOnScreen);
 	setAttribute(Qt::WA_NoSystemBackground);
@@ -123,9 +126,17 @@ void DXWidget::mouseMoveEvent(QMouseEvent* e)
 		if ((e->buttons() & Qt::LeftButton) && !(e->buttons() & Qt::RightButton))
 		{
 			QPointF delta = (e->localPos() - m_PrevMousePos) / (float)height() * DirectX::XM_PI;
-			m_Camera.rotate(delta.x(), delta.y(), 0.f);
+			if (e->modifiers() & Qt::Modifier::CTRL)
+			{
+				m_Camera.rotate(delta.x(), delta.y(), 0.f);
+			}
+			else
+			{
+				m_ToolManager.onMove();
+				m_RotationTool->mouseMovement(delta);
+			}
+
 			update();
-			m_ToolManager.onMove();
 		}
 		else if ((e->buttons() & Qt::RightButton) && !(e->buttons() & Qt::LeftButton))
 		{
@@ -181,6 +192,8 @@ void DXWidget::mouseMoveEvent(QMouseEvent* e)
 
 void DXWidget::mouseReleaseEvent(QMouseEvent* e)
 {
+	m_RotationTool->mouseReleased();
+
 	setCursor(Qt::ArrowCursor);
 	
 	//showStatus("");

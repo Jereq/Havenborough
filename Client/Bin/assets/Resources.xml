@@ -10,16 +10,16 @@
         <Resource Name="LoadingScreen" Path="assets/textures/LoadingScreen.dds"/>
         <Resource Name="Crosshair" Path="assets/textures/Dot.png"/>
         <Resource Name="PowerPie" Path="assets/textures/PowerPie.png"/>
-      <Resource Name="PiePiece" Path="assets/textures/PiePiece.png"/>
-      <Resource Name="Translate" Path="assets/textures/translate_2.png"/>
-      <Resource Name="Camera" Path="assets/textures/camera.png"/>
-      <Resource Name="Copy" Path="assets/textures/copy.png"/>
-      <Resource Name="EyeNO" Path="assets/textures/eyeNO.png"/>
-      <Resource Name="Paste" Path="assets/textures/paste.png"/>
-      <Resource Name="Rotate" Path="assets/textures/rotate.png"/>
-      <Resource Name="Resize" Path="assets/textures/resize.png"/>
-      <Resource Name="Eye" Path="assets/textures/eye.png"/>
-      <Resource Name="Select" Path="assets/textures/select.png"/>
+        <Resource Name="PiePiece" Path="assets/textures/PiePiece.png"/>
+        <Resource Name="Translate" Path="assets/textures/translate_2.png"/>
+        <Resource Name="Camera" Path="assets/textures/camera.png"/>
+        <Resource Name="Copy" Path="assets/textures/copy.png"/>
+        <Resource Name="EyeNO" Path="assets/textures/eyeNO.png"/>
+        <Resource Name="Paste" Path="assets/textures/paste.png"/>
+        <Resource Name="Rotate" Path="assets/textures/rotate.png"/>
+        <Resource Name="Resize" Path="assets/textures/resize.png"/>
+        <Resource Name="Eye" Path="assets/textures/eye.png"/>
+        <Resource Name="Select" Path="assets/textures/select.png"/>
     </ResourceType>
     <ResourceType Type="sound">
         <Resource Name="Fire" Path="assets/sounds/sfx/Fire.mp3"/>
@@ -175,6 +175,7 @@
         <Resource Name="Wall1v2" Path="assets/models/Wall1v2.btx"/>
         <Resource Name="Wall2v2" Path="assets/models/Wall2v2.btx"/>
         <Resource Name="Minque6" Path="assets/models/Minque6.btx"/>
+        <Resource Name="Circle" Path="assets/models/Circle.btx"/>
     </ResourceType>
     <ResourceType Type="volume">
         <Resource Name="Aqueduct1" Path="assets/volumes/CB_Aqueduct1.txc"/>
@@ -298,6 +299,7 @@
         <Resource Name="Wall1v2" Path="assets/volumes/CB_Wall1v2.txc"/>
         <Resource Name="Wall2v2" Path="assets/volumes/CB_Wall2v2.txc"/>
         <Resource Name="Flag1" Path="assets/volumes/CB_Flag1.txc"/>
+        <Resource Name="Circle" Path="assets/volumes/CB_Circle.txc"/>
     </ResourceType>
     <ResourceType Type="animation">
         <Resource Name="Dzala" Path="assets/animations/Dzala.atx"/>

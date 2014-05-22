@@ -35,11 +35,11 @@ bool KeyboardControl::keyPressEvent(QKeyEvent* e)
 			startMoveRight();
 			return true;
 
-		case Qt::Key::Key_Space:
+		case Qt::Key::Key_R:
 			startMoveUp();
 			return true;
 
-		case Qt::Key::Key_Shift:
+		case Qt::Key::Key_F:
 			startMoveDown();
 			return true;
 
@@ -68,11 +68,11 @@ bool KeyboardControl::keyReleaseEvent(QKeyEvent* e)
 			stopMoveRight();
 			return true;
 
-		case Qt::Key::Key_Space:
+		case Qt::Key::Key_R:
 			stopMoveUp();
 			return true;
 
-		case Qt::Key::Key_Shift:
+		case Qt::Key::Key_F:
 			stopMoveDown();
 			return true;
 

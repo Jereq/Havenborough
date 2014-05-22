@@ -2,6 +2,8 @@
 
 #include <ResourceManager.h>
 
+#include "RotationTool.h"
+
 MyDX11Widget::MyDX11Widget(QWidget* parent, Qt::WindowFlags flags)
 	: DXWidget(parent, flags),
 	m_Graphics(nullptr)
@@ -13,11 +15,12 @@ MyDX11Widget::~MyDX11Widget()
 	uninitialize();
 }
 
-void MyDX11Widget::initialize(EventManager* p_EventManager, ResourceManager* p_ResourceManager, IGraphics* p_Graphics)
+void MyDX11Widget::initialize(EventManager* p_EventManager, ResourceManager* p_ResourceManager, IGraphics* p_Graphics, RotationTool* p_RotationTool)
 {
 	m_EventManager = p_EventManager;
 	m_ResourceManager = p_ResourceManager;
 	m_Graphics = p_Graphics;
+	m_RotationTool = p_RotationTool;
 
 	m_ResourceIDs.push_back(m_ResourceManager->loadResource("texture","SKYBOXDDS"));
 	m_Graphics->createSkydome("SKYBOXDDS", 500000.f);
@@ -93,6 +96,7 @@ void MyDX11Widget::render()
 	{
 		m_Graphics->renderModel(mesh.modelId);
 	}
+	m_RotationTool->render();
 
 	bool usingDirectional = false;
 	for(auto &light : m_Lights)
