@@ -81,23 +81,35 @@ Actor::ptr ObjectManager::getActorFromBodyHandle(BodyHandle p_BodyHandle)
 
 void ObjectManager::addObject(const std::string& p_ObjectName, const Vector3& p_Position)
 {
-	auto description = m_ObjectDescriptions.find(p_ObjectName);
-	if (description == m_ObjectDescriptions.end())
+	tinyxml2::XMLDocument doc;
+	if(doc.LoadFile(p_ObjectName.c_str()))
 	{
 		return;
 	}
 
-	tinyxml2::XMLElement* root = description->second->FirstChildElement("Object");
+	tinyxml2::XMLElement* root = doc.FirstChildElement("ObjectDescription");
 	if (!root)
 	{
 		return;
 	}
 
-	Actor::ptr actor = m_ActorFactory->createActor(root);
+	const char* objectName = root->Attribute("Name");
+	if(!objectName)
+	{
+		return;
+	}
+
+	tinyxml2::XMLElement* objectDesc = root->FirstChildElement("Object");
+	if (!objectDesc)
+	{
+		return;
+	}
+
+	Actor::ptr actor = m_ActorFactory->createActor(objectDesc);
 	actor->setPosition(p_Position);
 
 	m_ActorList.addActor(actor);
-	emit actorAdded(p_ObjectName, actor);
+	emit actorAdded(objectName, actor);
 }
 
 static void deepClone(tinyxml2::XMLNode* p_NewNode, const tinyxml2::XMLNode* p_SrcNode)

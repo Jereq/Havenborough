@@ -21,7 +21,7 @@
 #include "ObjectManager.h"
 #include "TreeItem.h"
 #include "TreeFilter.h"
-#include "TableItem.h"
+#include "qFileSystemModelDialog.h"
 
 #include <EventData.h>
 
@@ -60,6 +60,9 @@ MainWindow::MainWindow(QWidget *parent) :
 	m_ObjectManager->loadDescriptionsFromFolder("assets/Objects");
 
 	initializeHotkeys();
+
+    m_FileSystemDialog = new QFileSystemModelDialog(this);
+	m_FileSystemDialog->setViews(ui->m_FileSystemTreeView, ui->m_FileSystemListView);
 }
 
 MainWindow::~MainWindow()
@@ -108,9 +111,6 @@ void MainWindow::signalAndSlotsDefinitions()
 
     //Signals and slots for connecting the remove button creation to the trees
 	QObject::connect(ui->m_ObjectTreeRemoveButton, SIGNAL(clicked()), ui->m_ObjectTree, SLOT(removeItem()));
-
-	//Signals and slots for connecting the Tree item creation to the table
-	QObject::connect(m_ObjectManager.get(), SIGNAL(objectTypeCreated(std::string)), ui->m_ObjectTable, SLOT(addObject(std::string)));
 
     //Signals and slots for connecting the light position editing to the light
     QObject::connect(ui->m_LightPositionXBox, SIGNAL(editingFinished()), this, SLOT(setLightPosition()));
@@ -211,11 +211,6 @@ void MainWindow::on_actionProperties_triggered()
     ui->m_PropertiesDockableWidget->show();
 }
 
-void MainWindow::on_actionAdd_Object_triggered()
-{
-    ui->m_ObjectTableDockableWidget->show();
-}
-
 void MainWindow::on_m_ObjectTree_itemSelectionChanged()
 {
 	QList<QTreeWidgetItem*> selectedItems = ui->m_ObjectTree->selectedItems();
@@ -279,48 +274,47 @@ void MainWindow::setObjectPosition()
 {
 	using namespace DirectX;
 
-	QList<QTreeWidgetItem*> selectedItems = ui->m_ObjectTree->selectedItems();
-	Vector3 newPos = Vector3(ui->m_ObjectPositionXBox->value(),ui->m_ObjectPositionYBox->value(),ui->m_ObjectPositionZBox->value());
+	//QList<QTreeWidgetItem*> selectedItems = ui->m_ObjectTree->selectedItems();
+	//Vector3 newPos = Vector3(ui->m_ObjectPositionXBox->value(),ui->m_ObjectPositionYBox->value(),ui->m_ObjectPositionZBox->value());
 
-	if(newPos == previousPosition)
-		return;
+	//if(newPos == previousPosition)
+	//	return;
 
-	previousPosition = newPos;
+	//previousPosition = newPos;
 
-	Vector3 originalPosition = findMiddlePoint(selectedItems);
-	XMVECTOR difference = XMLoadFloat3(&newPos) - XMLoadFloat3(&originalPosition);
+	//Vector3 originalPosition = findMiddlePoint(selectedItems);
+	//XMVECTOR difference = XMLoadFloat3(&newPos) - XMLoadFloat3(&originalPosition);
 
-	for( auto *item : selectedItems)
-	{
-		TreeItem *cItem = dynamic_cast<TreeItem*>(item);
-		if(!cItem)
-			continue;
+	//for( auto *item : selectedItems)
+	//{
+	//	TreeItem *cItem = dynamic_cast<TreeItem*>(item);
+	//	if(!cItem)
+	//		continue;
 
-		Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
-		if(!actor)
-			continue;
+	//	Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
+	//	if(!actor)
+	//		continue;
 
-		XMVECTOR oldPosition = XMLoadFloat3(&actor->getPosition());
-		oldPosition += difference;
-		Vector3 newPosition;
-		XMStoreFloat3(&newPosition, oldPosition);
-		actor->setPosition(newPosition);
-	}
+	//	XMVECTOR oldPosition = XMLoadFloat3(&actor->getPosition());
+	//	oldPosition += difference;
+	//	Vector3 newPosition;
+	//	XMStoreFloat3(&newPosition, oldPosition);
+	//	actor->setPosition(newPosition);
+	//}
 	
 
+    QTreeWidgetItem *currItem = ui->m_ObjectTree->currentItem();
 
-   // QTreeWidgetItem *currItem = ui->m_ObjectTree->currentItem();
+    if(currItem)
+    {
+        TreeItem *cItem = dynamic_cast<TreeItem*>(currItem);
 
-   // if(currItem)
-   // {
-   //     TreeItem *cItem = dynamic_cast<TreeItem*>(currItem);
-
-   //     if(currItem->isSelected() && cItem && cItem->getType() == TreeItem::TreeItemType::MODEL)
-   //     {
-			//Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
-			//actor->setPosition(Vector3(ui->m_ObjectPositionXBox->value(),ui->m_ObjectPositionYBox->value(),ui->m_ObjectPositionZBox->value()));
-   //     }
-   // }
+        if(currItem->isSelected() && cItem && cItem->getType() == TreeItem::TreeItemType::MODEL)
+        {
+			Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
+			actor->setPosition(Vector3(ui->m_ObjectPositionXBox->value(),ui->m_ObjectPositionYBox->value(),ui->m_ObjectPositionZBox->value()));
+        }
+    }
 }
 
 void MainWindow::setObjectRotation()
@@ -479,14 +473,6 @@ void MainWindow::loadLevel(const std::string& p_Filename)
 void MainWindow::saveLevel(const std::string& p_Filename)
 {
 	m_ObjectManager->saveLevel(p_Filename);
-}
-
-void MainWindow::addObject(QTableWidgetItem* p_ObjectItem)
-{
-	const Vector3& cameraPos = ui->m_RenderWidget->getCamera().getPosition();
-	const Vector3& lookDir = ui->m_RenderWidget->getCamera().getForward();
-	const Vector3 addPos = cameraPos + lookDir * 500.f;
-	m_ObjectManager->addObject(p_ObjectItem->text().toStdString(), addPos);
 }
 
 void MainWindow::initializeSystems()
@@ -673,7 +659,7 @@ void MainWindow::on_actionGo_To_Selected_triggered()
 				float radius = m_Physics->getSurroundingSphereRadius(sBM->getBodyHandle());
 				float fov = m_Graphics->getFOV();
 				float distanceToCenter = radius / sinf(fov * 0.5f);
-				
+
 				using namespace DirectX;
 
 				XMFLOAT4X4 view = m_Graphics->getView();
@@ -709,12 +695,27 @@ void MainWindow::on_actionHelp_window_triggered()
     ui->m_HelpWidget->setGeometry(200, 200, 300, 500);
 }
 
+void MainWindow::on_m_FileSystemTreeView_clicked(const QModelIndex &index)
+{
+    m_FileSystemDialog->directoryViewClicked(index);
+}
+
+void MainWindow::on_m_FileSystemListView_doubleClicked(const QModelIndex &index)
+{
+    std::string filePath = m_FileSystemDialog->getObjectFilePath(index);
+    
+	const Vector3& cameraPos = ui->m_RenderWidget->getCamera().getPosition();
+	const Vector3& lookDir = ui->m_RenderWidget->getCamera().getForward();
+	const Vector3 addPos = cameraPos + lookDir * 500.f;
+    m_ObjectManager->addObject(filePath, addPos);
+}
+
 void MainWindow::itemPropertiesChanged(void)
 {
 	using namespace DirectX;
 
 	QList<QTreeWidgetItem*> selectedItems = ui->m_ObjectTree->selectedItems();
-	if(selectedItems.size() > 1)
+	if(false && selectedItems.size() > 1)
 	{
 		hideItemProperties();
 
@@ -855,6 +856,11 @@ void MainWindow::hideItemProperties(void)
 	ui->AdditionalBox_2->hide();
 	ui->AngleBox->hide();
 	ui->PositionBox_2->hide();
+}
+
+void MainWindow::on_actionAdd_Object_triggered()
+{
+    ui->m_ObjectBrowser->show();
 }
 
 Vector3 MainWindow::findMiddlePoint(QList<QTreeWidgetItem*> p_Items)

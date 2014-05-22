@@ -22,6 +22,7 @@ class AnimationLoader;
 class IGraphics;
 class IPhysics;
 class ObjectManager;
+class QFileSystemModelDialog;
 
 namespace Ui {
 class MainWindow;
@@ -45,6 +46,7 @@ private:
     std::vector<QGroupBox*> m_Boxes;
 
 	std::map<std::string, QShortcut*> m_Hotkey;
+    QFileSystemModelDialog* m_FileSystemDialog;
 	CameraInterpolation m_CamInt;
 	Vector3 previousPosition;
 	
@@ -59,7 +61,6 @@ private:
 
 private slots:
 	// Engine changes
-	void addObject(QTableWidgetItem* p_ObjectItem);
 	void onActorAdded(std::string p_ObjectType, Actor::ptr p_Actor);
 	void idle();
 
@@ -85,13 +86,18 @@ private slots:
 
 	// QT Triggers
 	void on_actionProperties_triggered();
-    void on_actionAdd_Object_triggered();
 	void on_actionObject_Tree_triggered();
 	void on_actionExit_triggered();
     void on_actionOpen_triggered();
     void on_actionSave_triggered();
     void on_actionGo_To_Selected_triggered();
     void on_actionHelp_window_triggered();
+
+    void on_m_FileSystemTreeView_clicked(const QModelIndex &index);
+
+    void on_m_FileSystemListView_doubleClicked(const QModelIndex &index);
+
+    void on_actionAdd_Object_triggered();
 
 signals:
     void setCameraPositionSignal(Vector3 p_CameraPosition);

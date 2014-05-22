@@ -6,6 +6,7 @@
 #include "Camera.h"
 #include "FlyControl.h"
 #include "KeyboardControl.h"
+#include "ToolManager.h"
 
 class EventManager;
 class IGraphics;
@@ -16,6 +17,27 @@ class DXWidget : public QWidget
 	Q_OBJECT
 
 protected:
+	struct PowerPie
+	{
+		Vector2 position;
+		bool isActive;
+
+		float nrOfElements;
+		float angle;
+
+		Vector4 selectedColor;
+		Vector4 pieColor;
+
+
+		PowerPie()
+		{
+			position = Vector2(0.f, 0.f);
+			isActive = false;
+		}
+	};
+	
+	PowerPie m_PowerPie;
+
 	Camera m_Camera;
 	KeyboardControl m_Control;
 	FlyControl m_FlyControl;
@@ -26,7 +48,7 @@ protected:
 	QPointF m_MouseDirPrev;
 	EventManager* m_EventManager;
 	ResourceManager* m_ResourceManager;
-
+	ToolManager m_ToolManager;
 
 public:
 	DXWidget(QWidget* parent = nullptr, Qt::WindowFlags flags = 0);

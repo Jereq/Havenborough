@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1920</width>
-    <height>1000</height>
+    <height>2000</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -184,53 +184,6 @@
          <string notr="true">1</string>
         </property>
        </column>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-  </widget>
-  <widget class="QDockWidget" name="m_ObjectTableDockableWidget">
-   <property name="allowedAreas">
-    <set>Qt::AllDockWidgetAreas</set>
-   </property>
-   <property name="windowTitle">
-    <string>Add New Objects</string>
-   </property>
-   <attribute name="dockWidgetArea">
-    <number>8</number>
-   </attribute>
-   <widget class="QWidget" name="dockWidgetContents_3">
-    <layout class="QGridLayout" name="gridLayout_3">
-     <item row="0" column="0">
-      <widget class="Table" name="m_ObjectTable">
-       <property name="editTriggers">
-        <set>QAbstractItemView::NoEditTriggers</set>
-       </property>
-       <property name="selectionMode">
-        <enum>QAbstractItemView::ExtendedSelection</enum>
-       </property>
-       <property name="showGrid">
-        <bool>false</bool>
-       </property>
-       <property name="gridStyle">
-        <enum>Qt::NoPen</enum>
-       </property>
-       <property name="cornerButtonEnabled">
-        <bool>false</bool>
-       </property>
-       <property name="rowCount">
-        <number>1</number>
-       </property>
-       <property name="columnCount">
-        <number>0</number>
-       </property>
-       <attribute name="horizontalHeaderVisible">
-        <bool>false</bool>
-       </attribute>
-       <attribute name="verticalHeaderVisible">
-        <bool>false</bool>
-       </attribute>
-       <row/>
       </widget>
      </item>
     </layout>
@@ -1494,6 +1447,80 @@
     </layout>
    </widget>
   </widget>
+  <widget class="QDockWidget" name="m_ObjectBrowser">
+   <property name="windowTitle">
+    <string>Object Browser</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>8</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_5">
+    <layout class="QGridLayout" name="gridLayout_10">
+     <item row="0" column="1">
+      <widget class="QListView" name="m_FileSystemListView"/>
+     </item>
+     <item row="0" column="0">
+      <widget class="QTreeView" name="m_FileSystemTreeView">
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>500</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"> QTreeView::branch:has-siblings:!adjoins-item {
+     border-image: url(:/Pictures/Assets/stylesheet-vline.png) 0;
+ }
+
+ QTreeView::branch:has-siblings:adjoins-item {
+     border-image: url(:/Pictures/Assets/stylesheet-branch-more.png) 0;
+ }
+
+ QTreeView::branch:!has-children:!has-siblings:adjoins-item {
+     border-image: url(:/Pictures/Assets/stylesheet-branch-end.png) 0;
+ }
+
+ QTreeView::branch:has-children:!has-siblings:closed,
+ QTreeView::branch:closed:has-children:has-siblings {
+         border-image: none;
+         image: url(:/Pictures/Assets/stylesheet-branch-closed.png);
+ }
+
+ QTreeView::branch:open:has-children:!has-siblings,
+ QTreeView::branch:open:has-children:has-siblings  {
+         border-image: none;
+         image: url(:/Pictures/Assets/stylesheet-branch-open.png);
+ }</string>
+       </property>
+       <property name="verticalScrollBarPolicy">
+        <enum>Qt::ScrollBarAsNeeded</enum>
+       </property>
+       <property name="horizontalScrollBarPolicy">
+        <enum>Qt::ScrollBarAsNeeded</enum>
+       </property>
+       <property name="dragEnabled">
+        <bool>true</bool>
+       </property>
+       <property name="dragDropMode">
+        <enum>QAbstractItemView::InternalMove</enum>
+       </property>
+       <property name="selectionMode">
+        <enum>QAbstractItemView::ExtendedSelection</enum>
+       </property>
+       <attribute name="headerDefaultSectionSize">
+        <number>0</number>
+       </attribute>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
   <action name="actionObject_Tree">
    <property name="text">
     <string>Object Tree</string>
@@ -1520,7 +1547,7 @@
   </action>
   <action name="actionAdd_Object">
    <property name="text">
-    <string>Add Object</string>
+    <string>Object Browser</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+A</string>
@@ -1580,17 +1607,11 @@
    <extends>QTreeWidget</extends>
    <header>tree.h</header>
   </customwidget>
-  <customwidget>
-   <class>Table</class>
-   <extends>QTableWidget</extends>
-   <header>table.h</header>
-  </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>m_ObjectTree</tabstop>
   <tabstop>m_ObjectTreeAddButton</tabstop>
   <tabstop>m_ObjectTreeRemoveButton</tabstop>
-  <tabstop>m_ObjectTable</tabstop>
   <tabstop>m_CameraPositionXBox</tabstop>
   <tabstop>m_CameraPositionYBox</tabstop>
   <tabstop>m_CameraPositionZBox</tabstop>
@@ -1607,24 +1628,7 @@
  <resources>
   <include location="../Resources.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>m_ObjectTable</sender>
-   <signal>itemDoubleClicked(QTableWidgetItem*)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>addObject(QTableWidgetItem*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>639</x>
-     <y>594</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>672</x>
-     <y>243</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
  <slots>
   <slot>addObject(QTableWidgetItem*)</slot>
  </slots>
