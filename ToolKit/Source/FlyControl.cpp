@@ -21,7 +21,7 @@ bool FlyControl::keyPressEvent(QKeyEvent* e)
 {
 	switch (e->key())
 	{
-		case Qt::Key::Key_Control:
+		case Qt::Key::Key_Shift:
 			m_MovementSpeed = slowMovementSpeed;
 			return true;
 
@@ -34,7 +34,7 @@ bool FlyControl::keyReleaseEvent(QKeyEvent* e)
 {
 	switch (e->key())
 	{
-		case Qt::Key::Key_Control:
+		case Qt::Key::Key_Shift:
 			m_MovementSpeed = normalMovementSpeed;
 			return true;
 

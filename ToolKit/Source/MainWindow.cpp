@@ -16,15 +16,14 @@
 
 #include <ActorFactory.h>
 #include <Components.h>
+#include <EventData.h>
 #include <TweakSettings.h>
 
 #include "ObjectManager.h"
+#include "RotationTool.h"
 #include "TreeItem.h"
 #include "TreeFilter.h"
 #include "qFileSystemModelDialog.h"
-
-#include <EventData.h>
-
 
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
@@ -140,6 +139,7 @@ void MainWindow::signalAndSlotsDefinitions()
 	//Signal and slot for removing actor when pressing remove in the tree.
 	QObject::connect(ui->m_ObjectTree, SIGNAL(removeActor(int)), m_ObjectManager.get(), SLOT(actorRemoved(int)));
 
+	QObject::connect(m_RotationTool.get(), SIGNAL(rotation(Vector3)), this, SLOT(addObjectRotation(Vector3)));
 	QObject::connect(ui->m_ObjectTree, SIGNAL(deselectAll()), this, SLOT(deselectAllTreeItems()));
 	QObject::connect(this, SIGNAL(deselectAll()), this, SLOT(deselectAllTreeItems()));
 }
@@ -289,18 +289,18 @@ void MainWindow::setObjectScale()
             spModel->setScale(modelScale);
         }
 
-		std::weak_ptr<BoundingMeshComponent> wpBM = actor->getComponent<BoundingMeshComponent>(PhysicsInterface::m_ComponentId);
+        std::shared_ptr<PhysicsInterface> physComp = actor->getComponent<PhysicsInterface>(PhysicsInterface::m_ComponentId).lock();
+		if (physComp)
+		{
+			std::shared_ptr<BoundingMeshComponent> meshComp = std::dynamic_pointer_cast<BoundingMeshComponent>(physComp);
+			if (meshComp)
+			{
+				Vector3 scale;
+				XMStoreFloat3(&scale, newScale);
+				meshComp->setScale(scale);
+			}
+		}
 
-		if(!wpBM.expired())
-        {
-			std::shared_ptr<BoundingMeshComponent> spBM = wpBM.lock();
-			XMVECTOR newModelScale = XMLoadFloat3(&spBM->getScale()) * newScale;
-
-			Vector3 modelScale;
-			XMStoreFloat3(&modelScale, newModelScale);
-
-            spModel->setScale(modelScale);
-        }
 	}
 
 
@@ -366,6 +366,21 @@ void MainWindow::setObjectRotation()
         {
 			Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
 			actor->setRotation(Vector3(ui->m_ObjectRotationXBox->value(),ui->m_ObjectRotationYBox->value(),ui->m_ObjectRotationZBox->value()));
+        }
+    }
+}
+
+void MainWindow::addObjectRotation(Vector3 p_Rotation)
+{
+    QTreeWidgetItem *currItem = ui->m_ObjectTree->currentItem();
+    if(currItem)
+    {
+        TreeItem *cItem = dynamic_cast<TreeItem*>(currItem);
+
+        if(currItem->isSelected() && cItem)
+        {
+			Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
+			actor->setRotation(actor->getRotation() + p_Rotation);
         }
     }
 }
@@ -550,14 +565,16 @@ void MainWindow::initializeSystems()
 		std::bind(&AnimationLoader::releaseAnimationData, m_AnimationLoader.get(), _1));
 	m_ResourceManager.loadDataFromFile("assets/Resources.xml");
 
-	ActorFactory::ptr actorFactory(new ActorFactory(0));
-	actorFactory->setPhysics(m_Physics);
-	actorFactory->setEventManager(&m_EventManager);
-	actorFactory->setResourceManager(&m_ResourceManager);
-	actorFactory->setAnimationLoader(m_AnimationLoader.get());
-	m_ObjectManager.reset(new ObjectManager(actorFactory, &m_EventManager, &m_ResourceManager, ui->m_ObjectTree));
+	m_ActorFactory.reset(new ActorFactory(0));
+	m_ActorFactory->setPhysics(m_Physics);
+	m_ActorFactory->setEventManager(&m_EventManager);
+	m_ActorFactory->setResourceManager(&m_ResourceManager);
+	m_ActorFactory->setAnimationLoader(m_AnimationLoader.get());
+	m_ObjectManager.reset(new ObjectManager(m_ActorFactory, &m_EventManager, &m_ResourceManager, ui->m_ObjectTree));
 
-	ui->m_RenderWidget->initialize(&m_EventManager, &m_ResourceManager, m_Graphics);
+	m_RotationTool.reset(new RotationTool(m_Graphics, m_Physics, &m_ResourceManager));
+
+	ui->m_RenderWidget->initialize(&m_EventManager, &m_ResourceManager, m_Graphics, m_RotationTool.get());
 
 	m_EventManager.addListener(EventListenerDelegate(this, &MainWindow::pick), CreatePickingEventData::sk_EventType);
 }
@@ -567,6 +584,7 @@ void MainWindow::uninitializeSystems()
 	m_ResourceManager.setReleaseImmediately(true);
 
 	m_ObjectManager.reset();
+	m_RotationTool.reset();
 
 	ui->m_RenderWidget->uninitialize();
 
@@ -664,7 +682,10 @@ void MainWindow::pick(IEventData::Ptr p_Data)
 	BodyHandle b = m_Physics->rayCast(data.get()->getRayDir(), data.get()->getRayOrigin());
 	Actor::ptr actor = m_ObjectManager->getActorFromBodyHandle(b);
 	if(!actor)
+	{
+		m_RotationTool->pick(b);
 		return;
+	}
 
 	ui->m_ObjectTree->selectItem(actor->getId());
 }
@@ -813,6 +834,13 @@ void MainWindow::itemPropertiesChanged(void)
 				ui->m_ObjectRotationYBox->setValue(rotation.y);
 				ui->m_ObjectRotationZBox->setValue(rotation.z);
 				spmodel->setColorTone(Vector3(5,5,7));
+				
+				float radius = 100.f;
+				if (std::shared_ptr<PhysicsInterface> comp = actor->getComponent<PhysicsInterface>(PhysicsInterface::m_ComponentId).lock())
+				{
+					radius = m_Physics->getSurroundingSphereRadius(comp->getBodyHandle());
+				}
+				m_RotationTool->setSelection(position, radius);
 			}
 			else if (spmodel)
 			{

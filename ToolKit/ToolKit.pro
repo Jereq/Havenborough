@@ -53,7 +53,8 @@ SOURCES += Source/main.cpp\
     Source/XMLLevel.cpp \
     Source/qFileSystemModelDialog.cpp \
     Source/ToolManager.cpp \
-    Source/CameraInterpolation.cpp
+    Source/CameraInterpolation.cpp \
+    Source/RotationTool.cpp
 
 HEADERS  += Source/MainWindow.h \
     Source/TreeItem.h \
@@ -69,7 +70,8 @@ HEADERS  += Source/MainWindow.h \
     Source/qFileSystemModelDialog.h \
     Source/Tools.h \
     Source/CameraInterpolation.h \
-    Source/ToolManager.h
+    Source/ToolManager.h \
+    Source/RotationTool.h
 
 FORMS    += Source/MainWindow.ui
 
