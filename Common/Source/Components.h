@@ -166,6 +166,8 @@ public:
 
 	void onUpdate(float p_DeltaTime) override
 	{
+		(void)p_DeltaTime;
+
 		if (!m_IsEdge)
 		{
 			using namespace DirectX;
@@ -306,6 +308,8 @@ public:
 
 	void onUpdate(float p_DeltaTime) override
 	{
+		(void)p_DeltaTime;
+
 		m_Owner->setPosition(m_Physics->getBodyPosition(m_Body) - m_OffsetPositition);
 		Vector3 rotation = m_Owner->getRotation();
 		m_Physics->setBodyRotation(m_Body, rotation);
@@ -428,6 +432,8 @@ public:
 
 	void onUpdate(float p_DeltaTime) override
 	{
+		(void)p_DeltaTime;
+
 		m_Owner->setPosition(m_Physics->getBodyPosition(m_Body) - m_OffsetPositition);
 	}
 
@@ -1004,6 +1010,7 @@ public:
 
 	void setVelocity(Vector3 p_Velocity) override
 	{
+		(void)p_Velocity;
 	}
 	Vector3 getVelocity() const override
 	{
@@ -1015,6 +1022,7 @@ public:
 	}
 	void setRotationalVelocity(Vector3 p_RotVelocity) override
 	{
+		(void)p_RotVelocity;
 	}
 	Vector3 getRotationalVelocity() const override
 	{
@@ -1754,6 +1762,8 @@ public:
 
 	void onUpdate(float p_DeltaTime) override
 	{
+		(void)p_DeltaTime;
+
 		m_WorldPosition = m_Owner->getPosition() + m_OffsetPosition;
 		m_Owner->getEventManager()->queueEvent(IEventData::Ptr(new updateWorldTextPositionEventData(m_ComponentId,m_WorldPosition)));
 	}
