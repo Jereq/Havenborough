@@ -19,6 +19,7 @@
 #include <EventData.h>
 #include <TweakSettings.h>
 
+#include "EditorEvents.h"
 #include "ObjectManager.h"
 #include "RotationTool.h"
 #include "TreeItem.h"
@@ -369,6 +370,8 @@ void MainWindow::addObjectRotation(Vector3 p_Rotation)
         {
 			Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
 			actor->setRotation(actor->getRotation() + p_Rotation);
+
+			itemPropertiesChanged();
         }
     }
 }
@@ -562,7 +565,7 @@ void MainWindow::initializeSystems()
 
 	m_RotationTool.reset(new RotationTool(m_Graphics, m_Physics, &m_ResourceManager));
 
-	ui->m_RenderWidget->initialize(&m_EventManager, &m_ResourceManager, m_Graphics, m_RotationTool.get());
+	ui->m_RenderWidget->initialize(&m_EventManager, &m_ResourceManager, m_Graphics, m_RotationTool.get(), m_Physics);
 
 	m_EventManager.addListener(EventListenerDelegate(this, &MainWindow::pick), CreatePickingEventData::sk_EventType);
 }
@@ -685,6 +688,7 @@ void MainWindow::pick(IEventData::Ptr p_Data)
 	}
 
 	ui->m_ObjectTree->selectItem(actor->getId());
+	m_EventManager.queueEvent(IEventData::Ptr(new SelectObjectEventData(actor)));
 }
 
 void MainWindow::on_actionGo_To_Selected_triggered()

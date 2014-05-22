@@ -2,6 +2,7 @@
 
 #include <ResourceManager.h>
 
+#include "EditorEvents.h"
 #include "RotationTool.h"
 
 MyDX11Widget::MyDX11Widget(QWidget* parent, Qt::WindowFlags flags)
@@ -15,12 +16,13 @@ MyDX11Widget::~MyDX11Widget()
 	uninitialize();
 }
 
-void MyDX11Widget::initialize(EventManager* p_EventManager, ResourceManager* p_ResourceManager, IGraphics* p_Graphics, RotationTool* p_RotationTool)
+void MyDX11Widget::initialize(EventManager* p_EventManager, ResourceManager* p_ResourceManager, IGraphics* p_Graphics, RotationTool* p_RotationTool, IPhysics* p_Physics)
 {
 	m_EventManager = p_EventManager;
 	m_ResourceManager = p_ResourceManager;
 	m_Graphics = p_Graphics;
 	m_RotationTool = p_RotationTool;
+	m_Physics = p_Physics;
 
 	m_ResourceIDs.push_back(m_ResourceManager->loadResource("texture","SKYBOXDDS"));
 	m_Graphics->createSkydome("SKYBOXDDS", 500000.f);
@@ -42,6 +44,7 @@ void MyDX11Widget::initialize(EventManager* p_EventManager, ResourceManager* p_R
 	m_EventManager->addListener(EventListenerDelegate(this, &MyDX11Widget::activatePowerPie), MouseEventDataPie::sk_EventType);
 	m_EventManager->addListener(EventListenerDelegate(this, &MyDX11Widget::selectPie), PowerPieSelectEventData::sk_EventType);
 	m_EventManager->addListener(EventListenerDelegate(this, &MyDX11Widget::pick), CreateRayEventData::sk_EventType);
+	m_EventManager->addListener(EventListenerDelegate(this, &MyDX11Widget::selectActor), SelectObjectEventData::sk_EventType);
 
 	m_EventManager->addListener(EventListenerDelegate(this, &MyDX11Widget::updateLightColor), UpdateLightColorEventData::sk_EventType);
 	m_EventManager->addListener(EventListenerDelegate(this, &MyDX11Widget::updateLightDirection), UpdateLightDirectionEventData::sk_EventType);
@@ -96,6 +99,25 @@ void MyDX11Widget::render()
 	{
 		m_Graphics->renderModel(mesh.modelId);
 	}
+
+	Actor::ptr selectedObject = m_SelectedObject.lock();
+	if (selectedObject)
+	{
+		for (auto bodyHandle : selectedObject->getBodyHandles())
+		{
+			const unsigned int numVolumes = m_Physics->getNrOfVolumesInBody(bodyHandle);
+			for (unsigned int vol = 0; vol <= numVolumes; ++vol)
+			{
+				const unsigned int numTriangles = m_Physics->getNrOfTrianglesFromBody(bodyHandle, vol);
+				for (unsigned int i = 0; i < numTriangles; ++i)
+				{
+					const Triangle tri = m_Physics->getTriangleFromBody(bodyHandle, i, vol);
+					m_Graphics->addBVTriangle(tri.corners[0].xyz(), tri.corners[1].xyz(), tri.corners[2].xyz());
+				}
+			}
+		}
+	}
+
 	m_RotationTool->render();
 
 	bool usingDirectional = false;
@@ -425,6 +447,13 @@ void MyDX11Widget::activatePowerPie(IEventData::Ptr p_Data)
 		m_Graphics->set2D_ObjectPosition(m_GUI[icons], Vector3(pos.x + m_PowerPie.m_RelativeIconPositions[index].x, pos.y + m_PowerPie.m_RelativeIconPositions[index].y, (float)DRAW::MEDIUM));
 		index++;
 	}
+}
+
+void MyDX11Widget::selectActor(IEventData::Ptr p_Data)
+{
+	std::shared_ptr<SelectObjectEventData> object = std::static_pointer_cast<SelectObjectEventData>(p_Data);
+
+	m_SelectedObject = object->getActor();
 }
 
 void MyDX11Widget::createPowerPieElement()

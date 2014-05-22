@@ -58,7 +58,7 @@ public:
 
 	virtual ~DXWidget() {}
 
-	virtual void initialize(EventManager* p_EventManager, ResourceManager* p_ResourceManager, IGraphics* p_Graphics, RotationTool* p_RotationTool) = 0;
+	virtual void initialize(EventManager* p_EventManager, ResourceManager* p_ResourceManager, IGraphics* p_Graphics, RotationTool* p_RotationTool, IPhysics* p_Physics) = 0;
 	virtual void uninitialize() = 0;
 
 	virtual void render() {}
