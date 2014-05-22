@@ -26,9 +26,8 @@ protected:
 		float nrOfElements;
 		float angle;
 
-		Vector4 selectedColor;
-		Vector4 pieColor;
-
+		std::vector<Vector2> m_RelativeIconPositions;
+		std::vector<std::string> m_ToolOrder;
 
 		PowerPie()
 		{
@@ -36,7 +35,7 @@ protected:
 			isActive = false;
 		}
 	};
-	
+	int m_PieAngleIndex;
 	PowerPie m_PowerPie;
 
 	Camera m_Camera;

@@ -12,11 +12,8 @@ private:
 	
 	std::vector<int> m_ResourceIDs;
 	std::vector<LightClass> m_Lights;
-
 	bool m_PowerPieActive;
 	std::map<std::string, int> m_GUI;
-
-	std::vector<Vector2> m_RelativeIconPositions;
 
 	enum class DRAW
 	{
@@ -57,6 +54,8 @@ public:
 	void present() override;
 	void onFrame(float p_DeltaTime) override;
 	void onResize(unsigned int nWidth, unsigned int nHeight) override;
+	std::vector<std::string> getPieList();
+	void updatePowerPie(std::vector<std::string> p_List);
 
 private:
 	void addLight(IEventData::Ptr p_Data);
@@ -77,6 +76,7 @@ private:
 	void selectPie(IEventData::Ptr p_Data);
 	void activatePowerPie(IEventData::Ptr p_Data);
 	void createPowerPieElement();
+	void reinitializePowerPie();
 	void preLoadModels();
 
 

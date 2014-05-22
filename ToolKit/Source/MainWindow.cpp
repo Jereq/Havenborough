@@ -50,6 +50,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->m_HelpWidget->hide();
     ui->m_HelpWidget->setFloating(true);
 
+	ui->m_PowerOptions->hide();
+    ui->m_PowerOptions->setFloating(true);
+	fillPowerPieOptions();
+
     //Timer
 	m_Timer.setInterval(1000 / 60);
 	m_Timer.setSingleShot(false);
@@ -622,6 +626,17 @@ void MainWindow::sortPropertiesBoxes()
     }
 }
 
+void MainWindow::fillPowerPieOptions()
+{
+	std::vector<std::string> v = ui->m_RenderWidget->getPieList();
+	QStringList qlist;
+
+	for(auto &s : v)
+	{
+		ui->listOrder->addItem(QString::fromStdString(s));
+	}
+}
+
 void MainWindow::onActorAdded(std::string p_ObjectType, Actor::ptr p_Actor)
 {
 	std::string objectName = "Object";
@@ -991,3 +1006,48 @@ void MainWindow::on_actionSet_to_Default_Scale_triggered()
 		}
 	}
 }
+
+void MainWindow::on_actionPower_Pie_triggered()
+{
+    ui->m_PowerOptions->show();
+
+    ui->m_PowerOptions->setGeometry(width()*0.5f - 150.f, height()*0.5f - 100.f, 300, 200);
+}
+
+void MainWindow::on_addButton_clicked()
+{
+	int size = ui->listAvailable->selectedItems().size();
+	QListWidgetItem *item;
+	if(size <= 0)
+		item = ui->listAvailable->takeItem(ui->listAvailable->count() - 1);
+	else
+		item = ui->listAvailable->takeItem(ui->listAvailable->currentRow());
+
+    ui->listOrder->addItem(item);
+}
+
+void MainWindow::on_removeButton_clicked()
+{
+	int size = ui->listOrder->selectedItems().size();
+	QListWidgetItem *item;
+	if(size <= 0)
+		item = ui->listOrder->takeItem(ui->listOrder->count() - 1);
+	else
+		item = ui->listOrder->takeItem(ui->listOrder->currentRow());
+
+	ui->listAvailable->addItem(item);
+}
+void MainWindow::on_saveButton_clicked()
+{
+	QListWidget *list = ui->listOrder;
+	std::vector<std::string> tools;
+	for(int i = 0; i < list->count(); i++)
+	{
+		tools.push_back(list->item(i)->text().toStdString());
+	}
+
+	ui->m_RenderWidget->updatePowerPie(tools);
+
+	ui->m_PowerOptions->hide();
+}
+
