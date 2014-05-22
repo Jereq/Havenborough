@@ -14,15 +14,17 @@
 #include <map>
 #include "CameraInterpolation.h"
 
+class QFileSystemModelDialog;
+class QGroupBox;
 class QTableWidgetItem;
 class QTreeWidgetItem;
-class QGroupBox;
+
 
 class AnimationLoader;
 class IGraphics;
 class IPhysics;
 class ObjectManager;
-class QFileSystemModelDialog;
+class TreeItem;
 
 namespace Ui {
 class MainWindow;
@@ -48,7 +50,6 @@ private:
 	std::map<std::string, QShortcut*> m_Hotkey;
     QFileSystemModelDialog* m_FileSystemDialog;
 	CameraInterpolation m_CamInt;
-	Vector3 previousPosition;
 	
 public:
 	explicit MainWindow(QWidget *parent = 0);
@@ -116,5 +117,5 @@ private:
 	void itemPropertiesChanged(void);
 	void hideItemProperties(void);
 
-	Vector3 findMiddlePoint(QList<QTreeWidgetItem*> p_Items);
+	Vector3 findMiddlePoint(QList<TreeItem*> p_Items);
 };
