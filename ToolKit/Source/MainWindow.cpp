@@ -249,6 +249,8 @@ void MainWindow::on_m_ObjectTree_itemSelectionChanged()
 		if(!spModel)
 			continue;
 		spModel->setColorTone(Vector3(5.0f, 5.0f, 7.0f));
+
+		m_EventManager.queueEvent(IEventData::Ptr(new SelectObjectEventData(actor)));
 	}
 
 	itemPropertiesChanged();
