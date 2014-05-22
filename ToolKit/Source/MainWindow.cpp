@@ -276,21 +276,21 @@ void MainWindow::setObjectPosition()
 
 	QList<QTreeWidgetItem*> selectedItems = ui->m_ObjectTree->selectedItems();
 	
-	QList<TreeItem*> items;
+	QList<TreeItem*> treeItems;
 	for(auto *widgetItem : selectedItems)
 	{
 		TreeItem* item = dynamic_cast<TreeItem*>(widgetItem);
 		if(item)
-			items.push_back(item);
+			treeItems.push_back(item);
 	}
 
 	Vector3 newPos = Vector3(ui->m_ObjectPositionXBox->value(),ui->m_ObjectPositionYBox->value(),ui->m_ObjectPositionZBox->value());
-	Vector3 originalPosition = findMiddlePoint(items);
+	Vector3 originalPosition = findMiddlePoint(treeItems);
 	XMVECTOR difference = XMLoadFloat3(&newPos) - XMLoadFloat3(&originalPosition);
 
-	for( auto *cItem : items)
+	for( auto *item : treeItems)
 	{
-		Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
+		Actor::ptr actor = m_ObjectManager->getActor(item->getActorId());
 		if(!actor)
 			continue;
 
