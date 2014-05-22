@@ -801,7 +801,7 @@ void MainWindow::on_actionPower_Pie_triggered()
 {
     ui->m_PowerOptions->show();
 
-    ui->m_PowerOptions->setGeometry(width()*0.5f - 300.f, height()*0.5f - 200.f, 600, 400);
+    ui->m_PowerOptions->setGeometry(width()*0.5f - 150.f, height()*0.5f - 100.f, 300, 200);
 }
 
 void MainWindow::on_addButton_clicked()
@@ -812,8 +812,6 @@ void MainWindow::on_addButton_clicked()
 		item = ui->listAvailable->takeItem(ui->listAvailable->count() - 1);
 	else
 		item = ui->listAvailable->takeItem(ui->listAvailable->currentRow());
-
-	//selected->setFlags(Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled | Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 
     ui->listOrder->addItem(item);
 }

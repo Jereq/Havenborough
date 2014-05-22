@@ -1507,7 +1507,53 @@
    </attribute>
    <widget class="QWidget" name="PowerOptionsContents">
     <layout class="QGridLayout" name="gridLayout_10">
-     <item row="0" column="0" rowspan="6">
+     <item row="0" column="2">
+      <widget class="QLabel" name="label_27">
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>12</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font: 75 8pt &quot;MS Shell Dlg 2&quot;;</string>
+       </property>
+       <property name="lineWidth">
+        <number>2</number>
+       </property>
+       <property name="text">
+        <string>&lt;b&gt;Active tools&lt;/b&gt;</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_26">
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>12</height>
+        </size>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QString{
+	font: 75 8pt &quot;MS Shell Dlg 2&quot;;
+}</string>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="lineWidth">
+        <number>1</number>
+       </property>
+       <property name="text">
+        <string>&lt;b&gt;Available tools&lt;/b&gt;</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::AutoText</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0" rowspan="6">
       <widget class="QListWidget" name="listAvailable">
        <property name="dragDropMode">
         <enum>QAbstractItemView::NoDragDrop</enum>
@@ -1517,7 +1563,7 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="2" rowspan="6">
+     <item row="1" column="2" rowspan="6">
       <widget class="QListWidget" name="listOrder">
        <property name="dragEnabled">
         <bool>true</bool>
@@ -1527,6 +1573,25 @@
        </property>
        <property name="defaultDropAction">
         <enum>Qt::MoveAction</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QPushButton" name="addButton">
+       <property name="minimumSize">
+        <size>
+         <width>40</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>40</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>-&gt;</string>
        </property>
       </widget>
      </item>
@@ -1552,25 +1617,6 @@
        </property>
        <property name="text">
         <string>&lt;-</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QPushButton" name="addButton">
-       <property name="minimumSize">
-        <size>
-         <width>40</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>40</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="text">
-        <string>-&gt;</string>
        </property>
       </widget>
      </item>
