@@ -238,8 +238,8 @@ void MainWindow::on_m_ObjectTree_itemSelectionChanged()
 		Actor::ptr actor = m_ObjectManager->getActor(treeItem->getActorId());
 		if(!actor)
 			continue;
-		std::weak_ptr<ModelComponent> wpModel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
-		std::shared_ptr<ModelComponent> spModel = wpModel.lock();
+
+		std::shared_ptr<ModelComponent> spModel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId).lock();
 
 		if(!spModel)
 			continue;
@@ -271,11 +271,9 @@ void MainWindow::setObjectScale()
 		if(!actor)
 			continue;
 
-		std::weak_ptr<ModelComponent> wpModel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
-
-		if(!wpModel.expired())
+		std::shared_ptr<ModelComponent> spModel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId).lock();
+		if(spModel)
         {
-			std::shared_ptr<ModelComponent> spModel = wpModel.lock();
 			XMVECTOR newModelScale;
 
 			if(treeItems.size() > 1)
@@ -410,9 +408,9 @@ void MainWindow::setLightColor()
         if(currItem->isSelected() && cItem)
 		{
 			Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
-			std::weak_ptr<LightComponent> light = actor->getComponent<LightComponent>(LightInterface::m_ComponentId);
-			std::shared_ptr<LightComponent> slight = light.lock();
-			slight->setColor(Vector3(ui->m_LightColorXBox->value(),ui->m_LightColorYBox->value(),ui->m_LightColorZBox->value()));
+			std::shared_ptr<LightComponent> slight = actor->getComponent<LightComponent>(LightInterface::m_ComponentId).lock();
+			if(slight)
+				slight->setColor(Vector3(ui->m_LightColorXBox->value(),ui->m_LightColorYBox->value(),ui->m_LightColorZBox->value()));
 		}
 	}
 }
@@ -427,9 +425,9 @@ void MainWindow::setLightDirection()
         if(currItem->isSelected() && cItem)
 		{
 			Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
-			std::weak_ptr<LightComponent> light = actor->getComponent<LightComponent>(LightInterface::m_ComponentId);
-			std::shared_ptr<LightComponent> slight = light.lock();
-			slight->setDirection(Vector3(ui->m_LightDirectionXBox->value(),ui->m_LightDirectionYBox->value(),ui->m_LightDirectionZBox->value()));
+			std::shared_ptr<LightComponent> slight = actor->getComponent<LightComponent>(LightInterface::m_ComponentId).lock();
+			if(slight)
+				slight->setDirection(Vector3(ui->m_LightDirectionXBox->value(),ui->m_LightDirectionYBox->value(),ui->m_LightDirectionZBox->value()));
 		}
 	}
 }
@@ -444,9 +442,9 @@ void MainWindow::setLightAngles()
         if(currItem->isSelected() && cItem)
 		{
 			Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
-			std::weak_ptr<LightComponent> light = actor->getComponent<LightComponent>(LightInterface::m_ComponentId);
-			std::shared_ptr<LightComponent> slight = light.lock();
-			slight->setSpotLightAngles(Vector2(ui->m_LightAngleXBox->value(),ui->m_LightAngleYBox->value()));
+			std::shared_ptr<LightComponent> slight = actor->getComponent<LightComponent>(LightInterface::m_ComponentId).lock();
+			if(slight)
+				slight->setSpotLightAngles(Vector2(ui->m_LightAngleXBox->value(),ui->m_LightAngleYBox->value()));
 		}
 	}
 }
@@ -461,9 +459,9 @@ void MainWindow::setLightRange()
         if(currItem->isSelected() && cItem)
 		{
 			Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
-			std::weak_ptr<LightComponent> light = actor->getComponent<LightComponent>(LightInterface::m_ComponentId);
-			std::shared_ptr<LightComponent> slight = light.lock();
-			slight->setRange(ui->m_LightAdditionalBox2->value());
+			std::shared_ptr<LightComponent> slight = actor->getComponent<LightComponent>(LightInterface::m_ComponentId).lock();
+			if(slight)
+				slight->setRange(ui->m_LightAdditionalBox2->value());
 		}
 	}
 }
@@ -478,9 +476,9 @@ void MainWindow::setLightIntensity()
         if(currItem->isSelected() && cItem)
 		{
 			Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
-			std::weak_ptr<LightComponent> light = actor->getComponent<LightComponent>(LightInterface::m_ComponentId);
-			std::shared_ptr<LightComponent> slight = light.lock();
-			slight->setIntensity(ui->m_LightAdditionalBox1->value());
+			std::shared_ptr<LightComponent> slight = actor->getComponent<LightComponent>(LightInterface::m_ComponentId).lock();
+			if(slight)
+				slight->setIntensity(ui->m_LightAdditionalBox1->value());
 		}
 	}
 }
@@ -494,11 +492,11 @@ void MainWindow::deselectAllTreeItems()
 		Actor::ptr actor = m_ObjectManager->getActor(item->getActorId());
 		if(!actor)
 			continue;
-		std::weak_ptr<ModelComponent> wpModel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
-		std::shared_ptr<ModelComponent> spModel = wpModel.lock();
 
+		std::shared_ptr<ModelComponent> spModel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId).lock();
 		if(!spModel)
 			continue;
+
 		spModel->setColorTone(Vector3(1.0f, 1.0f, 1.0f));
 	}
 }
@@ -643,8 +641,7 @@ void MainWindow::onActorAdded(std::string p_ObjectType, Actor::ptr p_Actor)
 	std::string objectName = "Object";
 	int type = TreeItem::TreeItemType::UNKNOWN;
 
-	std::weak_ptr<LightComponent> lmodel = p_Actor->getComponent<LightComponent>(LightInterface::m_ComponentId);
-	std::shared_ptr<LightComponent> slmodel = lmodel.lock();
+	std::shared_ptr<LightComponent> slmodel = p_Actor->getComponent<LightComponent>(LightInterface::m_ComponentId).lock();
 	if(slmodel)
 	{
 		switch(slmodel->getType())
@@ -655,15 +652,14 @@ void MainWindow::onActorAdded(std::string p_ObjectType, Actor::ptr p_Actor)
 		}
 		type = (int)slmodel->getType();
 	}
-	std::weak_ptr<ParticleComponent> pmodel = p_Actor->getComponent<ParticleComponent>(ParticleInterface::m_ComponentId);
-	std::shared_ptr<ParticleComponent> spmodel = pmodel.lock();
+
+	std::shared_ptr<ParticleComponent> spmodel = p_Actor->getComponent<ParticleComponent>(ParticleInterface::m_ComponentId).lock();
 	if(spmodel)
 	{
 		objectName = spmodel->getEffectName();
 		type = 4;
 	}
-	std::weak_ptr<ModelComponent> model = p_Actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
-	std::shared_ptr<ModelComponent> smodel = model.lock();
+	std::shared_ptr<ModelComponent> smodel = p_Actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId).lock();
 	if(smodel)
 	{
 		objectName = smodel->getMeshName();
@@ -711,10 +707,10 @@ void MainWindow::on_actionGo_To_Selected_triggered()
 		Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
 		if(actor)
 		{
-			std::weak_ptr<BoundingMeshComponent> wBM = actor->getComponent<BoundingMeshComponent>(PhysicsInterface::m_ComponentId);
-			if(!wBM.expired())
+			std::shared_ptr<BoundingMeshComponent> sBM = actor->getComponent<BoundingMeshComponent>(PhysicsInterface::m_ComponentId).lock();
+
+			if(sBM)
 			{
-				std::shared_ptr<BoundingMeshComponent> sBM = wBM.lock();
 				float radius = m_Physics->getSurroundingSphereRadius(sBM->getBodyHandle());
 				float fov = m_Graphics->getFOV();
 				float distanceToCenter = radius / sinf(fov * 0.5f);
@@ -732,8 +728,6 @@ void MainWindow::on_actionGo_To_Selected_triggered()
 				XMStoreFloat3(&xmCamPos, camPos);
 
 				m_CamInt.createPath(ui->m_RenderWidget->getCamera().getPosition(), xmCamPos, 0.5f);
-
-				//emit setCameraPositionSignal(xmCamPos);
 			}
 			else
 			{
@@ -808,8 +802,7 @@ void MainWindow::itemPropertiesChanged(void)
 		hideItemProperties();
 
 		Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
-		std::weak_ptr<ModelComponent> pmodel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
-		std::shared_ptr<ModelComponent> spmodel = pmodel.lock();
+		std::shared_ptr<ModelComponent> spmodel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId).lock();
 
 		if(currItem && currItem->isSelected())
 		{
@@ -847,9 +840,7 @@ void MainWindow::itemPropertiesChanged(void)
 				spmodel->setColorTone(Vector3(1.0f, 1.0f, 1.0f));
 			}
 
-			std::weak_ptr<LightComponent> light = actor->getComponent<LightComponent>(LightInterface::m_ComponentId);
-			std::shared_ptr<LightComponent> slight = light.lock();
-
+			std::shared_ptr<LightComponent> slight = actor->getComponent<LightComponent>(LightInterface::m_ComponentId).lock();
 			if(slight)
 			{
 				TreeItem *cItem = dynamic_cast<TreeItem*>(currItem);
@@ -953,12 +944,8 @@ Vector3 MainWindow::findMiddlePoint(QList<TreeItem*> p_Items)
 		Actor::ptr actor = m_ObjectManager->getActor(item->getActorId());
 		if(!actor)
 			continue;
-
-		std::weak_ptr<BoundingMeshComponent> wBM = actor->getComponent<BoundingMeshComponent>(PhysicsInterface::m_ComponentId);
-		if(wBM.expired())
-			continue;
-
-		std::shared_ptr<BoundingMeshComponent> sBM = wBM.lock();	
+		
+		std::shared_ptr<BoundingMeshComponent> sBM = actor->getComponent<BoundingMeshComponent>(PhysicsInterface::m_ComponentId).lock();	
 		position = XMLoadFloat3(&(m_Physics->getBodyPosition(sBM->getBodyHandle())));
 
 		if(firstRun)
