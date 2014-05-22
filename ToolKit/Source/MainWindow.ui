@@ -84,6 +84,7 @@
      <string>Tools</string>
     </property>
     <addaction name="actionGo_To_Selected"/>
+    <addaction name="actionSet_to_Default_Scale"/>
    </widget>
    <widget class="QMenu" name="menuOptions">
     <property name="title">
@@ -1591,6 +1592,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+H</string>
+   </property>
+  </action>
+  <action name="actionSet_to_Default_Scale">
+   <property name="text">
+    <string>Set to Default Scale</string>
    </property>
   </action>
  </widget>

@@ -956,3 +956,38 @@ Vector3 MainWindow::findMiddlePoint(QList<TreeItem*> p_Items)
 
 	return midPosition;
 }
+void MainWindow::on_actionSet_to_Default_Scale_triggered()
+{
+	QList<QTreeWidgetItem*> selectedItems = ui->m_ObjectTree->selectedItems();
+	
+	QList<TreeItem*> treeItems;
+	for(auto *widgetItem : selectedItems)
+	{
+		TreeItem* item = dynamic_cast<TreeItem*>(widgetItem);
+		if(item)
+			treeItems.push_back(item);
+	}
+	
+	for( auto *item : treeItems)
+	{
+		Actor::ptr actor = m_ObjectManager->getActor(item->getActorId());
+		if(!actor)
+			continue;
+
+		std::shared_ptr<ModelComponent> spModel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId).lock();
+		if(spModel)
+        {
+            spModel->setScale(Vector3(1,1,1));
+        }
+
+        std::shared_ptr<PhysicsInterface> physComp = actor->getComponent<PhysicsInterface>(PhysicsInterface::m_ComponentId).lock();
+		if (physComp)
+		{
+			std::shared_ptr<BoundingMeshComponent> meshComp = std::dynamic_pointer_cast<BoundingMeshComponent>(physComp);
+			if (meshComp)
+			{
+				meshComp->setScale(Vector3(1,1,1));
+			}
+		}
+	}
+}

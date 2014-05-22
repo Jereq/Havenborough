@@ -106,6 +106,8 @@ private slots:
 
     void on_actionAdd_Object_triggered();
 
+    void on_actionSet_to_Default_Scale_triggered();
+
 signals:
     void setCameraPositionSignal(Vector3 p_CameraPosition);
 	void deselectAll();
