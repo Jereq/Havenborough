@@ -251,23 +251,76 @@ void MainWindow::on_m_ObjectTree_itemSelectionChanged()
 
 void MainWindow::setObjectScale()
 {
-    QTreeWidgetItem *currItem = ui->m_ObjectTree->currentItem();
-	if(currItem)
+	using namespace DirectX;
+
+	QList<QTreeWidgetItem*> selectedItems = ui->m_ObjectTree->selectedItems();
+	
+	QList<TreeItem*> treeItems;
+	for(auto *widgetItem : selectedItems)
 	{
-		TreeItem *cItem = dynamic_cast<TreeItem*>(currItem);
-
-		if(currItem->isSelected() && cItem)
-        {
-			Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
-			std::weak_ptr<ModelComponent> pmodel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
-            std::shared_ptr<ModelComponent> spmodel = pmodel.lock();
-
-            if(spmodel)
-            {
-                spmodel->setScale(Vector3(ui->m_ObjectScaleXBox->value(),ui->m_ObjectScaleYBox->value(),ui->m_ObjectScaleZBox->value()));
-            }
-		}
+		TreeItem* item = dynamic_cast<TreeItem*>(widgetItem);
+		if(item)
+			treeItems.push_back(item);
 	}
+
+	XMVECTOR newScale = XMLoadFloat3(&Vector3(ui->m_ObjectScaleXBox->value(),ui->m_ObjectScaleYBox->value(),ui->m_ObjectScaleZBox->value()));
+
+	for( auto *item : treeItems)
+	{
+		Actor::ptr actor = m_ObjectManager->getActor(item->getActorId());
+		if(!actor)
+			continue;
+
+		std::weak_ptr<ModelComponent> wpModel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
+
+		if(!wpModel.expired())
+        {
+			std::shared_ptr<ModelComponent> spModel = wpModel.lock();
+			XMVECTOR newModelScale;
+
+			if(treeItems.size() > 1)
+				newModelScale = XMLoadFloat3(&spModel->getScale()) * newScale;
+			else
+				newModelScale = newScale;
+
+			Vector3 modelScale;
+			XMStoreFloat3(&modelScale, newModelScale);
+
+            spModel->setScale(modelScale);
+        }
+
+		std::weak_ptr<BoundingMeshComponent> wpBM = actor->getComponent<BoundingMeshComponent>(PhysicsInterface::m_ComponentId);
+
+		if(!wpBM.expired())
+        {
+			std::shared_ptr<BoundingMeshComponent> spBM = wpBM.lock();
+			XMVECTOR newModelScale = XMLoadFloat3(&spBM->getScale()) * newScale;
+
+			Vector3 modelScale;
+			XMStoreFloat3(&modelScale, newModelScale);
+
+            spModel->setScale(modelScale);
+        }
+	}
+
+
+ //   QTreeWidgetItem *currItem = ui->m_ObjectTree->currentItem();
+	//if(currItem)
+	//{
+	//	TreeItem *cItem = dynamic_cast<TreeItem*>(currItem);
+
+	//	if(currItem->isSelected() && cItem)
+ //       {
+	//		Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
+	//		std::weak_ptr<ModelComponent> pmodel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
+ //           std::shared_ptr<ModelComponent> spmodel = pmodel.lock();
+
+ //           if(spmodel)
+ //           {
+ //               spmodel->setScale(Vector3(ui->m_ObjectScaleXBox->value(),ui->m_ObjectScaleYBox->value(),ui->m_ObjectScaleZBox->value()));
+ //           }
+	//	}
+	//}
 }
 
 void MainWindow::setObjectPosition()
