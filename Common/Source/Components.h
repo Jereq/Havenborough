@@ -56,6 +56,8 @@ public:
 	 * @return true if it the body is on something otherwise false.
 	 */
 	virtual bool isOnSomething() const = 0;
+
+	virtual void setScale(const Vector3& p_Scale) = 0;
 };
 
 /**
@@ -72,7 +74,7 @@ private:
 	Vector3 m_OffsetPosition;
 	Vector3 m_OffsetRotation;
 	Vector3 m_Halfsize;
-	
+	Vector3 m_Scale;
 
 public:
 	~OBB_Component() override
@@ -94,6 +96,8 @@ public:
 	{
 		m_OffsetPosition = Vector3(0.f, 0.f, 0.f);
 		m_OffsetRotation = Vector3(0.f, 0.f,0.f);
+		m_Scale = Vector3(1.f, 1.f, 1.f);
+
 		m_Halfsize = Vector3(1.f, 1.f, 1.f);
 		const tinyxml2::XMLElement* size = p_Data->FirstChildElement("Halfsize");
 		if (size)
@@ -231,6 +235,20 @@ public:
 	{
 		return m_Physics->getBodyOnSomething(m_Body);
 	}
+	void setScale(const Vector3& p_Scale) override
+	{
+		if (p_Scale.x == 0.f || p_Scale.y == 0.f || p_Scale.z == 0.f)
+		{
+			return;
+		}
+
+		Vector3 relativeScale;
+		relativeScale.x = p_Scale.x / m_Scale.x;
+		relativeScale.y = p_Scale.y / m_Scale.y;
+		relativeScale.z = p_Scale.z / m_Scale.z;
+		m_Scale = p_Scale;
+		m_Physics->setBodyScale(m_Body, relativeScale);
+	}
 };
 
 /**
@@ -341,6 +359,10 @@ public:
 	bool isOnSomething() const
 	{
 		return m_Physics->getBodyOnSomething(m_Body);
+	}
+	void setScale(const Vector3& p_Scale) override
+	{
+		m_Physics->setBodyScale(m_Body, p_Scale);
 	}
 
 	float getRadius() const
@@ -464,6 +486,10 @@ public:
 	{
 		return m_Physics->getBodyOnSomething(m_Body);
 	}
+	void setScale(const Vector3& p_Scale) override
+	{
+		m_Physics->setBodyScale(m_Body, p_Scale);
+	}
 };
 
 /**
@@ -576,7 +602,7 @@ public:
 		return m_Physics->getBodyOnSomething(m_Body);
 	}
 
-	void setScale(const Vector3& p_Scale)
+	void setScale(const Vector3& p_Scale) override
 	{
 		if (p_Scale.x == 0.f || p_Scale.y == 0.f || p_Scale.z == 0.f)
 		{
@@ -603,6 +629,7 @@ public:
 	{
 		return m_ComponentId;
 	}
+	virtual void setScale(Vector3 p_Scale) = 0;
 	/**
 	 * Update the scale of the model.
 	 *
@@ -649,8 +676,6 @@ private:
 	std::string m_Style;
 	std::vector<std::pair<std::string, Vector3>> m_AppliedScales;
 
-	Vector3 m_Scale;
-
 public:
 	~ModelComponent() override
 	{
@@ -679,7 +704,6 @@ public:
 			scale->QueryFloatAttribute("y", &m_BaseScale.y);
 			scale->QueryFloatAttribute("z", &m_BaseScale.z);
 		}
-		m_Scale = m_BaseScale;
 
 		m_ColorTone = Vector3(1.f, 1.f, 1.f);
 		const tinyxml2::XMLElement* tone = p_Data->FirstChildElement("ColorTone");
@@ -742,10 +766,10 @@ public:
 		m_Owner->getEventManager()->queueEvent(IEventData::Ptr(new UpdateModelRotationEventData(m_Id, p_Rotation)));
 	}
 
-	void setScale(Vector3 p_Scale)
+	void setScale(Vector3 p_Scale) override
 	{
-		m_Owner->getEventManager()->queueEvent(IEventData::Ptr(new UpdateModelScaleEventData(m_Id, p_Scale)));
-		m_Scale = p_Scale;
+		m_BaseScale = p_Scale;
+		calculateScale();
 	}
 
 	Vector3 getPosition()
@@ -760,7 +784,7 @@ public:
 
 	Vector3 getScale()
 	{
-		return m_Scale;
+		return m_BaseScale;
 	}
 
 	void updateScale(const std::string& p_CompName, Vector3 p_Scale) override

@@ -77,6 +77,29 @@ void Actor::setRotation(Vector3 p_Rotation)
 	m_Rotation = p_Rotation;
 }
 
+void Actor::setScale(Vector3 p_Scale)
+{
+	for (auto& comp : m_Components)
+	{
+		switch (comp->getComponentId())
+		{
+		case ModelInterface::m_ComponentId:
+			{
+				std::shared_ptr<ModelInterface> modelComp = std::static_pointer_cast<ModelInterface>(comp);
+				modelComp->setScale(p_Scale);
+			}
+			break;
+
+		case PhysicsInterface::m_ComponentId:
+			{
+				std::shared_ptr<PhysicsInterface> physComp = std::static_pointer_cast<PhysicsInterface>(comp);
+				physComp->setScale(p_Scale);
+			}
+			break;
+		}
+	}
+}
+
 EventManager* Actor::getEventManager() const
 {
 	return m_EventManager;

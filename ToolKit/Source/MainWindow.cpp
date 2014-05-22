@@ -267,46 +267,35 @@ void MainWindow::setObjectScale()
 		if(item)
 			treeItems.push_back(item);
 	}
-
 	XMVECTOR newScale = XMLoadFloat3(&Vector3(ui->m_ObjectScaleXBox->value(),ui->m_ObjectScaleYBox->value(),ui->m_ObjectScaleZBox->value()));
 
-	for( auto *item : treeItems)
+	if (treeItems.size() == 1)
 	{
-		Actor::ptr actor = m_ObjectManager->getActor(item->getActorId());
-		if(!actor)
-			continue;
-
-		std::shared_ptr<ModelComponent> spModel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId).lock();
-		if(spModel)
-        {
-			XMVECTOR newModelScale;
-
-			if(treeItems.size() > 1)
-				newModelScale = XMLoadFloat3(&spModel->getScale()) * newScale;
-			else
-				newModelScale = newScale;
-
-			Vector3 modelScale;
-			XMStoreFloat3(&modelScale, newModelScale);
-            spModel->setScale(modelScale);
-        }
-
-        std::shared_ptr<PhysicsInterface> physComp = actor->getComponent<PhysicsInterface>(PhysicsInterface::m_ComponentId).lock();
-		if (physComp)
+		Actor::ptr actor = m_ObjectManager->getActor(treeItems.front()->getActorId());
+		if (actor)
 		{
-			std::shared_ptr<BoundingMeshComponent> meshComp = std::dynamic_pointer_cast<BoundingMeshComponent>(physComp);
-			if (meshComp)
+			Vector3 scale;
+			XMStoreFloat3(&scale, newScale);
+			actor->setScale(scale);
+		}
+	}
+	else
+	{
+		for( auto *item : treeItems)
+		{
+			Actor::ptr actor = m_ObjectManager->getActor(item->getActorId());
+			if(!actor)
+				continue;
+
+			std::shared_ptr<ModelComponent> spModel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId).lock();
+			if(spModel)
 			{
-				XMVECTOR newMeshScale;
+				XMVECTOR newModelScale = XMLoadFloat3(&spModel->getScale()) * newScale;
 
-				if(treeItems.size() > 1)
-					newMeshScale = XMLoadFloat3(&spModel->getScale()) * newScale;
-				else
-					newMeshScale = newScale;
+				Vector3 modelScale;
+				XMStoreFloat3(&modelScale, newModelScale);
 
-				Vector3 MeshScale;
-				XMStoreFloat3(&MeshScale, newMeshScale);
-				meshComp->setScale(MeshScale);
+				actor->setScale(modelScale);
 			}
 		}
 	}
