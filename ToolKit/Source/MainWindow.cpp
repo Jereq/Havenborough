@@ -283,7 +283,6 @@ void MainWindow::setObjectScale()
 
 			Vector3 modelScale;
 			XMStoreFloat3(&modelScale, newModelScale);
-
             spModel->setScale(modelScale);
         }
 
@@ -293,32 +292,19 @@ void MainWindow::setObjectScale()
 			std::shared_ptr<BoundingMeshComponent> meshComp = std::dynamic_pointer_cast<BoundingMeshComponent>(physComp);
 			if (meshComp)
 			{
-				Vector3 scale;
-				XMStoreFloat3(&scale, newScale);
-				meshComp->setScale(scale);
+				XMVECTOR newMeshScale;
+
+				if(treeItems.size() > 1)
+					newMeshScale = XMLoadFloat3(&spModel->getScale()) * newScale;
+				else
+					newMeshScale = newScale;
+
+				Vector3 MeshScale;
+				XMStoreFloat3(&MeshScale, newMeshScale);
+				meshComp->setScale(MeshScale);
 			}
 		}
-
 	}
-
-
- //   QTreeWidgetItem *currItem = ui->m_ObjectTree->currentItem();
-	//if(currItem)
-	//{
-	//	TreeItem *cItem = dynamic_cast<TreeItem*>(currItem);
-
-	//	if(currItem->isSelected() && cItem)
- //       {
-	//		Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
-	//		std::weak_ptr<ModelComponent> pmodel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId);
- //           std::shared_ptr<ModelComponent> spmodel = pmodel.lock();
-
- //           if(spmodel)
- //           {
- //               spmodel->setScale(Vector3(ui->m_ObjectScaleXBox->value(),ui->m_ObjectScaleYBox->value(),ui->m_ObjectScaleZBox->value()));
- //           }
-	//	}
-	//}
 }
 
 void MainWindow::setObjectPosition()
@@ -788,6 +774,10 @@ void MainWindow::itemPropertiesChanged(void)
 		ui->m_ObjectPositionXBox->setValue(position.x);
 		ui->m_ObjectPositionYBox->setValue(position.y);
 		ui->m_ObjectPositionZBox->setValue(position.z);
+
+		ui->m_ObjectScaleXBox->setValue(1.0f);
+		ui->m_ObjectScaleYBox->setValue(1.0f);
+		ui->m_ObjectScaleZBox->setValue(1.0f);
 	}
 	else
 	{
