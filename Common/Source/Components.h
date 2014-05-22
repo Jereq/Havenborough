@@ -544,7 +544,7 @@ public:
 
 	void setRotation(Vector3 p_Rotation) override
 	{
-		m_Physics->setBodyRotation(m_Body, p_Rotation);
+		m_Physics->setBodyRotation(m_Body, p_Rotation - m_Owner->getRotation());
 	}
 
 	BodyHandle getBodyHandle() const override
