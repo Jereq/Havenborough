@@ -1051,3 +1051,18 @@ void MainWindow::on_saveButton_clicked()
 	ui->m_PowerOptions->hide();
 }
 
+void MainWindow::on_moveUpButton_clicked()
+{
+    int currentIndex = ui->listOrder->currentRow();
+    QListWidgetItem *item = ui->listOrder->takeItem(currentIndex);
+    ui->listOrder->insertItem(currentIndex - 1, item);
+    ui->listOrder->setCurrentRow(currentIndex - 1);
+}
+
+void MainWindow::on_moveDownButton_clicked()
+{
+    int currentIndex = ui->listOrder->currentRow();
+    QListWidgetItem *item = ui->listOrder->takeItem(currentIndex);
+    ui->listOrder->insertItem(currentIndex + 1, item);
+    ui->listOrder->setCurrentRow(currentIndex + 1);
+}

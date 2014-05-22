@@ -116,6 +116,10 @@ private slots:
 
     void on_actionSet_to_Default_Scale_triggered();
 
+    void on_moveUpButton_clicked();
+
+    void on_moveDownButton_clicked();
+
 signals:
     void setCameraPositionSignal(Vector3 p_CameraPosition);
 	void deselectAll();
