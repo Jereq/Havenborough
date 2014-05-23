@@ -19,6 +19,7 @@
 #include <EventData.h>
 #include <TweakSettings.h>
 
+#include "EditorEvents.h"
 #include "ObjectManager.h"
 #include "RotationTool.h"
 #include "TreeItem.h"
@@ -49,6 +50,10 @@ MainWindow::MainWindow(QWidget *parent) :
 	
     ui->m_HelpWidget->hide();
     ui->m_HelpWidget->setFloating(true);
+
+	ui->m_PowerOptions->hide();
+    ui->m_PowerOptions->setFloating(true);
+	fillPowerPieOptions();
 
     //Timer
 	m_Timer.setInterval(1000 / 60);
@@ -244,6 +249,8 @@ void MainWindow::on_m_ObjectTree_itemSelectionChanged()
 		if(!spModel)
 			continue;
 		spModel->setColorTone(Vector3(5.0f, 5.0f, 7.0f));
+
+		m_EventManager.queueEvent(IEventData::Ptr(new SelectObjectEventData(actor)));
 	}
 
 	itemPropertiesChanged();
@@ -264,15 +271,26 @@ void MainWindow::setObjectScale()
 		if(item)
 			treeItems.push_back(item);
 	}
-
 	XMVECTOR newScale = XMLoadFloat3(&Vector3(ui->m_ObjectScaleXBox->value(),ui->m_ObjectScaleYBox->value(),ui->m_ObjectScaleZBox->value()));
 	XMVECTOR centerPosition = XMLoadFloat3(&findMiddlePoint(treeItems));
 
-	for( auto *item : treeItems)
+	if (treeItems.size() == 1)
 	{
-		Actor::ptr actor = m_ObjectManager->getActor(item->getActorId());
-		if(!actor)
-			continue;
+		Actor::ptr actor = m_ObjectManager->getActor(treeItems.front()->getActorId());
+		if (actor)
+		{
+			Vector3 scale;
+			XMStoreFloat3(&scale, newScale);
+			actor->setScale(scale);
+		}
+	}
+	else
+	{
+		for( auto *item : treeItems)
+		{
+			Actor::ptr actor = m_ObjectManager->getActor(item->getActorId());
+			if(!actor)
+				continue;
 		XMVECTOR objectPos = XMLoadFloat3(&actor->getPosition());
 		XMVECTOR diff = (objectPos - centerPosition) * (newScale - XMVectorSet(1,1,1,1)) * ((XMVector3LessOrEqual(newScale,XMVectorSet(0,0,0,0))) ? 2.f : 0.5f);
 		objectPos += diff;
@@ -280,37 +298,15 @@ void MainWindow::setObjectScale()
 		XMStoreFloat3(&newObjectPos, objectPos);
 		actor->setPosition(newObjectPos);		
 		
-		std::shared_ptr<ModelComponent> spModel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId).lock();
-		if(spModel)
-        {
-			XMVECTOR newModelScale;
-
-			if(treeItems.size() > 1)
-				newModelScale = XMLoadFloat3(&spModel->getScale()) * newScale;
-			else
-				newModelScale = newScale;
-
-			Vector3 modelScale;
-			XMStoreFloat3(&modelScale, newModelScale);
-            spModel->setScale(modelScale);
-        }
-
-        std::shared_ptr<PhysicsInterface> physComp = actor->getComponent<PhysicsInterface>(PhysicsInterface::m_ComponentId).lock();
-		if (physComp)
-		{
-			std::shared_ptr<BoundingMeshComponent> meshComp = std::dynamic_pointer_cast<BoundingMeshComponent>(physComp);
-			if (meshComp)
+			std::shared_ptr<ModelComponent> spModel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId).lock();
+			if(spModel)
 			{
-				XMVECTOR newMeshScale;
+				XMVECTOR newModelScale = XMLoadFloat3(&spModel->getScale()) * newScale;
 
-				if(treeItems.size() > 1)
-					newMeshScale = XMLoadFloat3(&spModel->getScale()) * newScale;
-				else
-					newMeshScale = newScale;
+				Vector3 modelScale;
+				XMStoreFloat3(&modelScale, newModelScale);
 
-				Vector3 MeshScale;
-				XMStoreFloat3(&MeshScale, newMeshScale);
-				meshComp->setScale(MeshScale);
+				actor->setScale(modelScale);
 			}
 		}
 	}
@@ -383,6 +379,8 @@ void MainWindow::addObjectRotation(Vector3 p_Rotation)
         {
 			Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
 			actor->setRotation(actor->getRotation() + p_Rotation);
+
+			itemPropertiesChanged();
         }
     }
 }
@@ -576,7 +574,7 @@ void MainWindow::initializeSystems()
 
 	m_RotationTool.reset(new RotationTool(m_Graphics, m_Physics, &m_ResourceManager));
 
-	ui->m_RenderWidget->initialize(&m_EventManager, &m_ResourceManager, m_Graphics, m_RotationTool.get());
+	ui->m_RenderWidget->initialize(&m_EventManager, &m_ResourceManager, m_Graphics, m_RotationTool.get(), m_Physics);
 
 	m_EventManager.addListener(EventListenerDelegate(this, &MainWindow::pick), CreatePickingEventData::sk_EventType);
 }
@@ -640,6 +638,17 @@ void MainWindow::sortPropertiesBoxes()
     }
 }
 
+void MainWindow::fillPowerPieOptions()
+{
+	std::vector<std::string> v = ui->m_RenderWidget->getPieList();
+	QStringList qlist;
+
+	for(auto &s : v)
+	{
+		ui->listOrder->addItem(QString::fromStdString(s));
+	}
+}
+
 void MainWindow::onActorAdded(std::string p_ObjectType, Actor::ptr p_Actor)
 {
 	std::string objectName = "Object";
@@ -688,6 +697,7 @@ void MainWindow::pick(IEventData::Ptr p_Data)
 	}
 
 	ui->m_ObjectTree->selectItem(actor->getId());
+	m_EventManager.queueEvent(IEventData::Ptr(new SelectObjectEventData(actor)));
 }
 
 void MainWindow::on_actionGo_To_Selected_triggered()
@@ -1013,3 +1023,48 @@ void MainWindow::on_actionSet_to_Default_Scale_triggered()
 		}
 	}
 }
+
+void MainWindow::on_actionPower_Pie_triggered()
+{
+    ui->m_PowerOptions->show();
+
+    ui->m_PowerOptions->setGeometry(width()*0.5f - 150.f, height()*0.5f - 100.f, 300, 200);
+}
+
+void MainWindow::on_addButton_clicked()
+{
+	int size = ui->listAvailable->selectedItems().size();
+	QListWidgetItem *item;
+	if(size <= 0)
+		item = ui->listAvailable->takeItem(ui->listAvailable->count() - 1);
+	else
+		item = ui->listAvailable->takeItem(ui->listAvailable->currentRow());
+
+    ui->listOrder->addItem(item);
+}
+
+void MainWindow::on_removeButton_clicked()
+{
+	int size = ui->listOrder->selectedItems().size();
+	QListWidgetItem *item;
+	if(size <= 0)
+		item = ui->listOrder->takeItem(ui->listOrder->count() - 1);
+	else
+		item = ui->listOrder->takeItem(ui->listOrder->currentRow());
+
+	ui->listAvailable->addItem(item);
+}
+void MainWindow::on_saveButton_clicked()
+{
+	QListWidget *list = ui->listOrder;
+	std::vector<std::string> tools;
+	for(int i = 0; i < list->count(); i++)
+	{
+		tools.push_back(list->item(i)->text().toStdString());
+	}
+
+	ui->m_RenderWidget->updatePowerPie(tools);
+
+	ui->m_PowerOptions->hide();
+}
+

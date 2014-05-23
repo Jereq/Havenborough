@@ -63,7 +63,7 @@ private:
 	void signalAndSlotsDefinitions();
     void pushBoxes();
     void sortPropertiesBoxes();
-
+	void fillPowerPieOptions();
 private slots:
 	// Engine changes
 	void onActorAdded(std::string p_ObjectType, Actor::ptr p_Actor);
@@ -99,6 +99,14 @@ private slots:
     void on_actionSave_triggered();
     void on_actionGo_To_Selected_triggered();
     void on_actionHelp_window_triggered();
+
+    void on_actionPower_Pie_triggered();
+
+    void on_addButton_clicked();
+
+    void on_removeButton_clicked();
+
+    void on_saveButton_clicked();
 
     void on_m_FileSystemTreeView_clicked(const QModelIndex &index);
 

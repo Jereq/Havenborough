@@ -71,7 +71,8 @@ HEADERS  += Source/MainWindow.h \
     Source/Tools.h \
     Source/CameraInterpolation.h \
     Source/ToolManager.h \
-    Source/RotationTool.h
+    Source/RotationTool.h \
+    Source/EditorEvents.h
 
 FORMS    += Source/MainWindow.ui
 
