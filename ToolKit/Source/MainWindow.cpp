@@ -251,10 +251,12 @@ void MainWindow::on_m_ObjectTree_itemSelectionChanged()
 
 void MainWindow::setObjectScale()
 {
-	using namespace DirectX;
-
 	QList<QTreeWidgetItem*> selectedItems = ui->m_ObjectTree->selectedItems();
+	if(selectedItems.empty())
+		return;
 	
+	using namespace DirectX;
+		
 	QList<TreeItem*> treeItems;
 	for(auto *widgetItem : selectedItems)
 	{
@@ -264,13 +266,20 @@ void MainWindow::setObjectScale()
 	}
 
 	XMVECTOR newScale = XMLoadFloat3(&Vector3(ui->m_ObjectScaleXBox->value(),ui->m_ObjectScaleYBox->value(),ui->m_ObjectScaleZBox->value()));
+	XMVECTOR centerPosition = XMLoadFloat3(&findMiddlePoint(treeItems));
 
 	for( auto *item : treeItems)
 	{
 		Actor::ptr actor = m_ObjectManager->getActor(item->getActorId());
 		if(!actor)
 			continue;
-
+		XMVECTOR objectPos = XMLoadFloat3(&actor->getPosition());
+		XMVECTOR diff = (objectPos - centerPosition) * (newScale - XMVectorSet(1,1,1,1)) * ((XMVector3LessOrEqual(newScale,XMVectorSet(0,0,0,0))) ? 2.f : 0.5f);
+		objectPos += diff;
+		Vector3 newObjectPos;
+		XMStoreFloat3(&newObjectPos, objectPos);
+		actor->setPosition(newObjectPos);		
+		
 		std::shared_ptr<ModelComponent> spModel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId).lock();
 		if(spModel)
         {
@@ -305,6 +314,13 @@ void MainWindow::setObjectScale()
 			}
 		}
 	}
+	
+	if(selectedItems.size() > 1)
+	{
+		ui->m_ObjectScaleXBox->setValue(1);
+		ui->m_ObjectScaleYBox->setValue(1);
+		ui->m_ObjectScaleZBox->setValue(1);
+	}
 }
 
 void MainWindow::setObjectPosition()
@@ -312,6 +328,8 @@ void MainWindow::setObjectPosition()
 	using namespace DirectX;
 
 	QList<QTreeWidgetItem*> selectedItems = ui->m_ObjectTree->selectedItems();
+	if(selectedItems.empty())
+		return;
 	
 	QList<TreeItem*> treeItems;
 	for(auto *widgetItem : selectedItems)
@@ -935,8 +953,12 @@ Vector3 MainWindow::findMiddlePoint(QList<TreeItem*> p_Items)
 		if(!actor)
 			continue;
 		
-		std::shared_ptr<BoundingMeshComponent> sBM = actor->getComponent<BoundingMeshComponent>(PhysicsInterface::m_ComponentId).lock();	
-		position = XMLoadFloat3(&(m_Physics->getBodyPosition(sBM->getBodyHandle())));
+		std::shared_ptr<BoundingMeshComponent> sBM = actor->getComponent<BoundingMeshComponent>(PhysicsInterface::m_ComponentId).lock();
+
+		if(sBM)
+			position = XMLoadFloat3(&(m_Physics->getBodyPosition(sBM->getBodyHandle())));
+		else
+			position = XMLoadFloat3(&(actor->getPosition()));
 
 		if(firstRun)
 		{
