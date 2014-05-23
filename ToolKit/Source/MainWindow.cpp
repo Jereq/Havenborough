@@ -292,7 +292,7 @@ void MainWindow::setObjectScale()
 			if(!actor)
 				continue;
 		XMVECTOR objectPos = XMLoadFloat3(&actor->getPosition());
-		XMVECTOR diff = (objectPos - centerPosition) * (newScale - XMVectorSet(1,1,1,1)) * ((XMVector3LessOrEqual(newScale,XMVectorSet(0,0,0,0))) ? 2.f : 0.5f);
+		XMVECTOR diff = (objectPos - centerPosition) * (newScale - XMVectorSet(1,1,1,1));//((XMVector3LessOrEqual(newScale,XMVectorSet(0,0,0,0))) ? 2.f : 0.5f);
 		objectPos += diff;
 		Vector3 newObjectPos;
 		XMStoreFloat3(&newObjectPos, objectPos);
@@ -1067,4 +1067,3 @@ void MainWindow::on_saveButton_clicked()
 
 	ui->m_PowerOptions->hide();
 }
-
