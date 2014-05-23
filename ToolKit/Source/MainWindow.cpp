@@ -258,21 +258,20 @@ void MainWindow::on_m_ObjectTree_itemSelectionChanged()
 
 void MainWindow::setObjectScale()
 {
+	using namespace DirectX;
+
 	QList<QTreeWidgetItem*> selectedItems = ui->m_ObjectTree->selectedItems();
 	if(selectedItems.empty())
 		return;
 	
-	using namespace DirectX;
-		
 	QList<TreeItem*> treeItems;
 	for(auto *widgetItem : selectedItems)
 	{
-		TreeItem* item = dynamic_cast<TreeItem*>(widgetItem);
+		TreeItem *item = dynamic_cast<TreeItem*>(widgetItem);
 		if(item)
 			treeItems.push_back(item);
 	}
 	XMVECTOR newScale = XMLoadFloat3(&Vector3(ui->m_ObjectScaleXBox->value(),ui->m_ObjectScaleYBox->value(),ui->m_ObjectScaleZBox->value()));
-	XMVECTOR centerPosition = XMLoadFloat3(&findMiddlePoint(treeItems));
 
 	if (treeItems.size() == 1)
 	{
@@ -286,18 +285,20 @@ void MainWindow::setObjectScale()
 	}
 	else
 	{
-		for( auto *item : treeItems)
+		XMVECTOR centerPosition = XMLoadFloat3(&findMiddlePoint(treeItems));
+		for(auto *item : treeItems)
 		{
 			Actor::ptr actor = m_ObjectManager->getActor(item->getActorId());
 			if(!actor)
 				continue;
-		XMVECTOR objectPos = XMLoadFloat3(&actor->getPosition());
-		XMVECTOR diff = (objectPos - centerPosition) * (newScale - XMVectorSet(1,1,1,1));//((XMVector3LessOrEqual(newScale,XMVectorSet(0,0,0,0))) ? 2.f : 0.5f);
-		objectPos += diff;
-		Vector3 newObjectPos;
-		XMStoreFloat3(&newObjectPos, objectPos);
-		actor->setPosition(newObjectPos);		
-		
+
+			XMVECTOR objectPos = XMLoadFloat3(&actor->getPosition());
+			XMVECTOR diff = (objectPos - centerPosition) * (newScale - XMVectorSet(1,1,1,1));
+			objectPos += diff;
+			Vector3 newObjectPos;
+			XMStoreFloat3(&newObjectPos, objectPos);
+			actor->setPosition(newObjectPos);		
+
 			std::shared_ptr<ModelComponent> spModel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId).lock();
 			if(spModel)
 			{
@@ -355,17 +356,61 @@ void MainWindow::setObjectPosition()
 
 void MainWindow::setObjectRotation()
 {
-    QTreeWidgetItem *currItem = ui->m_ObjectTree->currentItem();
-    if(currItem)
-    {
-        TreeItem *cItem = dynamic_cast<TreeItem*>(currItem);
+	using namespace DirectX;
 
-        if(currItem->isSelected() && cItem)
-        {
-			Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
-			actor->setRotation(Vector3(ui->m_ObjectRotationXBox->value(),ui->m_ObjectRotationYBox->value(),ui->m_ObjectRotationZBox->value()));
-        }
-    }
+	QList<QTreeWidgetItem*> selectedItems = ui->m_ObjectTree->selectedItems();
+	if(selectedItems.empty())
+		return;
+
+	QList<TreeItem*> treeItems;
+	for(auto *widgetItem : selectedItems)
+	{
+		TreeItem *item = dynamic_cast<TreeItem*>(widgetItem);
+		if(item)
+			treeItems.push_back(item);
+	}
+	XMVECTOR newRotation = XMLoadFloat3(&Vector3(ui->m_ObjectRotationXBox->value(),ui->m_ObjectRotationYBox->value(),ui->m_ObjectRotationZBox->value()));
+
+	if (treeItems.size() == 1)
+	{
+		Actor::ptr actor = m_ObjectManager->getActor(treeItems.front()->getActorId());
+		if (actor)
+		{
+			Vector3 rotation;
+			XMStoreFloat3(&rotation, newRotation);
+			actor->setRotation(rotation);
+		}
+	}
+	else
+	{
+		XMVECTOR centerPosition = XMLoadFloat3(&findMiddlePoint(treeItems));
+		XMMATRIX rotationMatrix = XMMatrixRotationRollPitchYawFromVector(newRotation);
+		for(auto *item : treeItems)
+		{
+			Actor::ptr actor = m_ObjectManager->getActor(item->getActorId());
+			if(!actor)
+				continue;
+
+			XMVECTOR objectPosition = XMLoadFloat3(&actor->getPosition());
+			XMVECTOR difference = objectPosition - centerPosition;
+			
+			//Something is terribly wrong.
+			difference = XMVector3Rotate(difference, XMVectorRotateLeft(newRotation, 3));
+
+			objectPosition += difference;
+			Vector3 newObjectPosition;
+			XMStoreFloat3(&newObjectPosition, objectPosition);
+			actor->setPosition(newObjectPosition);		
+		}
+	}
+	
+	if(selectedItems.size() > 1)
+	{
+		ui->m_ObjectRotationXBox->setValue(0);
+		ui->m_ObjectRotationYBox->setValue(0);
+		ui->m_ObjectRotationZBox->setValue(0);
+	}
+
 }
 
 void MainWindow::addObjectRotation(Vector3 p_Rotation)
@@ -988,6 +1033,7 @@ Vector3 MainWindow::findMiddlePoint(QList<TreeItem*> p_Items)
 
 	return midPosition;
 }
+
 void MainWindow::on_actionSet_to_Default_Scale_triggered()
 {
 	QList<QTreeWidgetItem*> selectedItems = ui->m_ObjectTree->selectedItems();
@@ -1054,6 +1100,7 @@ void MainWindow::on_removeButton_clicked()
 
 	ui->listAvailable->addItem(item);
 }
+
 void MainWindow::on_saveButton_clicked()
 {
 	QListWidget *list = ui->listOrder;
