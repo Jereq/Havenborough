@@ -33,5 +33,5 @@ public:
 	bool hasLanded() const override;
 	bool isOnSomething() const override;
 	void resetFallTime();
-	void setScale(const Vector3& p_Scale) override;
+	void setScale(const Vector3& p_Scale, bool p_Pinned) override;
 };

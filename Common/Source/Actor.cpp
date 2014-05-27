@@ -93,7 +93,7 @@ void Actor::setScale(Vector3 p_Scale)
 		case PhysicsInterface::m_ComponentId:
 			{
 				std::shared_ptr<PhysicsInterface> physComp = std::static_pointer_cast<PhysicsInterface>(comp);
-				physComp->setScale(p_Scale);
+				physComp->setScale(p_Scale, false);
 			}
 			break;
 		}

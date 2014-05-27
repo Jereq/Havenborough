@@ -1018,7 +1018,7 @@ void MainWindow::on_actionSet_to_Default_Scale_triggered()
 			std::shared_ptr<BoundingMeshComponent> meshComp = std::dynamic_pointer_cast<BoundingMeshComponent>(physComp);
 			if (meshComp)
 			{
-				meshComp->setScale(Vector3(1,1,1));
+				meshComp->setScale(Vector3(1,1,1), false);
 			}
 		}
 	}
@@ -1066,4 +1066,19 @@ void MainWindow::on_saveButton_clicked()
 	ui->m_RenderWidget->updatePowerPie(tools);
 
 	ui->m_PowerOptions->hide();
+}
+void MainWindow::on_moveUpButton_clicked()
+{
+    int currentIndex = ui->listOrder->currentRow();
+    QListWidgetItem *item = ui->listOrder->takeItem(currentIndex);
+    ui->listOrder->insertItem(currentIndex - 1, item);
+    ui->listOrder->setCurrentRow(currentIndex - 1);
+}
+
+void MainWindow::on_moveDownButton_clicked()
+{
+    int currentIndex = ui->listOrder->currentRow();
+    QListWidgetItem *item = ui->listOrder->takeItem(currentIndex);
+    ui->listOrder->insertItem(currentIndex + 1, item);
+    ui->listOrder->setCurrentRow(currentIndex + 1);
 }
