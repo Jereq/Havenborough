@@ -6,16 +6,38 @@
 #include "Camera.h"
 #include "FlyControl.h"
 #include "KeyboardControl.h"
+#include "ToolManager.h"
 
 class EventManager;
 class IGraphics;
 class ResourceManager;
+class RotationTool;
 
 class DXWidget : public QWidget
 {
 	Q_OBJECT
 
 protected:
+	struct PowerPie
+	{
+		Vector2 position;
+		bool isActive;
+
+		float nrOfElements;
+		float angle;
+
+		std::vector<Vector2> m_RelativeIconPositions;
+		std::vector<std::string> m_ToolOrder;
+
+		PowerPie()
+		{
+			position = Vector2(0.f, 0.f);
+			isActive = false;
+		}
+	};
+	int m_PieAngleIndex;
+	PowerPie m_PowerPie;
+
 	Camera m_Camera;
 	KeyboardControl m_Control;
 	FlyControl m_FlyControl;
@@ -26,7 +48,9 @@ protected:
 	QPointF m_MouseDirPrev;
 	EventManager* m_EventManager;
 	ResourceManager* m_ResourceManager;
+	ToolManager m_ToolManager;
 
+	RotationTool* m_RotationTool;
 
 public:
 	DXWidget(QWidget* parent = nullptr, Qt::WindowFlags flags = 0);
@@ -34,7 +58,7 @@ public:
 
 	virtual ~DXWidget() {}
 
-	virtual void initialize(EventManager* p_EventManager, ResourceManager* p_ResourceManager, IGraphics* p_Graphics) = 0;
+	virtual void initialize(EventManager* p_EventManager, ResourceManager* p_ResourceManager, IGraphics* p_Graphics, RotationTool* p_RotationTool, IPhysics* p_Physics) = 0;
 	virtual void uninitialize() = 0;
 
 	virtual void render() {}

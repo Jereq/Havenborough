@@ -198,3 +198,7 @@ void PlayerBodyComponent::resetFallTime()
 {
 	m_FallTime = 0.f;
 }
+
+void PlayerBodyComponent::setScale(const Vector3& p_Scale, bool p_Pinned)
+{
+}

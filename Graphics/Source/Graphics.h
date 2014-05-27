@@ -13,6 +13,7 @@
 #include "DeferredRenderer.h"
 #include "ForwardRendering.h"
 #include "ScreenRenderer.h"
+#include "BillboardRenderer.h"
 #include "TextRenderer.h"
 #include "WrapperFactory.h"
 #include "ModelFactory.h"
@@ -80,6 +81,7 @@ private:
 	ForwardRendering *m_ForwardRenderer;
 	ScreenRenderer *m_ScreenRenderer;
 	TextRenderer *m_TextRenderer;
+	BillboardRenderer* m_BillboardRenderer;
 		
 	//Lights
 	std::vector<Light>	m_SpotLights;
@@ -143,6 +145,8 @@ public:
 	void linkShaderToParticles(const char *p_ShaderId, const char *p_ParticlesId) override;
 	void updateParticles(float p_DeltaTime) override;
 	/////
+	void createBillboard_Object(Vector3 p_Position, Vector2 p_HalfSize, float p_Scale, float p_Rotation,
+		const char *p_TextureId) override;
 
 	Object2D_Id create2D_Object(Vector3 p_Position, Vector2 p_HalfSize, Vector3 p_Scale, float p_Rotation,
 		const char *p_TextureId) override;

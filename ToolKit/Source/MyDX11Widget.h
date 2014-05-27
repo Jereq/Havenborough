@@ -4,34 +4,25 @@
 
 #include <EventData.h>
 #include <IGraphics.h>
+#include <IPhysics.h>
 
 class MyDX11Widget : public DXWidget
 {
 private:
 	IGraphics* m_Graphics;
+	IPhysics* m_Physics;
 	
 	std::vector<int> m_ResourceIDs;
 	std::vector<LightClass> m_Lights;
-
 	bool m_PowerPieActive;
 	std::map<std::string, int> m_GUI;
 
-	struct PowerPie
+	enum class DRAW
 	{
-		Vector2 position;
-		bool isActive;
-		Vector4 selectedColor;
-		Vector4 pieColor;
-
-
-		PowerPie()
-		{
-			position = Vector2(0.f, 0.f);
-			isActive = false;
-		}
+		LOW,
+		MEDIUM,
+		HIGH
 	};
-
-	PowerPie m_PowerPie;
 
 	struct ReachIK
 	{
@@ -53,18 +44,21 @@ private:
 		IGraphics::InstanceId instance;
 	};
 	std::map<unsigned int, ParticleBinding> m_Particles;
+	Actor::wPtr m_SelectedObject;
 
 public:
 	explicit MyDX11Widget(QWidget* parent = nullptr, Qt::WindowFlags flags = 0);
 	~MyDX11Widget() override;
 
-	void initialize(EventManager* p_EventManager, ResourceManager* p_ResourceManager, IGraphics* p_Graphics) override;
+	void initialize(EventManager* p_EventManager, ResourceManager* p_ResourceManager, IGraphics* p_Graphics, RotationTool* p_RotationTool, IPhysics* p_Physics) override;
 	void uninitialize() override;
 
 	void render() override;
 	void present() override;
 	void onFrame(float p_DeltaTime) override;
 	void onResize(unsigned int nWidth, unsigned int nHeight) override;
+	std::vector<std::string> getPieList();
+	void updatePowerPie(std::vector<std::string> p_List);
 
 private:
 	void addLight(IEventData::Ptr p_Data);
@@ -84,7 +78,10 @@ private:
 	void pick(IEventData::Ptr p_Data);
 	void selectPie(IEventData::Ptr p_Data);
 	void activatePowerPie(IEventData::Ptr p_Data);
+	void selectActor(IEventData::Ptr p_Data);
+
 	void createPowerPieElement();
+	void reinitializePowerPie();
 	void preLoadModels();
 
 

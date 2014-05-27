@@ -41,6 +41,7 @@ Graphics::Graphics(void)
 	m_ForwardRenderer = nullptr;
 	m_ScreenRenderer = nullptr;
 	m_TextRenderer = nullptr;
+	m_BillboardRenderer = nullptr;
 
 	m_ConstantBuffer = nullptr;
 	m_BVBuffer = nullptr;
@@ -221,6 +222,10 @@ bool Graphics::initialize(HWND p_Hwnd, int p_ScreenWidth, int p_ScreenHeight, bo
 	m_TextRenderer->initialize(m_Device, m_DeviceContext, &m_Eye, &m_ViewMatrix, &m_ProjectionMatrix,
 		m_RenderTargetView);
 
+	m_BillboardRenderer = new BillboardRenderer();
+	m_BillboardRenderer->init(m_Device, m_DeviceContext, m_Eye, &m_ViewMatrix, &m_ProjectionMatrix, 
+		m_DepthStencilView, m_RenderTargetView);
+
 	DebugDefferedDraw();
 	setClearColor(Vector4(0.0f, 0.5f, 0.0f, 1.0f)); 
 	m_BVBufferNumOfElements = 100;
@@ -317,6 +322,7 @@ void Graphics::resize(unsigned int p_ScreenWidth, unsigned int p_ScreenHeight)
 
 	m_DeferredRender->resize(p_ScreenWidth, p_ScreenHeight, m_DepthStencilView);
 	m_ForwardRenderer->resize(m_DepthStencilView, m_RenderTargetView);
+	m_BillboardRenderer->resize(m_DepthStencilView, m_RenderTargetView);
 	m_ScreenRenderer->resize(m_DepthStencilView, m_RenderTargetView, XMFLOAT4((float)p_ScreenWidth, (float)p_ScreenHeight, 0.f, (float)p_ScreenWidth));
 	m_TextRenderer->resize(m_RenderTargetView);
 
@@ -403,6 +409,7 @@ void Graphics::shutdown(void)
 	SAFE_DELETE(m_ForwardRenderer);
 	SAFE_DELETE(m_ScreenRenderer);
 	SAFE_DELETE(m_TextRenderer);
+	SAFE_DELETE(m_BillboardRenderer);
 
 	//Clear lights
 	m_PointLights.clear();
@@ -654,6 +661,17 @@ void Graphics::updateParticles(float p_DeltaTime)
 	}
 }
 
+void Graphics::createBillboard_Object(Vector3 p_Position, Vector2 p_HalfSize, float p_Scale,
+	float p_Rotation, const char *p_TextureId)
+{
+	if(m_TextureList.count(p_TextureId) > 0)
+	{
+		m_BillboardRenderer->addRenderable(BillboardRenderable(p_Position, p_HalfSize, p_Scale, p_Rotation, m_TextureList.at(p_TextureId)));
+	}
+	else
+		throw GraphicsException("Texture not found when trying to create a billboard object.",__LINE__, __FILE__);
+}
+
 IGraphics::Object2D_Id Graphics::create2D_Object(Vector3 p_Position, Vector2 p_HalfSize, Vector3 p_Scale,
 	float p_Rotation, const char *p_TextureId)
 {
@@ -893,6 +911,7 @@ void Graphics::drawFrame(void)
 			m_ForwardRenderer->addRenderable(particle.second);
 		}
 		m_ForwardRenderer->renderForward();
+		m_BillboardRenderer->renderBillboards();
 		m_TextRenderer->renderFrame();
 		drawBoundingVolumes();
 		m_ScreenRenderer->renderScreen();
@@ -1142,6 +1161,7 @@ void Graphics::updateCamera(Vector3 p_Position, Vector3 p_Forward, Vector3 p_Up)
 	updateConstantBuffer();
 	m_DeferredRender->updateCamera(m_Eye);
 	m_ForwardRenderer->updateCamera(m_Eye);
+	m_BillboardRenderer->updateCamera(m_Eye);
 }
 
 void Graphics::addBVTriangle(Vector3 p_Corner1, Vector3 p_Corner2, Vector3 p_Corner3)

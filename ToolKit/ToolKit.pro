@@ -47,12 +47,14 @@ SOURCES += Source/main.cpp\
     Source/KeyboardControl.cpp \
     Source/FlyControl.cpp \
     Source/ObjectManager.cpp \
-    Source/TableItem.cpp \
     Source/DXWidget.cpp \
     Source/MyDX11Widget.cpp \
     Source/Tree.cpp \
-    Source/Table.cpp \
-    Source/XMLLevel.cpp
+    Source/XMLLevel.cpp \
+    Source/qFileSystemModelDialog.cpp \
+    Source/ToolManager.cpp \
+    Source/CameraInterpolation.cpp \
+    Source/RotationTool.cpp
 
 HEADERS  += Source/MainWindow.h \
     Source/TreeItem.h \
@@ -63,10 +65,14 @@ HEADERS  += Source/MainWindow.h \
     Source/KeyboardControl.h \
     Source/FlyControl.h \
     Source/ObjectManager.h \
-    Source/TableItem.h \
     Source/Tree.h \
-    Source/Table.h \
-    Source/XMLLevel.h
+    Source/XMLLevel.h \
+    Source/qFileSystemModelDialog.h \
+    Source/Tools.h \
+    Source/CameraInterpolation.h \
+    Source/ToolManager.h \
+    Source/RotationTool.h \
+    Source/EditorEvents.h
 
 FORMS    += Source/MainWindow.ui
 

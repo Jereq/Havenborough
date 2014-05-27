@@ -2,6 +2,9 @@
 
 #include <ResourceManager.h>
 
+#include "EditorEvents.h"
+#include "RotationTool.h"
+
 MyDX11Widget::MyDX11Widget(QWidget* parent, Qt::WindowFlags flags)
 	: DXWidget(parent, flags),
 	m_Graphics(nullptr)
@@ -13,11 +16,13 @@ MyDX11Widget::~MyDX11Widget()
 	uninitialize();
 }
 
-void MyDX11Widget::initialize(EventManager* p_EventManager, ResourceManager* p_ResourceManager, IGraphics* p_Graphics)
+void MyDX11Widget::initialize(EventManager* p_EventManager, ResourceManager* p_ResourceManager, IGraphics* p_Graphics, RotationTool* p_RotationTool, IPhysics* p_Physics)
 {
 	m_EventManager = p_EventManager;
 	m_ResourceManager = p_ResourceManager;
 	m_Graphics = p_Graphics;
+	m_RotationTool = p_RotationTool;
+	m_Physics = p_Physics;
 
 	m_ResourceIDs.push_back(m_ResourceManager->loadResource("texture","SKYBOXDDS"));
 	m_Graphics->createSkydome("SKYBOXDDS", 500000.f);
@@ -39,6 +44,7 @@ void MyDX11Widget::initialize(EventManager* p_EventManager, ResourceManager* p_R
 	m_EventManager->addListener(EventListenerDelegate(this, &MyDX11Widget::activatePowerPie), MouseEventDataPie::sk_EventType);
 	m_EventManager->addListener(EventListenerDelegate(this, &MyDX11Widget::selectPie), PowerPieSelectEventData::sk_EventType);
 	m_EventManager->addListener(EventListenerDelegate(this, &MyDX11Widget::pick), CreateRayEventData::sk_EventType);
+	m_EventManager->addListener(EventListenerDelegate(this, &MyDX11Widget::selectActor), SelectObjectEventData::sk_EventType);
 
 	m_EventManager->addListener(EventListenerDelegate(this, &MyDX11Widget::updateLightColor), UpdateLightColorEventData::sk_EventType);
 	m_EventManager->addListener(EventListenerDelegate(this, &MyDX11Widget::updateLightDirection), UpdateLightDirectionEventData::sk_EventType);
@@ -49,10 +55,20 @@ void MyDX11Widget::initialize(EventManager* p_EventManager, ResourceManager* p_R
 
 
 	m_ResourceIDs.push_back(m_ResourceManager->loadResource("particleSystem", "TestParticle"));
+	
+	m_PowerPie = PowerPie();
+
+	m_PowerPie.m_ToolOrder.push_back("Rotate");
+	m_PowerPie.m_ToolOrder.push_back("Translate");
+	m_PowerPie.m_ToolOrder.push_back("Resize");
+	m_PowerPie.m_ToolOrder.push_back("Copy");
+	m_PowerPie.m_ToolOrder.push_back("Paste");
+	m_PowerPie.m_ToolOrder.push_back("Select");
+	m_PowerPie.m_ToolOrder.push_back("Camera");
+	m_PowerPie.m_ToolOrder.push_back("Eye");
 
 	preLoadModels();
-
-	m_PowerPie = PowerPie();
+	m_ToolManager.initialize(m_EventManager, m_PowerPie.m_ToolOrder);
 }
 
 void MyDX11Widget::uninitialize()
@@ -70,16 +86,39 @@ void MyDX11Widget::render()
 
 	if(m_PowerPie.isActive)
 	{
+		for (const std::string &icons : m_PowerPie.m_ToolOrder)
+		{
+			m_Graphics->render2D_Object(m_GUI[icons]);
+		}
+			
 		m_Graphics->render2D_Object(m_GUI["PowerPie"]);
 		m_Graphics->render2D_Object(m_GUI["PiePiece"]);
 	}
-
-
 
 	for (auto& mesh : m_Models)
 	{
 		m_Graphics->renderModel(mesh.modelId);
 	}
+
+	Actor::ptr selectedObject = m_SelectedObject.lock();
+	if (selectedObject)
+	{
+		for (auto bodyHandle : selectedObject->getBodyHandles())
+		{
+			const unsigned int numVolumes = m_Physics->getNrOfVolumesInBody(bodyHandle);
+			for (unsigned int vol = 0; vol <= numVolumes; ++vol)
+			{
+				const unsigned int numTriangles = m_Physics->getNrOfTrianglesFromBody(bodyHandle, vol);
+				for (unsigned int i = 0; i < numTriangles; ++i)
+				{
+					const Triangle tri = m_Physics->getTriangleFromBody(bodyHandle, i, vol);
+					m_Graphics->addBVTriangle(tri.corners[0].xyz(), tri.corners[1].xyz(), tri.corners[2].xyz());
+				}
+			}
+		}
+	}
+
+	m_RotationTool->render();
 
 	bool usingDirectional = false;
 	for(auto &light : m_Lights)
@@ -88,21 +127,22 @@ void MyDX11Widget::render()
 		{
 		case LightClass::Type::DIRECTIONAL:
 			{
+				m_Graphics->createBillboard_Object(Vector3(0,0,0), Vector2(100,100), 1.f, 1.f, "DIRECTIONAL");
 				m_Graphics->useFrameDirectionalLight(light.color, light.direction, light.intensity);
 				usingDirectional = true;
 				break;
 			}
 		case LightClass::Type::POINT:
 			{
+				m_Graphics->createBillboard_Object(light.position, Vector2(100,100), 1.f, 1.f, "POINT");
 				m_Graphics->useFramePointLight(light.position, light.color, light.range);
-
 				break;
 			}
 		case LightClass::Type::SPOT:
 			{
+				m_Graphics->createBillboard_Object(light.position, Vector2(100,100), 1.f, 1.f, "SPOT");
 				m_Graphics->useFrameSpotLight(light.position, light.color, light.direction,
 					light.spotlightAngles, light.range);
-
 				break;
 			}
 		}
@@ -140,6 +180,19 @@ void MyDX11Widget::onResize(unsigned int nWidth, unsigned int nHeight)
 
 		render();
 	}
+}
+
+std::vector<std::string> MyDX11Widget::getPieList()
+{
+	return m_PowerPie.m_ToolOrder;
+}
+
+void MyDX11Widget::updatePowerPie(std::vector<std::string> p_List)
+{
+	m_PowerPie = PowerPie();
+	m_PowerPie.m_ToolOrder = p_List;
+	reinitializePowerPie();
+	m_ToolManager.updateToolOrder(p_List);
 }
 	
 void MyDX11Widget::addLight(IEventData::Ptr p_Data)
@@ -366,33 +419,47 @@ void MyDX11Widget::selectPie(IEventData::Ptr p_Data)
 {
 	std::shared_ptr<PowerPieSelectEventData> pie = std::static_pointer_cast<PowerPieSelectEventData>(p_Data);
 
-	m_Graphics->set2D_ObjectPosition(m_GUI["PiePiece"], Vector3(m_PowerPie.position.x, m_PowerPie.position.y, 5.f));
+	m_Graphics->set2D_ObjectPosition(m_GUI["PiePiece"], Vector3(m_PowerPie.position.x, m_PowerPie.position.y, (float)DRAW::LOW));
 	Vector4 color(0.9101f, 0.f, 0.f, 1.f);
 	m_Graphics->set2D_ObjectColor(m_GUI["PiePiece"], color);
 
-	m_Graphics->set2D_ObjectRotationZ(m_GUI["PiePiece"], -0.785398163f * pie->getIndex());
-
-
+	m_Graphics->set2D_ObjectRotationZ(m_GUI["PiePiece"], m_PowerPie.angle * pie->getIndex());
 }
+
+
 
 void MyDX11Widget::activatePowerPie(IEventData::Ptr p_Data)
 {
 	std::shared_ptr<MouseEventDataPie> pie = std::static_pointer_cast<MouseEventDataPie>(p_Data);
 
 	Vector2 pos = pie->getMousePos();
+	
+	m_PowerPie.position = pos;
+	m_PowerPie.isActive = pie->getPieStatus();
 
-	m_Graphics->set2D_ObjectPosition(m_GUI["PowerPie"], Vector3(pos.x, pos.y, 0.f));
+	m_Graphics->set2D_ObjectPosition(m_GUI["PowerPie"], Vector3(pos.x, pos.y, (float)DRAW::HIGH));
 
 	Vector4 color(0.9101f, 0.8632f, 0.0937f, 0.f);
 	m_Graphics->set2D_ObjectColor(m_GUI["PiePiece"], color);
+	
+	unsigned int index = 0;
+	for (const std::string &icons : m_PowerPie.m_ToolOrder)
+	{
+		m_Graphics->set2D_ObjectPosition(m_GUI[icons], Vector3(pos.x + m_PowerPie.m_RelativeIconPositions[index].x, pos.y + m_PowerPie.m_RelativeIconPositions[index].y, (float)DRAW::MEDIUM));
+		index++;
+	}
+}
 
-	m_PowerPie.position = pos;
-	m_PowerPie.isActive = pie->getPieStatus();
+void MyDX11Widget::selectActor(IEventData::Ptr p_Data)
+{
+	std::shared_ptr<SelectObjectEventData> object = std::static_pointer_cast<SelectObjectEventData>(p_Data);
+
+	m_SelectedObject = object->getActor();
 }
 
 void MyDX11Widget::createPowerPieElement()
 {
-	Vector4 color(0.9101f, 0.8632f, 0.0937f, 1.f);
+	Vector4 color(0.9101f, 0.8632f, 0.0937f, 2.f);
 	Vector3 position(0.f, 0.f, 0.f);
 	Vector3 scale(1.f, 1.f, 1.f);
 
@@ -404,6 +471,32 @@ void MyDX11Widget::createPowerPieElement()
 
 	m_GUI.insert(std::pair<std::string, int>("PiePiece", m_Graphics->create2D_Object(position, Vector2(128.f, 128.f), scale, 0.f, "PiePiece")));
 	m_Graphics->set2D_ObjectColor(m_GUI["PiePiece"], color);
+
+	reinitializePowerPie();
+}
+
+void MyDX11Widget::reinitializePowerPie()
+{
+	Vector3 position(0.f, 0.f, 2.f);
+	Vector4 color(1.f, 1.f, 1.f, 1.f);
+	Vector3 scale(0.32f, 0.32f, 1.f);
+
+	m_PowerPie.nrOfElements = m_PowerPie.m_ToolOrder.size();
+	m_PowerPie.angle = -2*DirectX::XM_PI/m_PowerPie.nrOfElements;
+
+	DirectX::XMMATRIX rot = DirectX::XMMatrixRotationZ(m_PowerPie.angle);
+	DirectX::XMVECTOR vec = DirectX::XMVectorSet(0.f, 80.f, 0.f, 0.f);
+	float *x = &vec.m128_f32[0];
+	float *y = &vec.m128_f32[1];
+	
+	for (const std::string &icons : m_PowerPie.m_ToolOrder)
+	{
+		m_GUI.insert(std::pair<std::string, int>(icons, m_Graphics->create2D_Object(position, Vector2(64.f, 64.f), scale, 0.f, icons.c_str())));
+		m_Graphics->set2D_ObjectColor(m_GUI[icons], color);
+
+		m_PowerPie.m_RelativeIconPositions.push_back(Vector2(*x, *y));
+		vec = DirectX::XMVector2Transform(vec, rot);
+	}
 }
 
 void MyDX11Widget::preLoadModels()
@@ -412,15 +505,22 @@ void MyDX11Widget::preLoadModels()
 	{
 		"PowerPie",
 		"PiePiece",
+		"DIRECTIONAL",
+		"SPOT",
+		"POINT"
 	};
 	for (const std::string &texture : preloadedTextures)
 	{
 		m_ResourceIDs.push_back(m_ResourceManager->loadResource("texture", texture));
 	}
 
+	for (const std::string &texture : m_PowerPie.m_ToolOrder)
+	{
+		m_ResourceIDs.push_back(m_ResourceManager->loadResource("texture", texture));
+	}
+
 	createPowerPieElement();
 }
-
 
 void MyDX11Widget::updateLightColor(IEventData::Ptr p_Data)
 {

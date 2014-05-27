@@ -99,6 +99,14 @@ public:
 	 */
 	void setRotation(Vector3 p_Rotation);
 	/**
+	 * Sets the rotation of components that supports it.
+	 *
+	 * The result is entirely up to the components
+	 *
+	 * @param p_Scale the new scale to set
+	 */
+	void setScale(Vector3 p_Scale);
+	/**
 	 * Get the event manager associated with this actor.
 	 *
 	 * @return the event manager

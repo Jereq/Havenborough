@@ -5,11 +5,14 @@
 #include <QStatusBar>
 #include "EventData.h"
 
+#include "RotationTool.h"
+
 DXWidget::DXWidget(QWidget* parent, Qt::WindowFlags flags)
 	: QWidget(parent, flags),
 	m_FlyControl(&m_Camera, &m_Control),
 	m_EventManager(nullptr),
-	m_ResourceManager(nullptr)
+	m_ResourceManager(nullptr),
+	m_RotationTool(nullptr)
 {
 	setAttribute(Qt::WA_PaintOnScreen);
 	setAttribute(Qt::WA_NoSystemBackground);
@@ -51,6 +54,7 @@ void DXWidget::resizeEvent(QResizeEvent* p_Event)
 		QWidget::resizeEvent(p_Event);
 	}
 	onResize(newSize.width(), newSize.height());
+	m_ToolManager.updateScreenSize(newSize.width(), newSize.height());
 }
 
 void DXWidget::keyPressEvent(QKeyEvent* e)
@@ -89,8 +93,8 @@ void DXWidget::mousePressEvent(QMouseEvent* e)
 	{
 		if ((e->buttons() & Qt::LeftButton) && !(e->buttons() & Qt::RightButton))
 		{
-			m_EventManager->triggerTriggerEvent(IEventData::Ptr(new CreateRayEventData(DirectX::XMFLOAT2(e->localPos().x(), e->localPos().y()),
-																						DirectX::XMFLOAT2(width(), height()))));
+			m_ToolManager.updateMousePos(e->localPos().x(), e->localPos().y());
+			m_ToolManager.onPress();
 			//showStatus(tr("Tumble Tool: LMB Drag: Use LMB or MMB to tumble"));
 			setCursor(Qt::OpenHandCursor);
 		}
@@ -122,7 +126,16 @@ void DXWidget::mouseMoveEvent(QMouseEvent* e)
 		if ((e->buttons() & Qt::LeftButton) && !(e->buttons() & Qt::RightButton))
 		{
 			QPointF delta = (e->localPos() - m_PrevMousePos) / (float)height() * DirectX::XM_PI;
-			m_Camera.rotate(delta.x(), delta.y(), 0.f);
+			if (e->modifiers() & Qt::Modifier::CTRL)
+			{
+				m_Camera.rotate(delta.x(), delta.y(), 0.f);
+			}
+			else
+			{
+				m_ToolManager.onMove();
+				m_RotationTool->mouseMovement(delta);
+			}
+
 			update();
 		}
 		else if ((e->buttons() & Qt::RightButton) && !(e->buttons() & Qt::LeftButton))
@@ -136,19 +149,22 @@ void DXWidget::mouseMoveEvent(QMouseEvent* e)
 			dotMouseDir = sqrtf(dotMouseDir);
 			mouseDir = mouseDir / dotMouseDir;
 
-			m_MouseDir = m_MouseDirPrev * 0.9f + mouseDir * 0.1f;
+			m_MouseDir = m_MouseDirPrev * 0.95f + mouseDir * 0.05f;
 
 			float a = atan2f(-m_MouseDir.x(), m_MouseDir.y());
 
 			a += DirectX::XM_PI;
-			a += (2 * DirectX::XM_PI) / 16.f;
+			a += (2 * DirectX::XM_PI) / (m_PowerPie.nrOfElements * 2.f);
 			if(a > 2 * DirectX::XM_PI)
 				a -= 2*DirectX::XM_PI;
 
 			a /= (2*DirectX::XM_PI);
-			a *= 8;
+			a *= m_PowerPie.nrOfElements;
 
 			a = floorf(a);
+			m_PieAngleIndex = a;
+			if(m_PieAngleIndex >= m_PowerPie.nrOfElements)
+				m_PieAngleIndex = -1;
 
 			std::shared_ptr<PowerPieSelectEventData> pie(new PowerPieSelectEventData(a));
 			m_EventManager->queueEvent(pie);
@@ -176,8 +192,17 @@ void DXWidget::mouseMoveEvent(QMouseEvent* e)
 
 void DXWidget::mouseReleaseEvent(QMouseEvent* e)
 {
+	m_RotationTool->mouseReleased();
+
 	setCursor(Qt::ArrowCursor);
+	
 	//showStatus("");
+	if ((e->button() & Qt::RightButton) && !(e->button() & Qt::LeftButton))
+	{
+		m_ToolManager.changeTool(m_PieAngleIndex);
+		//showStatus(tr("Tumble Tool: LMB Drag: Use LMB or MMB to tumble"));
+	}
+
 
 	std::shared_ptr<MouseEventDataPie> pie(new MouseEventDataPie(Vector2(0.f, 0.f), false));
 	m_EventManager->queueEvent(pie);
@@ -186,7 +211,6 @@ void DXWidget::mouseReleaseEvent(QMouseEvent* e)
 	int y = m_MouseStartPos.y();
 	QPoint temp = mapToGlobal(QPoint(x, y));
 	//QCursor::setPos(temp);
-	
 	
 	QWidget::mouseReleaseEvent(e);
 }
