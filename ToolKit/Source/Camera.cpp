@@ -2,7 +2,9 @@
 
 Camera::Camera()
 	: m_Forward(0.f, 0.f, 1.f),
-	m_Up(0.f, 1.f, 0.f)
+	m_Up(0.f, 1.f, 0.f),
+	m_ViewportSize(1.f, 1.f),
+	m_FOV_Y(90.f)
 {
 }
 
@@ -32,6 +34,22 @@ Vector3 Camera::getRight() const
 	Vector3 vRight;
 	XMStoreFloat3(&vRight, right);
 	return vRight;
+}
+
+const Vector2& Camera::getViewportSize() const
+{
+	return m_ViewportSize;
+}
+
+float Camera::getFOV_Y() const
+{
+	return m_FOV_Y;
+}
+
+void Camera::setViewport(const Vector2& p_Size, float p_FOV_Y)
+{
+	m_ViewportSize = p_Size;
+	m_FOV_Y = p_FOV_Y;
 }
 
 void Camera::setPosition(const Vector3 &p_Position)

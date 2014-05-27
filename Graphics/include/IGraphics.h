@@ -271,6 +271,18 @@ public:
 	virtual void linkShaderToParticles(const char *p_ShaderId, const char *p_ParticlesId) = 0;
 
 	/**
+	* Creates a billboard from a texture to be used by the Billboardrenderer.
+	* @param p_Position the position in world coords
+	* @param p_HalfSize the object's pixel size in xy from the center point
+	* @param p_Scale the scaling factor where 1.0f is the default model size uniform
+	* @param p_Rotation the rotation around the z-axis in radians, left-handed
+	* @param p_TextureId the ID of the texture to be used
+	* @return the Object2D ID of the created object
+	*/
+	virtual void createBillboard_Object(Vector3 p_Position, Vector2 p_HalfSize, float p_Scale, float p_Rotation,
+		const char *p_TextureId) = 0;
+
+	/**
 	* Creates a 2D object from a texture to be used by the screen renderer.
 	* @param p_Position the xy-pixel coordinates to place the object on, z the depth in range of 0.0f to 1280.0f
 	* @param p_HalfSize the object's pixel size in xy from the center point

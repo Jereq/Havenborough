@@ -106,7 +106,7 @@ void MyDX11Widget::render()
 		for (auto bodyHandle : selectedObject->getBodyHandles())
 		{
 			const unsigned int numVolumes = m_Physics->getNrOfVolumesInBody(bodyHandle);
-			for (unsigned int vol = 0; vol <= numVolumes; ++vol)
+			for (unsigned int vol = 0; vol < numVolumes; ++vol)
 			{
 				const unsigned int numTriangles = m_Physics->getNrOfTrianglesFromBody(bodyHandle, vol);
 				for (unsigned int i = 0; i < numTriangles; ++i)
@@ -127,21 +127,22 @@ void MyDX11Widget::render()
 		{
 		case LightClass::Type::DIRECTIONAL:
 			{
+				m_Graphics->createBillboard_Object(Vector3(0,0,0), Vector2(100,100), 1.f, 1.f, "DIRECTIONAL");
 				m_Graphics->useFrameDirectionalLight(light.color, light.direction, light.intensity);
 				usingDirectional = true;
 				break;
 			}
 		case LightClass::Type::POINT:
 			{
+				m_Graphics->createBillboard_Object(light.position, Vector2(100,100), 1.f, 1.f, "POINT");
 				m_Graphics->useFramePointLight(light.position, light.color, light.range);
-
 				break;
 			}
 		case LightClass::Type::SPOT:
 			{
+				m_Graphics->createBillboard_Object(light.position, Vector2(100,100), 1.f, 1.f, "SPOT");
 				m_Graphics->useFrameSpotLight(light.position, light.color, light.direction,
 					light.spotlightAngles, light.range);
-
 				break;
 			}
 		}
@@ -176,6 +177,7 @@ void MyDX11Widget::onResize(unsigned int nWidth, unsigned int nHeight)
 	if (m_Graphics)
 	{
 		m_Graphics->resize(nWidth, nHeight);
+		m_Camera.setViewport(Vector2(nWidth, nHeight), m_Graphics->getFOV());
 
 		render();
 	}
@@ -506,6 +508,9 @@ void MyDX11Widget::preLoadModels()
 	{
 		"PowerPie",
 		"PiePiece",
+		"DIRECTIONAL",
+		"SPOT",
+		"POINT"
 	};
 	for (const std::string &texture : preloadedTextures)
 	{

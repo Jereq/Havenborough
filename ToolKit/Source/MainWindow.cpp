@@ -26,6 +26,12 @@
 #include "TreeFilter.h"
 #include "qFileSystemModelDialog.h"
 
+#undef min
+
+#include <QProgressDialog>
+#include <QFutureWatcher>
+#include <QtConcurrent>
+
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
 	ui(new Ui::MainWindow),
@@ -67,6 +73,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     m_FileSystemDialog = new QFileSystemModelDialog(this);
 	m_FileSystemDialog->setViews(ui->m_FileSystemTreeView, ui->m_FileSystemListView);
+	m_LevelLoaded = false;
+
 }
 
 MainWindow::~MainWindow()
@@ -93,7 +101,7 @@ void MainWindow::signalAndSlotsDefinitions()
 	QObject::connect(&m_CamInt, SIGNAL(setCameraPositionSignal(Vector3)), ui->m_RenderWidget, SLOT(CameraPositionSet(Vector3)));
 
     //Signals and slots for connecting the object creation to the trees
-	QObject::connect(m_ObjectManager.get(), SIGNAL(actorAdded(std::string,  Actor::ptr)), this, SLOT(onActorAdded(std::string, Actor::ptr)));
+	QObject::connect(m_ObjectManager.get(), SIGNAL(actorAdded(std::string,  Actor::ptr)), this, SLOT(onActorAdded(std::string, Actor::ptr)), Qt::DirectConnection);
 
     //Signals and slots for connecting the object scale editing to the object
     QObject::connect(ui->m_ObjectScaleXBox, SIGNAL(editingFinished()), this, SLOT(setObjectScale()));
@@ -145,6 +153,8 @@ void MainWindow::signalAndSlotsDefinitions()
 	QObject::connect(ui->m_ObjectTree, SIGNAL(removeActor(int)), m_ObjectManager.get(), SLOT(actorRemoved(int)));
 
 	QObject::connect(m_RotationTool.get(), SIGNAL(rotation(Vector3)), this, SLOT(addObjectRotation(Vector3)));
+	QObject::connect(m_RotationTool.get(), SIGNAL(translation(Vector3)), this, SLOT(addObjectTranslation(Vector3)));
+
 	QObject::connect(ui->m_ObjectTree, SIGNAL(deselectAll()), this, SLOT(deselectAllTreeItems()));
 	QObject::connect(this, SIGNAL(deselectAll()), this, SLOT(deselectAllTreeItems()));
 }
@@ -186,7 +196,24 @@ void MainWindow::on_actionOpen_triggered()
 	QString fullFilePath = QFileDialog::getOpenFileName(this, tr("Open Level"), "./assets/levels/", tr("Level Files (*.xml *.btxl)"));
 	if (!fullFilePath.isNull())
 	{
-		loadLevel(fullFilePath.toStdString());
+		m_LevelLoaded = false;
+		deselectAllTreeItems();
+        QProgressDialog dialog;
+        dialog.setLabelText(QString("Loading level..."));
+		QFutureWatcher<void> futureWatcher;
+
+        QObject::connect(&futureWatcher, SIGNAL(finished()), &dialog, SLOT(hide()));
+        QObject::connect(&futureWatcher, SIGNAL(finished()), this, SLOT(levelLoaded()));
+        QObject::connect(&dialog, SIGNAL(canceled()), &futureWatcher, SLOT(cancel()));
+        QObject::connect(&futureWatcher, SIGNAL(progressRangeChanged(int,int)), &dialog, SLOT(setRange(int,int)));
+        QObject::connect(&futureWatcher, SIGNAL(progressValueChanged(int)), &dialog, SLOT(setValue(int)));
+		using namespace QtConcurrent;
+
+        futureWatcher.setFuture(QtConcurrent::run(std::bind(&MainWindow::loadLevel, this, fullFilePath.toStdString())));
+
+        dialog.exec();
+
+        futureWatcher.waitForFinished();
 	}
 }
 
@@ -385,6 +412,23 @@ void MainWindow::addObjectRotation(Vector3 p_Rotation)
     }
 }
 
+void MainWindow::addObjectTranslation(Vector3 p_Translation)
+{
+	QTreeWidgetItem* currItem = ui->m_ObjectTree->currentItem();
+	if (currItem)
+	{
+		TreeItem* cItem = dynamic_cast<TreeItem*>(currItem);
+
+		if (currItem->isSelected() && cItem)
+		{
+			Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
+			actor->setPosition(actor->getPosition() + p_Translation);
+
+			itemPropertiesChanged();
+		}
+	}
+}
+
 void MainWindow::setLightPosition()
 {
     QTreeWidgetItem *currItem = ui->m_ObjectTree->currentItem();
@@ -501,6 +545,8 @@ void MainWindow::deselectAllTreeItems()
 
 		spModel->setColorTone(Vector3(1.0f, 1.0f, 1.0f));
 	}
+
+	m_RotationTool->deselect();
 }
 
 void MainWindow::shortcutDeselect(void)
@@ -509,11 +555,17 @@ void MainWindow::shortcutDeselect(void)
 	ui->m_ObjectTree->clearSelection();
 }
 
+void MainWindow::levelLoaded()
+{
+	m_LevelLoaded = true;
+}
+
 void MainWindow::onFrame(float p_DeltaTime)
 {
 	m_EventManager.processEvents();
 	
-	m_ObjectManager->update(p_DeltaTime);
+	if(m_LevelLoaded)
+		m_ObjectManager->update(p_DeltaTime);
 
 	m_CamInt.update(p_DeltaTime);
 }
@@ -572,7 +624,7 @@ void MainWindow::initializeSystems()
 	m_ActorFactory->setAnimationLoader(m_AnimationLoader.get());
 	m_ObjectManager.reset(new ObjectManager(m_ActorFactory, &m_EventManager, &m_ResourceManager, ui->m_ObjectTree));
 
-	m_RotationTool.reset(new RotationTool(m_Graphics, m_Physics, &m_ResourceManager));
+	m_RotationTool.reset(new RotationTool(m_Graphics, m_Physics, &m_ResourceManager, &ui->m_RenderWidget->getCamera()));
 
 	ui->m_RenderWidget->initialize(&m_EventManager, &m_ResourceManager, m_Graphics, m_RotationTool.get(), m_Physics);
 
@@ -690,9 +742,11 @@ void MainWindow::pick(IEventData::Ptr p_Data)
 	std::shared_ptr<CreatePickingEventData> data = std::static_pointer_cast<CreatePickingEventData>(p_Data);
 	BodyHandle b = m_Physics->rayCast(data.get()->getRayDir(), data.get()->getRayOrigin());
 	Actor::ptr actor = m_ObjectManager->getActorFromBodyHandle(b);
+
+	m_RotationTool->pick(b);
+
 	if(!actor)
 	{
-		m_RotationTool->pick(b);
 		return;
 	}
 

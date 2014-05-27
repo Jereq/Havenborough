@@ -13,6 +13,8 @@
 
 #include <map>
 #include "CameraInterpolation.h"
+#include <QProgressBar> 
+
 
 class QFileSystemModelDialog;
 class QGroupBox;
@@ -27,6 +29,8 @@ class IPhysics;
 class ObjectManager;
 class TreeItem;
 class RotationTool;
+
+
 
 namespace Ui {
 class MainWindow;
@@ -52,6 +56,7 @@ private:
     std::vector<QGroupBox*> m_Boxes;
 
 	std::map<std::string, QShortcut*> m_Hotkey;
+	bool m_LevelLoaded;
     QFileSystemModelDialog* m_FileSystemDialog;
 	CameraInterpolation m_CamInt;
 	
@@ -78,6 +83,7 @@ private slots:
     void setObjectPosition();
 
 	void addObjectRotation(Vector3 p_Rotation);
+	void addObjectTranslation(Vector3 p_Translation);
 
 	void setLightPosition();
 	void setLightColor();
@@ -86,6 +92,7 @@ private slots:
 	void setLightRange();
 	void setLightIntensity();
 	void deselectAllTreeItems();
+	void levelLoaded();
 	void shortcutDeselect();
 
 	// QT object changes
