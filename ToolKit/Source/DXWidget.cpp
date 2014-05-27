@@ -133,7 +133,7 @@ void DXWidget::mouseMoveEvent(QMouseEvent* e)
 			else
 			{
 				m_ToolManager.onMove();
-				m_RotationTool->mouseMovement(delta);
+				m_RotationTool->mouseMovement(m_PrevMousePos, e->localPos());
 			}
 
 			update();

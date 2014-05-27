@@ -153,6 +153,8 @@ void MainWindow::signalAndSlotsDefinitions()
 	QObject::connect(ui->m_ObjectTree, SIGNAL(removeActor(int)), m_ObjectManager.get(), SLOT(actorRemoved(int)));
 
 	QObject::connect(m_RotationTool.get(), SIGNAL(rotation(Vector3)), this, SLOT(addObjectRotation(Vector3)));
+	QObject::connect(m_RotationTool.get(), SIGNAL(translation(Vector3)), this, SLOT(addObjectTranslation(Vector3)));
+
 	QObject::connect(ui->m_ObjectTree, SIGNAL(deselectAll()), this, SLOT(deselectAllTreeItems()));
 	QObject::connect(this, SIGNAL(deselectAll()), this, SLOT(deselectAllTreeItems()));
 }
@@ -410,6 +412,23 @@ void MainWindow::addObjectRotation(Vector3 p_Rotation)
     }
 }
 
+void MainWindow::addObjectTranslation(Vector3 p_Translation)
+{
+	QTreeWidgetItem* currItem = ui->m_ObjectTree->currentItem();
+	if (currItem)
+	{
+		TreeItem* cItem = dynamic_cast<TreeItem*>(currItem);
+
+		if (currItem->isSelected() && cItem)
+		{
+			Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
+			actor->setPosition(actor->getPosition() + p_Translation);
+
+			itemPropertiesChanged();
+		}
+	}
+}
+
 void MainWindow::setLightPosition()
 {
     QTreeWidgetItem *currItem = ui->m_ObjectTree->currentItem();
@@ -526,6 +545,8 @@ void MainWindow::deselectAllTreeItems()
 
 		spModel->setColorTone(Vector3(1.0f, 1.0f, 1.0f));
 	}
+
+	m_RotationTool->deselect();
 }
 
 void MainWindow::shortcutDeselect(void)
@@ -603,7 +624,7 @@ void MainWindow::initializeSystems()
 	m_ActorFactory->setAnimationLoader(m_AnimationLoader.get());
 	m_ObjectManager.reset(new ObjectManager(m_ActorFactory, &m_EventManager, &m_ResourceManager, ui->m_ObjectTree));
 
-	m_RotationTool.reset(new RotationTool(m_Graphics, m_Physics, &m_ResourceManager));
+	m_RotationTool.reset(new RotationTool(m_Graphics, m_Physics, &m_ResourceManager, &ui->m_RenderWidget->getCamera()));
 
 	ui->m_RenderWidget->initialize(&m_EventManager, &m_ResourceManager, m_Graphics, m_RotationTool.get(), m_Physics);
 
@@ -721,9 +742,11 @@ void MainWindow::pick(IEventData::Ptr p_Data)
 	std::shared_ptr<CreatePickingEventData> data = std::static_pointer_cast<CreatePickingEventData>(p_Data);
 	BodyHandle b = m_Physics->rayCast(data.get()->getRayDir(), data.get()->getRayOrigin());
 	Actor::ptr actor = m_ObjectManager->getActorFromBodyHandle(b);
+
+	m_RotationTool->pick(b);
+
 	if(!actor)
 	{
-		m_RotationTool->pick(b);
 		return;
 	}
 

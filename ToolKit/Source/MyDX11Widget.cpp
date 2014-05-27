@@ -177,6 +177,7 @@ void MyDX11Widget::onResize(unsigned int nWidth, unsigned int nHeight)
 	if (m_Graphics)
 	{
 		m_Graphics->resize(nWidth, nHeight);
+		m_Camera.setViewport(Vector2(nWidth, nHeight), m_Graphics->getFOV());
 
 		render();
 	}
