@@ -1428,6 +1428,44 @@
       </layout>
      </widget>
     </widget>
+    <widget class="QGroupBox" name="m_UniformScale">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>980</y>
+       <width>172</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Uniform Scale</string>
+     </property>
+     <widget class="QWidget" name="gridLayoutWidget_10">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>151</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="0" column="0">
+        <widget class="QLabel" name="m_UnifromScaleLabel">
+         <property name="text">
+          <string>Scale</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QDoubleSpinBox" name="m_UniformScaleSpinBox"/>
+       </item>
+      </layout>
+     </widget>
+    </widget>
    </widget>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>

@@ -99,6 +99,8 @@ void MainWindow::signalAndSlotsDefinitions()
     QObject::connect(ui->m_ObjectScaleXBox, SIGNAL(editingFinished()), this, SLOT(setObjectScale()));
     QObject::connect(ui->m_ObjectScaleYBox, SIGNAL(editingFinished()), this, SLOT(setObjectScale()));
     QObject::connect(ui->m_ObjectScaleZBox, SIGNAL(editingFinished()), this, SLOT(setObjectScale()));
+	QObject::connect(ui->m_UniformScaleSpinBox, SIGNAL(editingFinished()), this, SLOT(setObjectScale()));
+	
 
     //Signals and slots for connecting the object rotation editing to the object
     QObject::connect(ui->m_ObjectRotationXBox, SIGNAL(editingFinished()), this, SLOT(setObjectRotation()));
@@ -161,6 +163,7 @@ void MainWindow::pushBoxes()
     m_Boxes.push_back(ui->AngleBox);
     m_Boxes.push_back(ui->AdditionalBox_1);
     m_Boxes.push_back(ui->AdditionalBox_2);
+    m_Boxes.push_back(ui->m_UniformScale);
 }
 
 void MainWindow::on_actionObject_Tree_triggered()
@@ -271,10 +274,11 @@ void MainWindow::setObjectScale()
 		if(item)
 			treeItems.push_back(item);
 	}
-	XMVECTOR newScale = XMLoadFloat3(&Vector3(ui->m_ObjectScaleXBox->value(),ui->m_ObjectScaleYBox->value(),ui->m_ObjectScaleZBox->value()));
+	XMVECTOR newScale;
 
 	if (treeItems.size() == 1)
 	{
+		newScale = XMLoadFloat3(&Vector3(ui->m_ObjectScaleXBox->value(),ui->m_ObjectScaleYBox->value(),ui->m_ObjectScaleZBox->value()));
 		Actor::ptr actor = m_ObjectManager->getActor(treeItems.front()->getActorId());
 		if (actor)
 		{
@@ -285,6 +289,7 @@ void MainWindow::setObjectScale()
 	}
 	else
 	{
+		newScale = XMLoadFloat3(&Vector3(ui->m_UniformScaleSpinBox->value(),ui->m_UniformScaleSpinBox->value(),ui->m_UniformScaleSpinBox->value()));
 		XMVECTOR centerPosition = XMLoadFloat3(&findMiddlePoint(treeItems));
 		for(auto *item : treeItems)
 		{
@@ -310,13 +315,7 @@ void MainWindow::setObjectScale()
 				actor->setScale(modelScale);
 			}
 		}
-	}
-	
-	if(selectedItems.size() > 1)
-	{
-		ui->m_ObjectScaleXBox->setValue(1);
-		ui->m_ObjectScaleYBox->setValue(1);
-		ui->m_ObjectScaleZBox->setValue(1);
+		ui->m_UniformScaleSpinBox->setValue(1);
 	}
 }
 
@@ -832,7 +831,7 @@ void MainWindow::itemPropertiesChanged(void)
 		hideItemProperties();
 
 		ui->PositionBox->show();
-		ui->ScaleBox->show();
+        ui->m_UniformScale->show();
 		ui->RotationBox->show();
 		QList<TreeItem*> items;
 		for(auto *widgetItem : selectedItems)
@@ -848,9 +847,7 @@ void MainWindow::itemPropertiesChanged(void)
 		ui->m_ObjectPositionYBox->setValue(position.y);
 		ui->m_ObjectPositionZBox->setValue(position.z);
 
-		ui->m_ObjectScaleXBox->setValue(1.0f);
-		ui->m_ObjectScaleYBox->setValue(1.0f);
-		ui->m_ObjectScaleZBox->setValue(1.0f);
+		ui->m_UniformScaleSpinBox->setValue(1.0f);
 	}
 	else
 	{
@@ -982,6 +979,7 @@ void MainWindow::hideItemProperties(void)
 	ui->AdditionalBox_2->hide();
 	ui->AngleBox->hide();
 	ui->PositionBox_2->hide();
+    ui->m_UniformScale->hide();
 }
 
 void MainWindow::on_actionAdd_Object_triggered()
