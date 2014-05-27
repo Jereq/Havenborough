@@ -19,6 +19,7 @@
 #include <EventData.h>
 #include <TweakSettings.h>
 
+#include "EditorEvents.h"
 #include "ObjectManager.h"
 #include "RotationTool.h"
 #include "TreeItem.h"
@@ -248,6 +249,8 @@ void MainWindow::on_m_ObjectTree_itemSelectionChanged()
 		if(!spModel)
 			continue;
 		spModel->setColorTone(Vector3(5.0f, 5.0f, 7.0f));
+
+		m_EventManager.queueEvent(IEventData::Ptr(new SelectObjectEventData(actor)));
 	}
 
 	itemPropertiesChanged();
@@ -255,10 +258,12 @@ void MainWindow::on_m_ObjectTree_itemSelectionChanged()
 
 void MainWindow::setObjectScale()
 {
-	using namespace DirectX;
-
 	QList<QTreeWidgetItem*> selectedItems = ui->m_ObjectTree->selectedItems();
+	if(selectedItems.empty())
+		return;
 	
+	using namespace DirectX;
+		
 	QList<TreeItem*> treeItems;
 	for(auto *widgetItem : selectedItems)
 	{
@@ -266,48 +271,51 @@ void MainWindow::setObjectScale()
 		if(item)
 			treeItems.push_back(item);
 	}
-
 	XMVECTOR newScale = XMLoadFloat3(&Vector3(ui->m_ObjectScaleXBox->value(),ui->m_ObjectScaleYBox->value(),ui->m_ObjectScaleZBox->value()));
+	XMVECTOR centerPosition = XMLoadFloat3(&findMiddlePoint(treeItems));
 
-	for( auto *item : treeItems)
+	if (treeItems.size() == 1)
 	{
-		Actor::ptr actor = m_ObjectManager->getActor(item->getActorId());
-		if(!actor)
-			continue;
-
-		std::shared_ptr<ModelComponent> spModel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId).lock();
-		if(spModel)
-        {
-			XMVECTOR newModelScale;
-
-			if(treeItems.size() > 1)
-				newModelScale = XMLoadFloat3(&spModel->getScale()) * newScale;
-			else
-				newModelScale = newScale;
-
-			Vector3 modelScale;
-			XMStoreFloat3(&modelScale, newModelScale);
-            spModel->setScale(modelScale);
-        }
-
-        std::shared_ptr<PhysicsInterface> physComp = actor->getComponent<PhysicsInterface>(PhysicsInterface::m_ComponentId).lock();
-		if (physComp)
+		Actor::ptr actor = m_ObjectManager->getActor(treeItems.front()->getActorId());
+		if (actor)
 		{
-			std::shared_ptr<BoundingMeshComponent> meshComp = std::dynamic_pointer_cast<BoundingMeshComponent>(physComp);
-			if (meshComp)
+			Vector3 scale;
+			XMStoreFloat3(&scale, newScale);
+			actor->setScale(scale);
+		}
+	}
+	else
+	{
+		for( auto *item : treeItems)
+		{
+			Actor::ptr actor = m_ObjectManager->getActor(item->getActorId());
+			if(!actor)
+				continue;
+		XMVECTOR objectPos = XMLoadFloat3(&actor->getPosition());
+		XMVECTOR diff = (objectPos - centerPosition) * (newScale - XMVectorSet(1,1,1,1));//((XMVector3LessOrEqual(newScale,XMVectorSet(0,0,0,0))) ? 2.f : 0.5f);
+		objectPos += diff;
+		Vector3 newObjectPos;
+		XMStoreFloat3(&newObjectPos, objectPos);
+		actor->setPosition(newObjectPos);		
+		
+			std::shared_ptr<ModelComponent> spModel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId).lock();
+			if(spModel)
 			{
-				XMVECTOR newMeshScale;
+				XMVECTOR newModelScale = XMLoadFloat3(&spModel->getScale()) * newScale;
 
-				if(treeItems.size() > 1)
-					newMeshScale = XMLoadFloat3(&spModel->getScale()) * newScale;
-				else
-					newMeshScale = newScale;
+				Vector3 modelScale;
+				XMStoreFloat3(&modelScale, newModelScale);
 
-				Vector3 MeshScale;
-				XMStoreFloat3(&MeshScale, newMeshScale);
-				meshComp->setScale(MeshScale);
+				actor->setScale(modelScale);
 			}
 		}
+	}
+	
+	if(selectedItems.size() > 1)
+	{
+		ui->m_ObjectScaleXBox->setValue(1);
+		ui->m_ObjectScaleYBox->setValue(1);
+		ui->m_ObjectScaleZBox->setValue(1);
 	}
 }
 
@@ -316,6 +324,8 @@ void MainWindow::setObjectPosition()
 	using namespace DirectX;
 
 	QList<QTreeWidgetItem*> selectedItems = ui->m_ObjectTree->selectedItems();
+	if(selectedItems.empty())
+		return;
 	
 	QList<TreeItem*> treeItems;
 	for(auto *widgetItem : selectedItems)
@@ -369,6 +379,8 @@ void MainWindow::addObjectRotation(Vector3 p_Rotation)
         {
 			Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
 			actor->setRotation(actor->getRotation() + p_Rotation);
+
+			itemPropertiesChanged();
         }
     }
 }
@@ -562,7 +574,7 @@ void MainWindow::initializeSystems()
 
 	m_RotationTool.reset(new RotationTool(m_Graphics, m_Physics, &m_ResourceManager));
 
-	ui->m_RenderWidget->initialize(&m_EventManager, &m_ResourceManager, m_Graphics, m_RotationTool.get());
+	ui->m_RenderWidget->initialize(&m_EventManager, &m_ResourceManager, m_Graphics, m_RotationTool.get(), m_Physics);
 
 	m_EventManager.addListener(EventListenerDelegate(this, &MainWindow::pick), CreatePickingEventData::sk_EventType);
 }
@@ -685,6 +697,7 @@ void MainWindow::pick(IEventData::Ptr p_Data)
 	}
 
 	ui->m_ObjectTree->selectItem(actor->getId());
+	m_EventManager.queueEvent(IEventData::Ptr(new SelectObjectEventData(actor)));
 }
 
 void MainWindow::on_actionGo_To_Selected_triggered()
@@ -950,8 +963,12 @@ Vector3 MainWindow::findMiddlePoint(QList<TreeItem*> p_Items)
 		if(!actor)
 			continue;
 		
-		std::shared_ptr<BoundingMeshComponent> sBM = actor->getComponent<BoundingMeshComponent>(PhysicsInterface::m_ComponentId).lock();	
-		position = XMLoadFloat3(&(m_Physics->getBodyPosition(sBM->getBodyHandle())));
+		std::shared_ptr<BoundingMeshComponent> sBM = actor->getComponent<BoundingMeshComponent>(PhysicsInterface::m_ComponentId).lock();
+
+		if(sBM)
+			position = XMLoadFloat3(&(m_Physics->getBodyPosition(sBM->getBodyHandle())));
+		else
+			position = XMLoadFloat3(&(actor->getPosition()));
 
 		if(firstRun)
 		{
@@ -1050,7 +1067,6 @@ void MainWindow::on_saveButton_clicked()
 
 	ui->m_PowerOptions->hide();
 }
-
 void MainWindow::on_moveUpButton_clicked()
 {
     int currentIndex = ui->listOrder->currentRow();

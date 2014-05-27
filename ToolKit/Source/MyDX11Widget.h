@@ -4,11 +4,13 @@
 
 #include <EventData.h>
 #include <IGraphics.h>
+#include <IPhysics.h>
 
 class MyDX11Widget : public DXWidget
 {
 private:
 	IGraphics* m_Graphics;
+	IPhysics* m_Physics;
 	
 	std::vector<int> m_ResourceIDs;
 	std::vector<LightClass> m_Lights;
@@ -42,12 +44,13 @@ private:
 		IGraphics::InstanceId instance;
 	};
 	std::map<unsigned int, ParticleBinding> m_Particles;
+	Actor::wPtr m_SelectedObject;
 
 public:
 	explicit MyDX11Widget(QWidget* parent = nullptr, Qt::WindowFlags flags = 0);
 	~MyDX11Widget() override;
 
-	void initialize(EventManager* p_EventManager, ResourceManager* p_ResourceManager, IGraphics* p_Graphics, RotationTool* p_RotationTool) override;
+	void initialize(EventManager* p_EventManager, ResourceManager* p_ResourceManager, IGraphics* p_Graphics, RotationTool* p_RotationTool, IPhysics* p_Physics) override;
 	void uninitialize() override;
 
 	void render() override;
@@ -75,6 +78,8 @@ private:
 	void pick(IEventData::Ptr p_Data);
 	void selectPie(IEventData::Ptr p_Data);
 	void activatePowerPie(IEventData::Ptr p_Data);
+	void selectActor(IEventData::Ptr p_Data);
+
 	void createPowerPieElement();
 	void reinitializePowerPie();
 	void preLoadModels();
