@@ -368,7 +368,7 @@ void MainWindow::setObjectRotation()
 		if(item)
 			treeItems.push_back(item);
 	}
-	XMVECTOR newRotation = XMLoadFloat3(&Vector3(ui->m_ObjectRotationXBox->value(),ui->m_ObjectRotationYBox->value(),ui->m_ObjectRotationZBox->value()));
+	XMVECTOR newRotation = XMLoadFloat3(&Vector3(ui->m_ObjectRotationXBox->value(), ui->m_ObjectRotationYBox->value(), ui->m_ObjectRotationZBox->value()));
 
 	if (treeItems.size() == 1)
 	{
@@ -393,13 +393,17 @@ void MainWindow::setObjectRotation()
 			XMVECTOR objectPosition = XMLoadFloat3(&actor->getPosition());
 			XMVECTOR difference = objectPosition - centerPosition;
 			
-			//Something is terribly wrong.
-			difference = XMVector3Rotate(difference, XMVectorRotateLeft(newRotation, 3));
+			XMVECTOR objectRotation = XMLoadFloat3(&actor->getRotation()) + newRotation;
+			Vector3 newObjectRotation;
+			XMStoreFloat3(&newObjectRotation, objectRotation);
+			actor->setRotation(newObjectRotation);
 
-			objectPosition += difference;
+			XMVECTOR rotatedDiff = XMVector3Transform(difference, rotationMatrix);
+			objectPosition = centerPosition + rotatedDiff;
+
 			Vector3 newObjectPosition;
 			XMStoreFloat3(&newObjectPosition, objectPosition);
-			actor->setPosition(newObjectPosition);		
+			actor->setPosition(newObjectPosition);
 		}
 	}
 	
@@ -1050,21 +1054,7 @@ void MainWindow::on_actionSet_to_Default_Scale_triggered()
 		if(!actor)
 			continue;
 
-		std::shared_ptr<ModelComponent> spModel = actor->getComponent<ModelComponent>(ModelInterface::m_ComponentId).lock();
-		if(spModel)
-        {
-            spModel->setScale(Vector3(1,1,1));
-        }
-
-        std::shared_ptr<PhysicsInterface> physComp = actor->getComponent<PhysicsInterface>(PhysicsInterface::m_ComponentId).lock();
-		if (physComp)
-		{
-			std::shared_ptr<BoundingMeshComponent> meshComp = std::dynamic_pointer_cast<BoundingMeshComponent>(physComp);
-			if (meshComp)
-			{
-				meshComp->setScale(Vector3(1,1,1));
-			}
-		}
+		actor->setScale(Vector3(1,1,1));
 	}
 }
 
