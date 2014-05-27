@@ -126,7 +126,7 @@ void DXWidget::mouseMoveEvent(QMouseEvent* e)
 		if ((e->buttons() & Qt::LeftButton) && !(e->buttons() & Qt::RightButton))
 		{
 			QPointF delta = (e->localPos() - m_PrevMousePos) / (float)height() * DirectX::XM_PI;
-			if (e->modifiers() & Qt::Modifier::CTRL)
+			if (e->modifiers() & Qt::Modifier::ALT)
 			{
 				m_Camera.rotate(delta.x(), delta.y(), 0.f);
 			}
@@ -143,13 +143,14 @@ void DXWidget::mouseMoveEvent(QMouseEvent* e)
 			//QPointF delta = (e->localPos() - m_ClickPos) / (float)height() * m_Camera->getCenterOfInterest();
 			//moveCamera(0, 0, delta.y());
 
-			QPointF mouseDir = e->localPos() - m_PrevMousePos;
+			QPointF mouseDir = e->localPos() - m_MouseStartPos;
 
 			qreal dotMouseDir = QPointF::dotProduct(mouseDir, mouseDir);
 			dotMouseDir = sqrtf(dotMouseDir);
 			mouseDir = mouseDir / dotMouseDir;
 
-			m_MouseDir = m_MouseDirPrev * 0.95f + mouseDir * 0.05f;
+			m_MouseDir = mouseDir;
+			//m_MouseDir = m_MouseDirPrev * 0.95f + mouseDir * 0.05f;
 
 			float a = atan2f(-m_MouseDir.x(), m_MouseDir.y());
 
@@ -169,7 +170,7 @@ void DXWidget::mouseMoveEvent(QMouseEvent* e)
 			std::shared_ptr<PowerPieSelectEventData> pie(new PowerPieSelectEventData(a));
 			m_EventManager->queueEvent(pie);
 
-			((QMainWindow*)window())->statusBar()->showMessage("Angle: " + QString::number(a));
+			//((QMainWindow*)window())->statusBar()->showMessage("Angle: " + QString::number(a));
 
 			m_MouseDirPrev = m_MouseDir;
 

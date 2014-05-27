@@ -418,8 +418,9 @@ void MyDX11Widget::selectPie(IEventData::Ptr p_Data)
 {
 	std::shared_ptr<PowerPieSelectEventData> pie = std::static_pointer_cast<PowerPieSelectEventData>(p_Data);
 
-	m_Graphics->set2D_ObjectPosition(m_GUI["PiePiece"], Vector3(m_PowerPie.position.x, m_PowerPie.position.y, (float)DRAW::LOW));
-	Vector4 color(0.9101f, 0.f, 0.f, 1.f);
+	m_Graphics->set2D_ObjectPosition(m_GUI["PiePiece"], Vector3(m_PowerPie.position.x, m_PowerPie.position.y, (float)DRAW::MEDIUM));
+	Vector4 color(0.264f, 0.4082f, 0.752f, 3.0f);
+	
 	m_Graphics->set2D_ObjectColor(m_GUI["PiePiece"], color);
 
 	m_Graphics->set2D_ObjectRotationZ(m_GUI["PiePiece"], m_PowerPie.angle * pie->getIndex());
@@ -438,7 +439,7 @@ void MyDX11Widget::activatePowerPie(IEventData::Ptr p_Data)
 
 	m_Graphics->set2D_ObjectPosition(m_GUI["PowerPie"], Vector3(pos.x, pos.y, (float)DRAW::HIGH));
 
-	Vector4 color(0.9101f, 0.8632f, 0.0937f, 0.f);
+	Vector4 color(0.f, 0.f, 0.9937f, 0.f);
 	m_Graphics->set2D_ObjectColor(m_GUI["PiePiece"], color);
 	
 	unsigned int index = 0;
@@ -458,7 +459,8 @@ void MyDX11Widget::selectActor(IEventData::Ptr p_Data)
 
 void MyDX11Widget::createPowerPieElement()
 {
-	Vector4 color(0.9101f, 0.8632f, 0.0937f, 2.f);
+	//Vector4 color(0.9101f, 0.8632f, 0.0937f, 2.f);
+	Vector4 color(0.207f, 0.207f, 0.207f, 1.f);
 	Vector3 position(0.f, 0.f, 0.f);
 	Vector3 scale(1.f, 1.f, 1.f);
 
@@ -466,7 +468,7 @@ void MyDX11Widget::createPowerPieElement()
 	m_Graphics->set2D_ObjectColor(m_GUI["PowerPie"], color);
 
 	position = Vector3(0.f, 0.f, 5.f);
-	color = Vector4(0.9101f, 0.9632f, 0.f, 0.f);
+	color = Vector4(0.164f, 0.5082f, 0.852f, 0.f);
 
 	m_GUI.insert(std::pair<std::string, int>("PiePiece", m_Graphics->create2D_Object(position, Vector2(128.f, 128.f), scale, 0.f, "PiePiece")));
 	m_Graphics->set2D_ObjectColor(m_GUI["PiePiece"], color);
