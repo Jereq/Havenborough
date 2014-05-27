@@ -1018,7 +1018,7 @@ void MainWindow::on_actionSet_to_Default_Scale_triggered()
 			std::shared_ptr<BoundingMeshComponent> meshComp = std::dynamic_pointer_cast<BoundingMeshComponent>(physComp);
 			if (meshComp)
 			{
-				meshComp->setScale(Vector3(1,1,1));
+				meshComp->setScale(Vector3(1,1,1), false);
 			}
 		}
 	}

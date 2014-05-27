@@ -57,7 +57,7 @@ public:
 	 */
 	virtual bool isOnSomething() const = 0;
 
-	virtual void setScale(const Vector3& p_Scale) = 0;
+	virtual void setScale(const Vector3& p_Scale, bool p_Pinned) = 0;
 };
 
 /**
@@ -235,7 +235,7 @@ public:
 	{
 		return m_Physics->getBodyOnSomething(m_Body);
 	}
-	void setScale(const Vector3& p_Scale) override
+	void setScale(const Vector3& p_Scale, bool p_Pinned) override
 	{
 		if (p_Scale.x == 0.f || p_Scale.y == 0.f || p_Scale.z == 0.f)
 		{
@@ -248,6 +248,14 @@ public:
 		relativeScale.z = p_Scale.z / m_Scale.z;
 		m_Scale = p_Scale;
 		m_Physics->setBodyScale(m_Body, relativeScale);
+
+		if (!p_Pinned)
+		{
+			m_OffsetPosition.x *= relativeScale.x;
+			m_OffsetPosition.y *= relativeScale.y;
+			m_OffsetPosition.z *= relativeScale.z;
+			setPosition(m_Owner->getPosition());
+		}
 	}
 };
 
@@ -360,8 +368,9 @@ public:
 	{
 		return m_Physics->getBodyOnSomething(m_Body);
 	}
-	void setScale(const Vector3& p_Scale) override
+	void setScale(const Vector3& p_Scale, bool p_Pinned) override
 	{
+		(void)p_Pinned;
 		m_Physics->setBodyScale(m_Body, p_Scale);
 	}
 
@@ -486,8 +495,9 @@ public:
 	{
 		return m_Physics->getBodyOnSomething(m_Body);
 	}
-	void setScale(const Vector3& p_Scale) override
+	void setScale(const Vector3& p_Scale, bool p_Pinned) override
 	{
+		(void)p_Pinned;
 		m_Physics->setBodyScale(m_Body, p_Scale);
 	}
 };
@@ -602,8 +612,10 @@ public:
 		return m_Physics->getBodyOnSomething(m_Body);
 	}
 
-	void setScale(const Vector3& p_Scale) override
+	void setScale(const Vector3& p_Scale, bool p_Pinned) override
 	{
+		(void)p_Pinned;
+
 		if (p_Scale.x == 0.f || p_Scale.y == 0.f || p_Scale.z == 0.f)
 		{
 			return;
