@@ -219,7 +219,6 @@ void Tree::collectTreeItems(QTreeWidgetItem *currentItem, QList<TreeItem*> *item
 void Tree::mousePressEvent( QMouseEvent *mouseEvent)
 {
 	QModelIndex item = indexAt(mouseEvent->pos());
-    bool selected = selectionModel()->isSelected(indexAt(mouseEvent->pos()));
     QTreeView::mousePressEvent(mouseEvent);
     if ((item.row() == -1 && item.column() == -1))
     {

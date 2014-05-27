@@ -57,7 +57,6 @@ private:
 
 	std::map<std::string, QShortcut*> m_Hotkey;
 	bool m_LevelLoaded;
-	QProgressBar *progress;
     QFileSystemModelDialog* m_FileSystemDialog;
 	CameraInterpolation m_CamInt;
 	

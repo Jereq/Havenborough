@@ -74,8 +74,6 @@ MainWindow::MainWindow(QWidget *parent) :
     m_FileSystemDialog = new QFileSystemModelDialog(this);
 	m_FileSystemDialog->setViews(ui->m_FileSystemTreeView, ui->m_FileSystemListView);
 	m_LevelLoaded = false;
-	progress = new QProgressBar(ui->statusBar);
-	ui->statusBar->addWidget(progress);
 
 }
 
@@ -214,11 +212,6 @@ void MainWindow::on_actionOpen_triggered()
         dialog.exec();
 
         futureWatcher.waitForFinished();
-		dialog.show();
-		dialog.setValue(0);
-		//loadLevel(fullFilePath.toStdString());
-		dialog.setValue(dialog.maximum());
-		m_LevelLoaded = true;
 	}
 }
 
