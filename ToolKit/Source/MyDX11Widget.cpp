@@ -106,7 +106,7 @@ void MyDX11Widget::render()
 		for (auto bodyHandle : selectedObject->getBodyHandles())
 		{
 			const unsigned int numVolumes = m_Physics->getNrOfVolumesInBody(bodyHandle);
-			for (unsigned int vol = 0; vol <= numVolumes; ++vol)
+			for (unsigned int vol = 0; vol < numVolumes; ++vol)
 			{
 				const unsigned int numTriangles = m_Physics->getNrOfTrianglesFromBody(bodyHandle, vol);
 				for (unsigned int i = 0; i < numTriangles; ++i)
