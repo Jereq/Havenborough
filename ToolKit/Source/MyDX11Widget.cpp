@@ -127,21 +127,22 @@ void MyDX11Widget::render()
 		{
 		case LightClass::Type::DIRECTIONAL:
 			{
+				m_Graphics->createBillboard_Object(Vector3(0,0,0), Vector2(100,100), 1.f, 1.f, "DIRECTIONAL");
 				m_Graphics->useFrameDirectionalLight(light.color, light.direction, light.intensity);
 				usingDirectional = true;
 				break;
 			}
 		case LightClass::Type::POINT:
 			{
+				m_Graphics->createBillboard_Object(light.position, Vector2(100,100), 1.f, 1.f, "POINT");
 				m_Graphics->useFramePointLight(light.position, light.color, light.range);
-
 				break;
 			}
 		case LightClass::Type::SPOT:
 			{
+				m_Graphics->createBillboard_Object(light.position, Vector2(100,100), 1.f, 1.f, "SPOT");
 				m_Graphics->useFrameSpotLight(light.position, light.color, light.direction,
 					light.spotlightAngles, light.range);
-
 				break;
 			}
 		}
@@ -504,6 +505,9 @@ void MyDX11Widget::preLoadModels()
 	{
 		"PowerPie",
 		"PiePiece",
+		"DIRECTIONAL",
+		"SPOT",
+		"POINT"
 	};
 	for (const std::string &texture : preloadedTextures)
 	{

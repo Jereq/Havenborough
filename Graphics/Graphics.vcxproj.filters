@@ -80,6 +80,9 @@
     <ClCompile Include="Source\GPUTimer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\BillboardRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Buffer.h">
@@ -182,6 +185,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\FontCollectionLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BillboardRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BillboardRenderable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -97,6 +97,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\BillboardRenderer.cpp" />
     <ClCompile Include="Source\FontCollectionLoader.cpp" />
     <ClCompile Include="Source\GPUTimer.cpp" />
     <ClCompile Include="Source\ParticleInstance.cpp" />
@@ -121,6 +122,8 @@
     <ClCompile Include="Source\TextRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\BillboardRenderable.h" />
+    <ClInclude Include="Source\BillboardRenderer.h" />
     <ClInclude Include="Source\FontCollectionLoader.h" />
     <ClInclude Include="Source\GPUTimer.h" />
     <ClInclude Include="Source\Renderable2D.h" />
