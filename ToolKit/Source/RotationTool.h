@@ -21,12 +21,14 @@ private:
 	{
 		NONE,
 		YAW,
+		PITCH,
+		ROLL,
 		MOVE,
 	};
 	Tool m_SelectedTool;
 
 	float m_CurrentRadius;
-	float m_CurrentYaw;
+	Vector3 m_CurrentRotation;
 
 	Vector3 m_SelectionPos;
 	bool m_ObjectSelected;
@@ -36,6 +38,12 @@ private:
 
 	IGraphics::InstanceId m_YawCircleModel;
 	BodyHandle m_YawCircleBody;
+
+	IGraphics::InstanceId m_PitchCircleModel;
+	BodyHandle m_PitchCircleBody;
+
+	IGraphics::InstanceId m_RollCircleModel;
+	BodyHandle m_RollCircleBody;
 
 	BodyHandle m_MoveSphere;
 
@@ -50,7 +58,7 @@ public:
 
 	void render();
 	void pick(BodyHandle p_PickedBody);
-	void setSelection(Vector3 p_Position, float p_Radius);
+	void setSelection(Vector3 p_Position, float p_Radius, Vector3 p_Rotation);
 	void deselect();
 
 	void mouseReleased();
@@ -59,4 +67,9 @@ public:
 signals:
 	void rotation(Vector3 p_Rotation);
 	void translation(Vector3 p_Translation);
+
+private:
+	void recreateBodies();
+	void updateBodyRotations();
+	void updateModelRotations();
 };

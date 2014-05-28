@@ -82,8 +82,8 @@ private slots:
     void setObjectRotation();
     void setObjectPosition();
 
-	void addObjectRotation(Vector3 p_Rotation);
-	void addObjectTranslation(Vector3 p_Translation);
+	void setObjectRotation(Vector3 p_Rotation);
+	void setObjectTranslation(Vector3 p_Translation);
 
 	void setLightPosition();
 	void setLightColor();

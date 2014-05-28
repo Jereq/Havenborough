@@ -152,8 +152,8 @@ void MainWindow::signalAndSlotsDefinitions()
 	//Signal and slot for removing actor when pressing remove in the tree.
 	QObject::connect(ui->m_ObjectTree, SIGNAL(removeActor(int)), m_ObjectManager.get(), SLOT(actorRemoved(int)));
 
-	QObject::connect(m_RotationTool.get(), SIGNAL(rotation(Vector3)), this, SLOT(addObjectRotation(Vector3)));
-	QObject::connect(m_RotationTool.get(), SIGNAL(translation(Vector3)), this, SLOT(addObjectTranslation(Vector3)));
+	QObject::connect(m_RotationTool.get(), SIGNAL(rotation(Vector3)), this, SLOT(setObjectRotation(Vector3)));
+	QObject::connect(m_RotationTool.get(), SIGNAL(translation(Vector3)), this, SLOT(setObjectTranslation(Vector3)));
 
 	QObject::connect(ui->m_ObjectTree, SIGNAL(deselectAll()), this, SLOT(deselectAllTreeItems()));
 	QObject::connect(this, SIGNAL(deselectAll()), this, SLOT(deselectAllTreeItems()));
@@ -395,7 +395,7 @@ void MainWindow::setObjectRotation()
     }
 }
 
-void MainWindow::addObjectRotation(Vector3 p_Rotation)
+void MainWindow::setObjectRotation(Vector3 p_Rotation)
 {
     QTreeWidgetItem *currItem = ui->m_ObjectTree->currentItem();
     if(currItem)
@@ -405,14 +405,14 @@ void MainWindow::addObjectRotation(Vector3 p_Rotation)
         if(currItem->isSelected() && cItem)
         {
 			Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
-			actor->setRotation(actor->getRotation() + p_Rotation);
+			actor->setRotation(p_Rotation);
 
 			itemPropertiesChanged();
         }
     }
 }
 
-void MainWindow::addObjectTranslation(Vector3 p_Translation)
+void MainWindow::setObjectTranslation(Vector3 p_Translation)
 {
 	QTreeWidgetItem* currItem = ui->m_ObjectTree->currentItem();
 	if (currItem)
@@ -422,7 +422,7 @@ void MainWindow::addObjectTranslation(Vector3 p_Translation)
 		if (currItem->isSelected() && cItem)
 		{
 			Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
-			actor->setPosition(actor->getPosition() + p_Translation);
+			actor->setPosition(p_Translation);
 
 			itemPropertiesChanged();
 		}
@@ -905,7 +905,7 @@ void MainWindow::itemPropertiesChanged(void)
 				{
 					radius = m_Physics->getSurroundingSphereRadius(comp->getBodyHandle());
 				}
-				m_RotationTool->setSelection(position, radius);
+				m_RotationTool->setSelection(position, radius, rotation);
 			}
 			else if (spmodel)
 			{
