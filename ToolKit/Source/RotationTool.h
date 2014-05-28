@@ -59,7 +59,6 @@ public:
 	void render();
 	void pick(BodyHandle p_PickedBody);
 	void setSelection(Vector3 p_Position, float p_Radius, Vector3 p_Rotation);
-	void deselect();
 
 	void mouseReleased();
 	void mouseMovement(QPointF p_PreviousPosition, QPointF p_NewPosition);
@@ -67,6 +66,9 @@ public:
 signals:
 	void rotation(Vector3 p_Rotation);
 	void translation(Vector3 p_Translation);
+
+public slots:
+	void deselect();
 
 private:
 	void recreateBodies();
