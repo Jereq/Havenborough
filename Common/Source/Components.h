@@ -586,7 +586,13 @@ public:
 
 	void setRotation(Vector3 p_Rotation) override
 	{
-		m_Physics->setBodyRotation(m_Body, p_Rotation - m_Owner->getRotation());
+		// Ugly fix for bad physics interface
+		//m_Physics->setBodyRotation(m_Body, p_Rotation - m_Owner->getRotation());
+		m_Physics->releaseBody(m_Body);
+		m_Body = m_Physics->createBVInstance(m_MeshName.c_str());
+		m_Physics->setBodyScale(m_Body, m_Scale);
+		m_Physics->setBodyRotation(m_Body, p_Rotation);
+		m_Physics->setBodyPosition(m_Body, m_Owner->getPosition());
 	}
 
 	BodyHandle getBodyHandle() const override
