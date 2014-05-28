@@ -568,6 +568,7 @@ void MainWindow::deselectAllTreeItems()
 	}
 
 	m_RotationTool->deselect();
+	m_EventManager.queueEvent(IEventData::Ptr(new SelectObjectEventData(Actor::ptr())));
 }
 
 void MainWindow::shortcutDeselect(void)
