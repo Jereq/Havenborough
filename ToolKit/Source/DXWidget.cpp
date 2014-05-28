@@ -94,7 +94,8 @@ void DXWidget::mousePressEvent(QMouseEvent* e)
 		if ((e->buttons() & Qt::LeftButton) && !(e->buttons() & Qt::RightButton))
 		{
 			m_ToolManager.updateMousePos(e->localPos().x(), e->localPos().y());
-			m_ToolManager.onPress();
+			if (!(e->modifiers() & Qt::Modifier::ALT))
+				m_ToolManager.onPress();
 			//showStatus(tr("Tumble Tool: LMB Drag: Use LMB or MMB to tumble"));
 			setCursor(Qt::OpenHandCursor);
 		}
