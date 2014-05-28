@@ -309,6 +309,13 @@ void MainWindow::setObjectScale()
 			Vector3 scale;
 			XMStoreFloat3(&scale, newScale);
 			actor->setScale(scale);
+
+			float radius = 100.f * (scale.x + scale.y + scale.z) / 3.f;
+			if (std::shared_ptr<PhysicsInterface> comp = actor->getComponent<PhysicsInterface>(PhysicsInterface::m_ComponentId).lock())
+			{
+				radius = m_Physics->getSurroundingSphereRadius(comp->getBodyHandle());
+			}
+			m_RotationTool->setSelection(actor->getPosition(), radius, actor->getRotation());
 		}
 	}
 	else
@@ -377,6 +384,13 @@ void MainWindow::setObjectPosition()
 		Vector3 newPosition;
 		XMStoreFloat3(&newPosition, oldPosition);
 		actor->setPosition(newPosition);
+		
+		float radius = 100.f;
+		if (std::shared_ptr<PhysicsInterface> comp = actor->getComponent<PhysicsInterface>(PhysicsInterface::m_ComponentId).lock())
+		{
+			radius = m_Physics->getSurroundingSphereRadius(comp->getBodyHandle());
+		}
+		m_RotationTool->setSelection(actor->getPosition(), radius, actor->getRotation());
 	}
 }
 
@@ -391,6 +405,13 @@ void MainWindow::setObjectRotation()
         {
 			Actor::ptr actor = m_ObjectManager->getActor(cItem->getActorId());
 			actor->setRotation(Vector3(ui->m_ObjectRotationXBox->value(),ui->m_ObjectRotationYBox->value(),ui->m_ObjectRotationZBox->value()));
+			
+			float radius = 100.f;
+			if (std::shared_ptr<PhysicsInterface> comp = actor->getComponent<PhysicsInterface>(PhysicsInterface::m_ComponentId).lock())
+			{
+				radius = m_Physics->getSurroundingSphereRadius(comp->getBodyHandle());
+			}
+			m_RotationTool->setSelection(actor->getPosition(), radius, actor->getRotation());
         }
     }
 }
