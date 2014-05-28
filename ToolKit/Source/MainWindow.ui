@@ -78,6 +78,7 @@
     <property name="title">
      <string>Edit</string>
     </property>
+    <addaction name="actionDelete"/>
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
@@ -1804,6 +1805,14 @@
   <action name="actionSet_to_Default_Scale">
    <property name="text">
     <string>Set to Default Scale</string>
+   </property>
+  </action>
+  <action name="actionDelete">
+   <property name="text">
+    <string>Delete</string>
+   </property>
+   <property name="shortcut">
+    <string>Del</string>
    </property>
   </action>
  </widget>

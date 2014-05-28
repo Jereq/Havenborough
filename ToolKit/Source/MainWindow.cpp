@@ -124,6 +124,8 @@ void MainWindow::signalAndSlotsDefinitions()
     //Signals and slots for connecting the remove button creation to the trees
 	QObject::connect(ui->m_ObjectTreeRemoveButton, SIGNAL(clicked()), ui->m_ObjectTree, SLOT(removeItem()));
 	QObject::connect(ui->m_ObjectTreeRemoveButton, SIGNAL(clicked()), m_RotationTool.get(), SLOT(deselect()));
+	QObject::connect(ui->actionDelete, SIGNAL(triggered()), ui->m_ObjectTree, SLOT(removeItem()));
+	QObject::connect(ui->actionDelete, SIGNAL(triggered()), m_RotationTool.get(), SLOT(deselect()));
 
     //Signals and slots for connecting the light position editing to the light
     QObject::connect(ui->m_LightPositionXBox, SIGNAL(editingFinished()), this, SLOT(setLightPosition()));
