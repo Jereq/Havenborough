@@ -202,6 +202,11 @@ static float findCursorAngleOnPlane(const Camera* p_Camera, const Vector3& p_Cen
 
 void RotationTool::mouseMovement(QPointF p_PreviousPosition, QPointF p_NewPosition)
 {
+	if (!m_ObjectSelected)
+	{
+		return;
+	}
+
 	QPointF delta = p_NewPosition - p_PreviousPosition;
 
 	switch (m_SelectedTool)
