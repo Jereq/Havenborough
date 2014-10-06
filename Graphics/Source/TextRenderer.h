@@ -1,7 +1,9 @@
 #pragma once
-#include "WrapperFactory.h"
 #include "ConstantBuffers.h"
+#include "ResourceProxy.h"
 #include "Utilities/XMFloatUtil.h"
+#include "WrapperFactory.h"
+
 #include <d3d11.h>
 #include <map>
 #include <vector>
@@ -82,7 +84,8 @@ public:
 	* @param p_RenderTarget the target to render to, should be the same as the others
 	*/
 	void initialize(ID3D11Device *p_Device, ID3D11DeviceContext *p_DeviceContext, DirectX::XMFLOAT3 *p_CameraPosition,
-		DirectX::XMFLOAT4X4 *p_ViewMatrix, DirectX::XMFLOAT4X4 *p_ProjectionMatrix, ID3D11RenderTargetView *p_RenderTarget);
+		DirectX::XMFLOAT4X4 *p_ViewMatrix, DirectX::XMFLOAT4X4 *p_ProjectionMatrix, ID3D11RenderTargetView *p_RenderTarget,
+		ResourceProxy* p_ResProxy);
 
 	/**
 	 * Resizes all rendering buffers, used to change resolution.

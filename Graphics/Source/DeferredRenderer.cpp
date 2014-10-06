@@ -123,7 +123,7 @@ void DeferredRenderer::initialize(ID3D11Device* p_Device, ID3D11DeviceContext* p
 	ID3D11DepthStencilView *p_DepthStencilView, unsigned int p_ScreenWidth, unsigned int p_ScreenHeight,
 	DirectX::XMFLOAT3 p_CameraPosition, DirectX::XMFLOAT4X4 *p_ViewMatrix,	DirectX::XMFLOAT4X4 *p_ProjectionMatrix, int p_ShadowMapResolution,
 	std::vector<Light> *p_SpotLights, std::vector<Light> *p_PointLights, std::vector<Light> *p_DirectionalLights, Light *p_ShadowMappedLight,
-	float *p_FOV, float p_FarZ)
+	float *p_FOV, float p_FarZ, ResourceProxy* p_ResProxy)
 {
 	m_Device			= p_Device;
 	m_DeviceContext		= p_DeviceContext;
@@ -141,6 +141,8 @@ void DeferredRenderer::initialize(ID3D11Device* p_Device, ID3D11DeviceContext* p
 	m_FarZ = p_FarZ;
 	m_ScreenWidth = (float)p_ScreenWidth;
 	m_ScreenHeight = (float)p_ScreenHeight;
+
+	m_ResProxy = p_ResProxy;
 
 	if(!m_Device || !m_DeviceContext)
 		throw DeferredRenderException("Failed to initialize deferred renderer, nullpointers not allowed",
@@ -534,7 +536,7 @@ void DeferredRenderer::createSkyDome(ID3D11ShaderResourceView* p_Texture, float 
 		SAFE_DELETE(m_SkyDome);
 
 	m_SkyDome = new SkyDome();
-	m_SkyDome->init(m_Device, m_DeviceContext, p_Texture, p_Radius);
+	m_SkyDome->init(m_Device, m_DeviceContext, p_Texture, p_Radius, m_ResProxy);
 }
 
 void DeferredRenderer::renderSkyDome()
@@ -929,15 +931,19 @@ void DeferredRenderer::createShaders()
 		{"INTENSITY",	0, Format::R32_FLOAT,		1, 48, D3D11_INPUT_PER_INSTANCE_DATA, 1},
 	};
 
-	m_Shader["SpotLight"] = WrapperFactory::getInstance()->createShader(L"assets/shaders/LightPassSpotLight.hlsl", nullptr,
+	ResourceProxy::Buff buff = m_ResProxy->getData("assets/shaders/LightPassSpotLight.hlsl");
+	m_Shader["SpotLight"] = WrapperFactory::getInstance()->createShader(buff.data, buff.size, nullptr,
 		"SpotLightVS,SpotLightPS", "5_0",ShaderType::VERTEX_SHADER | ShaderType::PIXEL_SHADER, shaderDesc, 7);
 
-	m_Shader["PointLight"] = WrapperFactory::getInstance()->createShader(L"assets/shaders/LightPassPointLight.hlsl", nullptr,
+	buff = m_ResProxy->getData("assets/shaders/LightPassPointLight.hlsl");
+	m_Shader["PointLight"] = WrapperFactory::getInstance()->createShader(buff.data, buff.size, nullptr,
 		"PointLightVS,PointLightPS", "5_0",ShaderType::VERTEX_SHADER | ShaderType::PIXEL_SHADER, shaderDesc, 7);
 	std::string resolution = std::to_string(m_ShadowMapResolution);
 	std::string border = std::to_string(m_ShadowMapBorder);
 	D3D_SHADER_MACRO preDefines[3] = {{ "SHADOW_RES", resolution.c_str()}, { "SHADOW_BORDER", border.c_str()}, nullptr};
-	m_Shader["DirectionalLight"] = WrapperFactory::getInstance()->createShader(L"assets/shaders/LightPassDirectionalLight.hlsl", preDefines,
+
+	buff = m_ResProxy->getData("assets/shaders/LightPassDirectionalLight.hlsl");
+	m_Shader["DirectionalLight"] = WrapperFactory::getInstance()->createShader(buff.data, buff.size, preDefines,
 		"DirectionalLightVS,DirectionalLightPS", "5_0",ShaderType::VERTEX_SHADER | ShaderType::PIXEL_SHADER, shaderDesc, 7);
 
 	ShaderInputElementDescription instanceshaderDesc[] = 
@@ -967,21 +973,25 @@ void DeferredRenderer::createShaders()
 		{"WORLD", 3, Format::R32G32B32A32_FLOAT, 1, 48, D3D10_INPUT_PER_INSTANCE_DATA, 1},
 	};
 
-	m_Shader["IGeometry"] = WrapperFactory::getInstance()->createShader(L"assets/shaders/GeoInstanceShader.hlsl", nullptr,
+	buff = m_ResProxy->getData("assets/shaders/GeoInstanceShader.hlsl");
+	m_Shader["IGeometry"] = WrapperFactory::getInstance()->createShader(buff.data, buff.size, nullptr,
 		"VS,PS", "5_0",ShaderType::VERTEX_SHADER | ShaderType::PIXEL_SHADER, instanceshaderDesc, 10);
 
-	m_Shader["ShadowMapGeometry"] = WrapperFactory::getInstance()->createShader(L"assets/shaders/ShadowMapGeometry.hlsl", nullptr,
+	buff = m_ResProxy->getData("assets/shaders/ShadowMapGeometry.hlsl");
+	m_Shader["ShadowMapGeometry"] = WrapperFactory::getInstance()->createShader(buff.data, buff.size, nullptr,
 		"VS,PS", "5_0", ShaderType::VERTEX_SHADER| ShaderType::PIXEL_SHADER, instanceshaderDescSHADOWMAP, 9); 
 
-	m_Shader["SSAO"] = WrapperFactory::getInstance()->createShader(L"assets/shaders/SSAO.hlsl",
+	buff = m_ResProxy->getData("assets/shaders/SSAO.hlsl");
+	m_Shader["SSAO"] = WrapperFactory::getInstance()->createShader(buff.data, buff.size,
 		"VS,PS", "5_0",ShaderType::VERTEX_SHADER | ShaderType::PIXEL_SHADER);
 
-
-	m_Shader["SSAO_Blur"] = WrapperFactory::getInstance()->createShader(L"assets/shaders/SSAO_Blur.hlsl",
+	buff = m_ResProxy->getData("assets/shaders/SSAO_Blur.hlsl");
+	m_Shader["SSAO_Blur"] = WrapperFactory::getInstance()->createShader(buff.data, buff.size,
 		"VS,PS", "5_0", ShaderType::VERTEX_SHADER | ShaderType::PIXEL_SHADER);
 
+	buff = m_ResProxy->getData("assets/shaders/LightPassAmbient.hlsl");
 	D3D_SHADER_MACRO ambientDefine[2] = {{ "AMBIENT_STRENGTH", "0.315f" }, nullptr };
-	m_Shader["Ambient"] = WrapperFactory::getInstance()->createShader(L"assets/shaders/LightPassAmbient.hlsl",
+	m_Shader["Ambient"] = WrapperFactory::getInstance()->createShader(buff.data, buff.size,
 		ambientDefine, "VS,PS", "5_0", ShaderType::VERTEX_SHADER | ShaderType::PIXEL_SHADER);
 
 	m_FogColor = std::string("0.15f,0.35f,0.6f");
@@ -993,7 +1003,8 @@ void DeferredRenderer::createShaders()
 void DeferredRenderer::loadLightModels()
 {
 	ModelBinaryLoader modelLoader;
-	modelLoader.loadBinaryFile("assets/LightModels/SpotLight.btx");
+	Buff buff = m_ResProxy->getData("assets/LightModels/SpotLight.btx");
+	modelLoader.loadBinaryFromMemory(buff.data, buff.size);
 	const std::vector<StaticVertex>& vertices = modelLoader.getStaticVertexBuffer();
 	std::vector<DirectX::XMFLOAT3> temp;
 	for(unsigned int i = 0; i < vertices.size(); i++)
@@ -1011,7 +1022,8 @@ void DeferredRenderer::loadLightModels()
 
 	m_Buffer["SpotLightModel"] = WrapperFactory::getInstance()->createBuffer(cbdesc);
 	temp.clear();
-	modelLoader.loadBinaryFile("assets/LightModels/Sphere2.btx");
+	buff = m_ResProxy->getData("assets/LightModels/Sphere2.btx");
+	modelLoader.loadBinaryFromMemory(buff.data, buff.size);
 	for(unsigned int i = 0; i < vertices.size(); i++)
 	{
 		temp.push_back(DirectX::XMFLOAT3(vertices.at(i).m_Position.x,vertices.at(i).m_Position.y,vertices.at(i).m_Position.z));
@@ -1486,8 +1498,9 @@ void DeferredRenderer::registerTweakSettings()
 			SAFE_DELETE(m_Shader["Ambient"]);
 
 			std::string strength = std::to_string(p_Value) + 'f';
+			Buff buff = m_ResProxy->getData("assets/shaders/LightPassAmbient.hlsl");
 			D3D_SHADER_MACRO ambientDefine[2] = {{ "AMBIENT_STRENGTH", strength.c_str() }, nullptr };
-			m_Shader["Ambient"] = WrapperFactory::getInstance()->createShader(L"assets/shaders/LightPassAmbient.hlsl",
+			m_Shader["Ambient"] = WrapperFactory::getInstance()->createShader(buff.data, buff.size,
 				ambientDefine, "VS,PS", "5_0", ShaderType::VERTEX_SHADER | ShaderType::PIXEL_SHADER);
 		}
 	));
@@ -1537,8 +1550,9 @@ void DeferredRenderer::recompileFogShader(void)
 	Shader *tempFogShader = nullptr;
 	try
 	{
-		tempFogShader = WrapperFactory::getInstance()->createShader(L"assets/shaders/DistanceFog.hlsl",
-		fogDefine, "DistanceFogVS,DistanceFogPS", "5_0", ShaderType::VERTEX_SHADER | ShaderType::PIXEL_SHADER);
+		Buff buff = m_ResProxy->getData("assets/shaders/DistanceFog.hlsl");
+		tempFogShader = WrapperFactory::getInstance()->createShader(buff.data, buff.size,
+			fogDefine, "DistanceFogVS,DistanceFogPS", "5_0", ShaderType::VERTEX_SHADER | ShaderType::PIXEL_SHADER);
 	}
 	catch (...)
 	{

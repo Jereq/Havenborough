@@ -134,6 +134,7 @@
     <ClInclude Include="Source\ForwardRendering.h" />
     <ClInclude Include="include\ShaderDefinitions.h" />
     <ClInclude Include="Source\Renderable.h" />
+    <ClInclude Include="Source\ResourceProxy.h" />
     <ClInclude Include="Source\ScreenRenderer.h" />
     <ClInclude Include="Source\SkyDome.h" />
     <ClInclude Include="Source\DeferredRenderer.h" />

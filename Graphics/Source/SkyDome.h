@@ -1,4 +1,5 @@
 #pragma once
+#include "ResourceProxy.h"
 #include "WrapperFactory.h"
 
 #include <DirectXMath.h>
@@ -36,7 +37,7 @@ public:
 	* @param p_Radius the size of the sphere's radius in cm
 	*/
 	bool init(ID3D11Device *p_Device, ID3D11DeviceContext *p_DeviceContext, 
-		ID3D11ShaderResourceView* p_Texture, float p_Radius);
+		ID3D11ShaderResourceView* p_Texture, float p_Radius, ResourceProxy* p_ResProxy);
 
 	/**
 	* Initialize the sky dome 

@@ -52,6 +52,8 @@ public:
 	 *
 	 */
 	void loadBinaryFile(std::string p_FilePath);
+
+	void loadBinaryFromMemory(const char* p_Data, uint32_t p_DataLen);
 	
 	/**
 	 * Returns information about the materials used in the model.

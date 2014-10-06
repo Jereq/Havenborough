@@ -62,13 +62,13 @@ Buffer *WrapperFactory::createBuffer(Buffer::Description &p_Description)
 	}
 }
 
-Shader *WrapperFactory::createShader(LPCWSTR p_Filename, const char *p_EntryPoint, const char *p_ShaderModel,
+Shader *WrapperFactory::createShader(const char* p_Data, size_t p_DataLen, const char *p_EntryPoint, const char *p_ShaderModel,
 	ShaderType p_Type)
 {
-	return createShader(p_Filename, nullptr, p_EntryPoint, p_ShaderModel, p_Type);
+	return createShader(p_Data, p_DataLen, nullptr, p_EntryPoint, p_ShaderModel, p_Type);
 }
 
-Shader *WrapperFactory::createShader(LPCWSTR p_Filename, D3D_SHADER_MACRO *p_Defines, const char *p_EntryPoint, const char *p_ShaderModel,
+Shader *WrapperFactory::createShader(const char* p_Data, size_t p_DataLen, D3D_SHADER_MACRO *p_Defines, const char *p_EntryPoint, const char *p_ShaderModel,
 	ShaderType p_Type)
 {
 	Shader *shader = new Shader();
@@ -85,7 +85,7 @@ Shader *WrapperFactory::createShader(LPCWSTR p_Filename, D3D_SHADER_MACRO *p_Def
 			{
 				entryPoint = entryPointList.back();
 				entryPointList.pop_back();
-				addShaderStep(shader, p_Filename, p_Defines, entryPoint.c_str(), p_ShaderModel, Shader::Type(i));
+				addShaderStep(shader, p_Data, p_DataLen, p_Defines, entryPoint.c_str(), p_ShaderModel, Shader::Type(i));
 				if(entryPointList.size() == 0)
 					break;
 			}
@@ -100,7 +100,7 @@ Shader *WrapperFactory::createShader(LPCWSTR p_Filename, D3D_SHADER_MACRO *p_Def
 	}
 }
 
-Shader *WrapperFactory::createShader(LPCWSTR p_Filename, D3D_SHADER_MACRO *p_Defines, const char *p_EntryPoint, const char *p_ShaderModel,
+Shader *WrapperFactory::createShader(const char* p_Data, size_t p_DataLen, D3D_SHADER_MACRO *p_Defines, const char *p_EntryPoint, const char *p_ShaderModel,
 	ShaderType p_Type, ShaderInputElementDescription *p_VertexLayout, unsigned int p_NumOfInputElements)
 {
 	Shader *shader = new Shader();
@@ -129,7 +129,7 @@ Shader *WrapperFactory::createShader(LPCWSTR p_Filename, D3D_SHADER_MACRO *p_Def
 			{
 				entryPoint = entryPointList.back();
 				entryPointList.pop_back();
-				addShaderStep(shader, p_Filename, p_Defines, entryPoint.c_str(), p_ShaderModel, Shader::Type(i), desc);
+				addShaderStep(shader, p_Data, p_DataLen, p_Defines, entryPoint.c_str(), p_ShaderModel, Shader::Type(i), desc);
 				if(entryPointList.size() == 0)
 					break;
 			}
@@ -147,7 +147,7 @@ Shader *WrapperFactory::createShader(LPCWSTR p_Filename, D3D_SHADER_MACRO *p_Def
 	}
 }
 
-void WrapperFactory::addShaderStep(Shader *p_Shader, LPCWSTR p_Filename, D3D_SHADER_MACRO *p_Defines, const char *p_EntryPoint,
+void WrapperFactory::addShaderStep(Shader *p_Shader, const char* p_Data, size_t p_DataLen, D3D_SHADER_MACRO *p_Defines, const char *p_EntryPoint,
 	const char *p_ShaderModel, ShaderType p_Type)
 {
 	vector<string> entryPointList = createEntryPointList(p_EntryPoint);
@@ -164,7 +164,7 @@ void WrapperFactory::addShaderStep(Shader *p_Shader, LPCWSTR p_Filename, D3D_SHA
 			{
 				entryPoint = entryPointList.back();
 				entryPointList.pop_back();
-				addShaderStep(p_Shader, p_Filename, p_Defines, entryPoint.c_str(), p_ShaderModel, Shader::Type(i));
+				addShaderStep(p_Shader, p_Data, p_DataLen, p_Defines, entryPoint.c_str(), p_ShaderModel, Shader::Type(i));
 				if(entryPointList.size() == 0)
 					break;
 			}
@@ -257,19 +257,16 @@ vector<string> WrapperFactory::createEntryPointList(const char *p_EntryPoint)
 	return result;
 }
 
-void WrapperFactory::addShaderStep(Shader *p_Shader, LPCWSTR p_Filename, D3D_SHADER_MACRO *p_Defines, const char *p_EntryPoint,
+void WrapperFactory::addShaderStep(Shader *p_Shader, const char* p_Data, size_t p_DataLen, D3D_SHADER_MACRO *p_Defines, const char *p_EntryPoint,
 	const char *p_ShaderModel, Shader::Type p_ShaderType)
 {
-
 	string temp = getShaderModel(p_ShaderModel, p_ShaderType);
-	p_Shader->compileAndCreateShader(p_Filename, p_Defines, p_EntryPoint, temp.c_str(), p_ShaderType, nullptr);
-
+	p_Shader->compileAndCreateShader(p_Data, p_DataLen, p_Defines, p_EntryPoint, temp.c_str(), p_ShaderType, nullptr);
 }
 
-void WrapperFactory::addShaderStep(Shader *p_Shader, LPCWSTR p_Filename, D3D_SHADER_MACRO *p_Defines, const char *p_EntryPoint,
+void WrapperFactory::addShaderStep(Shader *p_Shader, const char* p_Data, size_t p_DataLen, D3D_SHADER_MACRO *p_Defines, const char *p_EntryPoint,
 	const char *p_ShaderModel, Shader::Type p_ShaderType, const D3D11_INPUT_ELEMENT_DESC *p_VertexLayout)
 {
-
 	string temp = getShaderModel(p_ShaderModel, p_ShaderType);
-	p_Shader->compileAndCreateShader(p_Filename, p_Defines, p_EntryPoint, temp.c_str(), p_ShaderType, p_VertexLayout);
+	p_Shader->compileAndCreateShader(p_Data, p_DataLen, p_Defines, p_EntryPoint, temp.c_str(), p_ShaderType, p_VertexLayout);
 }

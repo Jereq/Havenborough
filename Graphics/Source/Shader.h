@@ -4,6 +4,8 @@
 
 #include <d3d11.h>
 
+#include <cstdint>
+
 class Shader
 {
 public:
@@ -15,6 +17,8 @@ public:
 		HULL_SHADER = 3,
 		DOMAIN_SHADER = 4
 	};
+
+	typedef uint32_t ResId;
 
 private:
 	ID3D11Device *m_Device;
@@ -52,13 +56,14 @@ public:
 	
 	/**
 	* Compiles the shader file and initialize the D3D11Shader object based on shader type.
-	* @param p_Filename the shader file to read
+	* @param p_Data the shader file data
+	* @param p_DataLen the length of the data
 	* @param p_EntryPoint the main entry point in the shader file
 	* @param p_ShaderModel the shader model version to be used
 	* @param p_ShaderType the type of shader to create
 	* @param p_VertexLayout the user defined vertex layout shader should use
 	*/
-	HRESULT compileAndCreateShader(LPCWSTR p_Filename, D3D_SHADER_MACRO* p_Defines, const char *p_EntryPoint, const char *p_ShaderModel,
+	HRESULT compileAndCreateShader(const char* p_Data, size_t p_DataLen, D3D_SHADER_MACRO* p_Defines, const char *p_EntryPoint, const char *p_ShaderModel,
 		Type p_ShaderType, const D3D11_INPUT_ELEMENT_DESC *p_VertexLayout);
 
 	/**
@@ -105,6 +110,6 @@ private:
 protected:
 	virtual HRESULT createShader(ID3DBlob *p_ShaderData);
 	virtual void createInputLayoutFromShaderSignature(ID3DBlob *p_ShaderData);
-	virtual HRESULT compileShader(LPCWSTR p_Filename, D3D_SHADER_MACRO* p_Defines, const char *p_EntryPoint,	const char *p_ShaderModel, 
+	virtual HRESULT compileShader(LPVOID p_Data, SIZE_T p_DataSize, LPCSTR p_SourceName, D3D_SHADER_MACRO* p_Defines, const char *p_EntryPoint,	const char *p_ShaderModel, 
 		DWORD p_ShaderFlags, ID3DBlob *&p_ShaderData, ID3DBlob *&p_ErrorMessage);
 };

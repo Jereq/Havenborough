@@ -42,7 +42,7 @@ void Shader::initialize(ID3D11Device *p_Device, ID3D11DeviceContext *p_DeviceCon
 	m_NumOfElements = p_NumOfElements;
 }
 
-HRESULT Shader::compileAndCreateShader(LPCWSTR p_Filename, D3D_SHADER_MACRO* p_Defines, const char *p_EntryPoint,
+HRESULT Shader::compileAndCreateShader(const char* p_Data, size_t p_DataLen, D3D_SHADER_MACRO* p_Defines, const char *p_EntryPoint,
 	const char *p_ShaderModel, Type p_ShaderType,
 	const D3D11_INPUT_ELEMENT_DESC *p_VertexLayout)
 {
@@ -58,8 +58,7 @@ HRESULT Shader::compileAndCreateShader(LPCWSTR p_Filename, D3D_SHADER_MACRO* p_D
 	ID3DBlob *errorMessage = nullptr;
 	ID3DBlob *shaderData = nullptr;
 
-
-	result = compileShader(p_Filename, p_Defines, p_EntryPoint, p_ShaderModel, shaderFlags, shaderData, errorMessage);
+	result = compileShader((LPVOID)p_Data, p_DataLen, nullptr, p_Defines, p_EntryPoint, p_ShaderModel, shaderFlags, shaderData, errorMessage);
 
 	if(FAILED(result))
 	{
@@ -67,17 +66,13 @@ HRESULT Shader::compileAndCreateShader(LPCWSTR p_Filename, D3D_SHADER_MACRO* p_D
 		{
 			SAFE_RELEASE(errorMessage);
 			SAFE_RELEASE(shaderData);
-			std::wstring foo = p_Filename;
-			throw ShaderException("Error when trying to compile shader. Could be missing file: " +
-				std::string(foo.begin(), foo.end()), __LINE__, __FILE__);			
+			throw ShaderException("Error when trying to compile shader. Could be missing data", __LINE__, __FILE__);			
 		}
 		else
 		{
-			std::string temp = (std::string)(char*)errorMessage->GetBufferPointer();
+			std::string temp = std::string((char*)errorMessage->GetBufferPointer(), errorMessage->GetBufferSize());
 			SAFE_RELEASE(errorMessage);
-			std::wstring filename(p_Filename);
-			throw ShaderException("Error when compiling shader: "
-				+ std::string(filename.begin(), filename.end()) + "\n" + temp, __LINE__, __FILE__);
+			throw ShaderException("Error when compiling shader\n" + temp, __LINE__, __FILE__);
 		}
 	}
 
@@ -405,9 +400,9 @@ HRESULT Shader::createShader(ID3DBlob *p_ShaderData)
 	return result;
 }
 
-HRESULT Shader::compileShader(LPCWSTR p_Filename, D3D_SHADER_MACRO* p_Defines, const char *p_EntryPoint, const char *p_ShaderModel,
+HRESULT Shader::compileShader(LPVOID p_Data, SIZE_T p_DataSize, LPCSTR p_SourceName, D3D_SHADER_MACRO* p_Defines, const char *p_EntryPoint, const char *p_ShaderModel,
 	DWORD p_ShaderFlags, ID3DBlob *&p_ShaderData, ID3DBlob *&p_ErrorMessage )
 {
-	return D3DCompileFromFile(p_Filename, p_Defines, D3D_COMPILE_STANDARD_FILE_INCLUDE, p_EntryPoint, p_ShaderModel,
+	return D3DCompile(p_Data, p_DataSize, p_SourceName, p_Defines, D3D_COMPILE_STANDARD_FILE_INCLUDE, p_EntryPoint, p_ShaderModel,
 		p_ShaderFlags, 0, &p_ShaderData, &p_ErrorMessage);
 }

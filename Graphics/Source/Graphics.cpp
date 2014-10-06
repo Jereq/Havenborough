@@ -205,7 +205,7 @@ bool Graphics::initialize(HWND p_Hwnd, int p_ScreenWidth, int p_ScreenHeight, bo
 	m_DeferredRender->enableShadowMap(m_ShadowMap);
 	m_DeferredRender->initialize(m_Device,m_DeviceContext, m_DepthStencilView,p_ScreenWidth, p_ScreenHeight,
 		m_Eye, &m_ViewMatrix, &m_ProjectionMatrix, m_ShadowMapResolution, &m_SpotLights, &m_PointLights, &m_DirectionalLights, &m_ShadowMappedLight, 
-		&m_FOV, m_FarZ);
+		&m_FOV, m_FarZ, &m_ResProxy);
 	
 	//Forward renderer
 	m_ForwardRenderer = new ForwardRendering();
@@ -215,16 +215,17 @@ bool Graphics::initialize(HWND p_Hwnd, int p_ScreenWidth, int p_ScreenHeight, bo
 	//Screen renderer
 	m_ScreenRenderer = new ScreenRenderer();
 	m_ScreenRenderer->initialize(m_Device, m_DeviceContext, &m_ViewMatrix, 
-		XMFLOAT4((float)p_ScreenWidth, (float)p_ScreenHeight, 0.f, (float)p_ScreenWidth), m_DepthStencilView, m_RenderTargetView);
+		XMFLOAT4((float)p_ScreenWidth, (float)p_ScreenHeight, 0.f, (float)p_ScreenWidth), m_DepthStencilView, m_RenderTargetView,
+		&m_ResProxy);
 
 	//Text renderer
 	m_TextRenderer = new TextRenderer();
 	m_TextRenderer->initialize(m_Device, m_DeviceContext, &m_Eye, &m_ViewMatrix, &m_ProjectionMatrix,
-		m_RenderTargetView);
+		m_RenderTargetView, &m_ResProxy);
 
 	m_BillboardRenderer = new BillboardRenderer();
 	m_BillboardRenderer->init(m_Device, m_DeviceContext, m_Eye, &m_ViewMatrix, &m_ProjectionMatrix, 
-		m_DepthStencilView, m_RenderTargetView);
+		m_DepthStencilView, m_RenderTargetView, &m_ResProxy);
 
 	DebugDefferedDraw();
 	setClearColor(Vector4(0.0f, 0.5f, 0.0f, 1.0f)); 
@@ -352,7 +353,7 @@ void Graphics::shutdown(void)
 
 	for(auto &texture : m_TextureList)
 	{
-		SAFE_RELEASE(texture.second);
+		SAFE_RELEASE(texture.second.second);
 	}
 	m_TextureList.clear();
 		
@@ -429,9 +430,9 @@ void IGraphics::deleteGraphics(IGraphics *p_Graphics)
 	SAFE_DELETE(p_Graphics);
 }
 
-bool Graphics::createModel(const char *p_ModelId, const char *p_Filename)
+bool Graphics::createModel(const char *p_ModelId, ResId p_Res)
 {
-	m_ModelList.insert(pair<string, ModelDefinition>(p_ModelId, std::move(m_ModelFactory->getInstance()->createModel(p_Filename))));
+	m_ModelList.insert(pair<string, ModelDefinition>(p_ModelId, std::move(m_ModelFactory->getInstance()->createModel(p_Res))));
 	return true;
 }
 
@@ -444,13 +445,13 @@ bool Graphics::releaseModel(const char* p_ResourceName)
 		if (!model.is2D)
 		{
 			for (auto& tex : model.diffuseTexture)
-				m_ReleaseModelTexture(tex.first.c_str(), m_ReleaseModelTextureUserdata);
+				m_ReleaseModelTexture(m_TextureList[tex.first].first, m_ReleaseModelTextureUserdata);
 
 			for (auto& tex : model.normalTexture)
-				m_ReleaseModelTexture(tex.first.c_str(), m_ReleaseModelTextureUserdata);
+				m_ReleaseModelTexture(m_TextureList[tex.first].first, m_ReleaseModelTextureUserdata);
 
 			for (auto& tex : model.specularTexture)
-				m_ReleaseModelTexture(tex.first.c_str(), m_ReleaseModelTextureUserdata);
+				m_ReleaseModelTexture(m_TextureList[tex.first].first, m_ReleaseModelTextureUserdata);
 		}
 
 		m_ModelList.erase(resourceName);
@@ -475,20 +476,22 @@ bool Graphics::release2D_Model(Object2D_Id p_ObjectId)
 	return false;
 }
 
-void Graphics::createShader(const char *p_shaderId, LPCWSTR p_Filename, const char *p_EntryPoint,
+void Graphics::createShader(const char *p_shaderId, ResId p_Res, const char *p_EntryPoint,
 	const char *p_ShaderModel, ShaderType p_Type)
 {
+	ResourceProxy::Buff buff = m_ResProxy.getData(p_Res);
+
 	if(m_ShaderList.count(std::string(p_shaderId)) > 0)
 	{
-		m_WrapperFactory->addShaderStep(m_ShaderList.at(std::string(p_shaderId)), p_Filename, nullptr, p_EntryPoint, p_ShaderModel, p_Type);
+		m_WrapperFactory->addShaderStep(m_ShaderList.at(std::string(p_shaderId)), buff.data, buff.size, nullptr, p_EntryPoint, p_ShaderModel, p_Type);
 	}
 	else
 	{
-		m_ShaderList.insert(make_pair(p_shaderId, m_WrapperFactory->createShader(p_Filename, p_EntryPoint, p_ShaderModel, p_Type)));
+		m_ShaderList.insert(make_pair(p_shaderId, m_WrapperFactory->createShader(buff.data, buff.size, p_EntryPoint, p_ShaderModel, p_Type)));
 	}
 }
 
-void Graphics::createShader(const char *p_shaderId, LPCWSTR p_Filename, const char *p_EntryPoint,
+void Graphics::createShader(const char *p_shaderId, ResId p_Res, const char *p_EntryPoint,
 	const char *p_ShaderModel, ShaderType p_Type, ShaderInputElementDescription *p_VertexLayout,
 	unsigned int p_NumOfElements)
 
@@ -498,8 +501,9 @@ void Graphics::createShader(const char *p_shaderId, LPCWSTR p_Filename, const ch
 
 	if(m_ShaderList.count(std::string(p_shaderId)) > 0)
 		throw ShaderException("Failed to create shader, shader already exists", __LINE__, __FILE__);
-
-	m_ShaderList.insert(make_pair(p_shaderId, m_WrapperFactory->createShader(p_Filename, nullptr, p_EntryPoint,
+	
+	ResourceProxy::Buff buff = m_ResProxy.getData(p_Res);
+	m_ShaderList.insert(make_pair(p_shaderId, m_WrapperFactory->createShader(buff.data, buff.size, nullptr, p_EntryPoint,
 		p_ShaderModel, p_Type, p_VertexLayout, p_NumOfElements)));
 }
 
@@ -530,9 +534,11 @@ void Graphics::deleteShader(const char *p_ShaderId)
 		throw GraphicsException("Failed to set delete shader: " + shaderId + " does not exist", __LINE__, __FILE__);
 }
 
-bool Graphics::createTexture(const char *p_TextureId, const char *p_Filename)
+bool Graphics::createTexture(const char *p_TextureId, ResId p_Res, const char* p_FileType)
 {
-	ID3D11ShaderResourceView *resourceView = m_TextureLoader.createTextureFromFile(p_Filename);
+	// TODO: Get resource data and type
+	ResourceProxy::Buff buff = m_ResProxy.getData(p_Res);
+	ID3D11ShaderResourceView *resourceView = m_TextureLoader.createTextureFromMemory(buff.data, buff.size, p_FileType);
 	if(!resourceView)
 	{
 		return false;
@@ -541,7 +547,7 @@ bool Graphics::createTexture(const char *p_TextureId, const char *p_Filename)
 	int size = calculateTextureSize(resourceView);
 	VRAMInfo::getInstance()->updateUsage(size);
 
-	m_TextureList.insert(make_pair(p_TextureId, resourceView));
+	m_TextureList.insert(make_pair(p_TextureId, make_pair(p_Res, resourceView)));
 
 	return true;
 }
@@ -551,7 +557,7 @@ bool Graphics::releaseTexture(const char *p_TextureId)
 	std::string textureId(p_TextureId);
 	if(m_TextureList.count(textureId) > 0)
 	{
-		ID3D11ShaderResourceView *&m = m_TextureList.at(textureId);
+		ID3D11ShaderResourceView *&m = m_TextureList.at(textureId).second;
 		int size = calculateTextureSize(m);
 		VRAMInfo::getInstance()->updateUsage(-size);
 
@@ -562,9 +568,9 @@ bool Graphics::releaseTexture(const char *p_TextureId)
 	return false;
 }
 
-bool Graphics::createParticleEffectDefinition(const char * p_FileId, const char *p_FilePath)
+bool Graphics::createParticleEffectDefinition(const char * p_FileId, ResId p_Res)
 {
-	std::vector<ParticleEffectDefinition::ptr> tempList = m_ParticleFactory->createParticleEffectDefinition(p_FilePath);
+	std::vector<ParticleEffectDefinition::ptr> tempList = m_ParticleFactory->createParticleEffectDefinition(p_Res);
 	
 	for (unsigned int i = 0; i < tempList.size(); i++)
 	{
@@ -579,7 +585,8 @@ bool Graphics::releaseParticleEffectDefinition(const char *p_ParticleEffectId)
 	std::string id(p_ParticleEffectId);
 	if(m_ParticleEffectDefinitionList.count(id) > 0)
 	{
-		m_ReleaseModelTexture(m_ParticleEffectDefinitionList.at(id)->textureResourceName.c_str(), m_ReleaseModelTextureUserdata);
+		const std::string& texName = m_ParticleEffectDefinitionList.at(id)->textureResourceName;
+		m_ReleaseModelTexture(m_TextureList.at(texName).first, m_ReleaseModelTextureUserdata);
 		m_ParticleEffectDefinitionList.erase(id);
 		return true;
 	}
@@ -666,7 +673,7 @@ void Graphics::createBillboard_Object(Vector3 p_Position, Vector2 p_HalfSize, fl
 {
 	if(m_TextureList.count(p_TextureId) > 0)
 	{
-		m_BillboardRenderer->addRenderable(BillboardRenderable(p_Position, p_HalfSize, p_Scale, p_Rotation, m_TextureList.at(p_TextureId)));
+		m_BillboardRenderer->addRenderable(BillboardRenderable(p_Position, p_HalfSize, p_Scale, p_Rotation, m_TextureList.at(p_TextureId).second));
 	}
 	else
 		throw GraphicsException("Texture not found when trying to create a billboard object.",__LINE__, __FILE__);
@@ -1179,6 +1186,13 @@ void Graphics::setLogFunction(clientLogCallback_t p_LogCallback)
 	GraphicsLogger::setLogFunction(p_LogCallback);
 }
 
+void Graphics::setResourceCallbacks(resourceDataCallback p_DataCallback, void* p_DataUserData,
+		findResourceIdCallback p_FindCallback, void* p_FindUserData)
+{
+	m_ResProxy = ResourceProxy((ResourceProxy::ResourceDataCallback)p_DataCallback, p_DataUserData,
+		(ResourceProxy::FindResourceIdCallback)p_FindCallback, p_FindUserData);
+}
+
 void Graphics::setTweaker(TweakSettings* p_Tweaker)
 {
 	TweakSettings::initializeSlave(p_Tweaker);
@@ -1194,7 +1208,7 @@ void Graphics::setLoadModelTextureCallBack(loadModelTextureCallBack p_LoadModelT
 	if(!m_ModelFactory)
 	{
 		m_ModelFactory = ModelFactory::getInstance();
-		m_ModelFactory->initialize(&m_TextureList, &m_ShaderList);
+		m_ModelFactory->initialize(&m_TextureList, &m_ShaderList, &m_ResProxy);
 		m_ModelFactory->setLoadModelTextureCallBack(p_LoadModelTexture, p_Userdata);
 	}
 	m_ModelFactory->setLoadModelTextureCallBack(p_LoadModelTexture, p_Userdata);
@@ -1271,19 +1285,29 @@ DirectX::XMFLOAT4X4 Graphics::getProj() const
 
 void Graphics::createDefaultShaders(void)
 {
-	createShader("DefaultDeferredShader", L"assets/shaders/GeometryPass.hlsl", "VS,PS","5_0",
+	ResId defferedRes = m_ResProxy.findResourceId("assets/shaders/GeometryPass.hlsl");
+	createShader("DefaultDeferredShader", defferedRes, "VS,PS","5_0",
 		ShaderType::VERTEX_SHADER | ShaderType::PIXEL_SHADER);
-	createShader("DefaultForwardShader", L"assets/shaders/ForwardShader.hlsl", "VS,PS","5_0",
+
+	ResId forwardRes = m_ResProxy.findResourceId("assets/shaders/ForwardShader.hlsl");
+	createShader("DefaultForwardShader", forwardRes, "VS,PS","5_0",
 		ShaderType::VERTEX_SHADER | ShaderType::PIXEL_SHADER);
-	createShader("DefaultParticleShader", L"assets/shaders/ParticleSystem.hlsl", "VS,PS,GS", "5_0",
+
+	ResId particleRes = m_ResProxy.findResourceId("assets/shaders/ParticleSystem.hlsl");
+	createShader("DefaultParticleShader", particleRes, "VS,PS,GS", "5_0",
 		ShaderType::VERTEX_SHADER | ShaderType::GEOMETRY_SHADER | ShaderType::PIXEL_SHADER);
-	createShader("DefaultAnimatedShader", L"assets/shaders/AnimatedGeometryPass.hlsl",	"VS,PS","5_0",
+
+	ResId animatedRes = m_ResProxy.findResourceId("assets/shaders/AnimatedGeometryPass.hlsl");
+	createShader("DefaultAnimatedShader", animatedRes,	"VS,PS","5_0",
 		ShaderType::VERTEX_SHADER | ShaderType::PIXEL_SHADER);
 
 	// Debug shaders 
-	createShader("DebugDeferredShader", L"assets/shaders/DebugShader.hlsl","VS,PS","5_0",
+	ResId debugDefferedRes = m_ResProxy.findResourceId("assets/shaders/DebugShader.hlsl");
+	createShader("DebugDeferredShader", debugDefferedRes,"VS,PS","5_0",
 		ShaderType::VERTEX_SHADER | ShaderType::PIXEL_SHADER);
-	createShader("DebugBV_Shader", L"assets/shaders/BoundingVolume.hlsl",
+
+	ResId boundingRes = m_ResProxy.findResourceId("assets/shaders/BoundingVolume.hlsl");
+	createShader("DebugBV_Shader", boundingRes,
 		"VS,PS", "5_0", ShaderType::VERTEX_SHADER | ShaderType::PIXEL_SHADER);
 }
 
@@ -1511,9 +1535,9 @@ void Graphics::initializeFactories(void)
 	m_WrapperFactory = WrapperFactory::getInstance();
 	VRAMInfo::getInstance();
 	m_ModelFactory = ModelFactory::getInstance();
-	m_ModelFactory->initialize(&m_TextureList, &m_ShaderList);
+	m_ModelFactory->initialize(&m_TextureList, &m_ShaderList, &m_ResProxy);
 	m_ParticleFactory.reset(new ParticleFactory);
-	m_ParticleFactory->initialize(&m_TextureList, &m_ShaderList, m_Device);
+	m_ParticleFactory->initialize(&m_TextureList, &m_ShaderList, m_Device, &m_ResProxy);
 	m_TextureLoader = TextureLoader(m_Device, m_DeviceContext);
 	m_TextFactory.initialize(m_Device);
 }
@@ -1572,7 +1596,7 @@ ParticleEffectDefinition::ptr Graphics::getParticleFromList(string p_Identifier)
 ID3D11ShaderResourceView *Graphics::getTextureFromList(string p_Identifier)
 {
 	if(m_TextureList.count(p_Identifier) > 0)
-		return m_TextureList.at(p_Identifier);
+		return m_TextureList.at(p_Identifier).second;
 	else
 		throw GraphicsException("Failed to get texture from list, vector out of bounds: " + p_Identifier,
 		__LINE__, __FILE__);

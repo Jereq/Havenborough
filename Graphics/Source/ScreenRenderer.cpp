@@ -48,7 +48,7 @@ ScreenRenderer::~ScreenRenderer(void)
 
 void ScreenRenderer::initialize(ID3D11Device *p_Device, ID3D11DeviceContext *p_DeviceContext,
 	XMFLOAT4X4 *p_ViewMatrix, XMFLOAT4 p_OrthoData, ID3D11DepthStencilView* p_DepthStencilView,
-	ID3D11RenderTargetView *p_RenderTarget)
+	ID3D11RenderTargetView *p_RenderTarget, ResourceProxy* p_ResProxy)
 {
 	D3D11_BLEND_DESC blendDesc = createBlendStateDescription();
 	D3D11_SAMPLER_DESC samplerDesc = createSamplerDescription();
@@ -65,7 +65,10 @@ void ScreenRenderer::initialize(ID3D11Device *p_Device, ID3D11DeviceContext *p_D
 	XMStoreFloat4x4(&m_OrthoMatrix,
 		XMMatrixTranspose(XMMatrixOrthographicLH(p_OrthoData.x, p_OrthoData.y, p_OrthoData.z, p_OrthoData.w)));
 	
-	m_HUD_Shader = WrapperFactory::getInstance()->createShader(L"assets/shaders/HUD_Shader.hlsl", "VS,PS", "5_0",
+	m_ResProxy = p_ResProxy;
+
+	ResourceProxy::Buff buff = m_ResProxy->getData("assets/shaders/HUD_Shader.hlsl");
+	m_HUD_Shader = WrapperFactory::getInstance()->createShader(buff.data, buff.size, "VS,PS", "5_0",
 		ShaderType::VERTEX_SHADER | ShaderType::PIXEL_SHADER);
 
 	p_Device->CreateBlendState(&blendDesc, &m_TransparencyAdditiveBlend);

@@ -29,7 +29,7 @@ SkyDome::~SkyDome()
 }
 
 bool SkyDome::init(ID3D11Device *p_Device, ID3D11DeviceContext *p_DeviceContext, 
-				   ID3D11ShaderResourceView* p_Texture, float p_Radius)
+				   ID3D11ShaderResourceView* p_Texture, float p_Radius, ResourceProxy* p_ResProxy)
 {
 	m_DeviceContext = p_DeviceContext;
 	
@@ -87,7 +87,8 @@ bool SkyDome::init(ID3D11Device *p_Device, ID3D11DeviceContext *p_DeviceContext,
 	else
 		throw GraphicsException("Skydome: Error when trying to create Rasterizer state. No Device.", __LINE__, __FILE__);
 
-	m_SkyDomeShader = WrapperFactory::getInstance()->createShader(L"assets/shaders/SkyDome.hlsl",
+	ResourceProxy::Buff buff = p_ResProxy->getData("assets/shaders/SkyDome.hlsl");
+	m_SkyDomeShader = WrapperFactory::getInstance()->createShader(buff.data, buff.size,
 		"VS,PS","5_0",ShaderType::VERTEX_SHADER | ShaderType::PIXEL_SHADER);
 
 	// Create texture sampler.

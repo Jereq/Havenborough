@@ -6,8 +6,6 @@
 #include "../3rd party/tinyxml2/tinyxml2.h"
 #include "GraphicsExceptions.h"
 
-#include <boost/filesystem.hpp>
-
 using std::string;
 using std::vector;
 using std::pair;
@@ -17,34 +15,26 @@ ParticleFactory::~ParticleFactory()
 	SAFE_RELEASE(m_Sampler);
 }
 
-void ParticleFactory::initialize(std::map<std::string, ID3D11ShaderResourceView*> *p_TextureList,
-	std::map<string, Shader*> *p_ShaderList, ID3D11Device *p_Device)
+void ParticleFactory::initialize(std::map<std::string, std::pair<ResId, ID3D11ShaderResourceView*>> *p_TextureList,
+	std::map<string, Shader*> *p_ShaderList, ID3D11Device *p_Device, ResourceProxy* p_ResProxy)
 {
 	m_TextureList = p_TextureList;
 	m_ShaderList = p_ShaderList;
 	createSampler(p_Device);
+	m_ResProxy = p_ResProxy;
 }
 
-std::vector<ParticleEffectDefinition::ptr> ParticleFactory::createParticleEffectDefinition(const char* p_FilePath)
+std::vector<ParticleEffectDefinition::ptr> ParticleFactory::createParticleEffectDefinition(ResId p_Res)
 {	
 	std::vector<ParticleEffectDefinition::ptr> listOfDefinitions;
 
-	std::vector<char> buffer;
 	const char* name;
-
-	std::ifstream file(p_FilePath);
-	if(!file)
-	{
-		throw GraphicsException("Failed to load file: " + string(p_FilePath), __LINE__, __FILE__);
-	}
-	file >> std::noskipws;
-
-	std::copy(std::istream_iterator<char>(file), std::istream_iterator<char>(), std::back_inserter(buffer));
-	buffer.push_back('\0');
+	
+	ResourceProxy::Buff buff = m_ResProxy->getData(p_Res);
 
 	tinyxml2::XMLDocument particlesList;
 
-	tinyxml2::XMLError error = particlesList.Parse(buffer.data());
+	tinyxml2::XMLError error = particlesList.Parse(buff.data, buff.size);
 	if(error)
 	{
 		throw GraphicsException("File not of type 'XML'",__LINE__, __FILE__);
@@ -116,7 +106,7 @@ std::vector<ParticleEffectDefinition::ptr> ParticleFactory::createParticleEffect
 		particleSystem->particleColorDeviation.z = EffectAttributes->FloatAttribute("cdZ");
 		particleSystem->particleColorDeviation.w = EffectAttributes->FloatAttribute("cdA");
 
-		particleSystem->diffuseTexture = loadTexture(p_FilePath, particleSystem->textureResourceName.c_str());
+		particleSystem->diffuseTexture = loadTexture(p_Res);
 		particleSystem->sampler = m_Sampler;
 		particleSystem->shader = m_ShaderList->at("DefaultParticleShader");
 
@@ -172,22 +162,17 @@ std::shared_ptr<Buffer> ParticleFactory::createConstBuffer()
 	return buffer;
 }
 
-ID3D11ShaderResourceView *ParticleFactory::loadTexture(const char *p_Filepath, const char *p_Identifier)
-{
-	boost::filesystem::path particlePath(p_Filepath);
-	boost::filesystem::path parentDir(particlePath.parent_path().parent_path() / "textures");
-		
-	boost::filesystem::path diff = (std::string(p_Identifier) == "NONE" || std::string(p_Identifier) == "Default_COLOR.dds") ?
-		"assets/textures/Default_COLOR.dds" : parentDir / p_Identifier;
+ID3D11ShaderResourceView *ParticleFactory::loadTexture(ResId p_Res)
+{	
+	std::string ident = std::to_string(p_Res);
+	m_LoadParticleTexture(ident.c_str(), p_Res, m_LoadParticleTextureUserdata);
 
-	m_LoadParticleTexture(p_Identifier, diff.string().c_str(), m_LoadParticleTextureUserdata);
-
-	return getTextureFromList(p_Identifier);
+	return getTextureFromList(ident);
 }
 
 ID3D11ShaderResourceView *ParticleFactory::getTextureFromList(string p_Identifier)
 {
-	return m_TextureList->at(p_Identifier);
+	return m_TextureList->at(p_Identifier).second;
 }
 
 void ParticleFactory::createSampler(ID3D11Device* p_Device)

@@ -1,12 +1,17 @@
 #pragma once
+
 #include "BillboardRenderable.h"
-#include <vector>
 #include "Buffer.h"
+#include "ResourceProxy.h"
 #include "Shader.h"
+
+#include <vector>
 
 class BillboardRenderer
 {
 private:
+	typedef ResourceProxy::ResId ResId;
+	typedef ResourceProxy::Buff Buff;
 
 	struct cObjectTransform
 	{
@@ -45,6 +50,8 @@ private:
 
 	ID3D11BlendState		*m_TransparencyAdditiveBlend;
 
+	ResourceProxy* m_ResProxy;
+
 public:
 	BillboardRenderer(void);
 	~BillboardRenderer(void);
@@ -63,7 +70,7 @@ public:
 	void init(ID3D11Device *p_Device, ID3D11DeviceContext *p_DeviceContext,
 		DirectX::XMFLOAT3 p_CameraPosition, DirectX::XMFLOAT4X4 *p_ViewMatrix,
 		DirectX::XMFLOAT4X4 *p_ProjectionMatrix, ID3D11DepthStencilView* p_DepthStencilView,
-		ID3D11RenderTargetView *p_RenderTarget);
+		ID3D11RenderTargetView *p_RenderTarget, ResourceProxy* p_ResProxy);
 
 	/**
 	 * Resizes all rendering buffers, used to change resolution.

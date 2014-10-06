@@ -37,12 +37,20 @@ public:
 	 * @return Success = A pointer to the loaded texture, Fail = nullptr.
 	 */
 	ID3D11ShaderResourceView* createTextureFromFile(const char* p_Filename);
+	ID3D11ShaderResourceView* createTextureFromMemory(const char* p_Data, size_t p_DataLen, const char* p_Type);
 protected:
 	virtual HRESULT CreateWICTextureFromFile(ID3D11Device* p_Device, ID3D11DeviceContext* p_Context,
 		const wchar_t* p_Filename, ID3D11Resource** p_Texture, ID3D11ShaderResourceView** p_TextureView, size_t p_MaxSize);
 	
+	virtual HRESULT CreateWICTextureFromMemory(ID3D11Device* p_Device, ID3D11DeviceContext* p_Context,
+		const uint8_t* p_Data, size_t p_DataLen, ID3D11Resource** p_Texture, ID3D11ShaderResourceView** p_TextureView, size_t p_MaxSize);
+
 	virtual HRESULT CreateDDSTextureFromFile(ID3D11Device* p_Device, const wchar_t* p_Filename, ID3D11Resource** p_Texture,
 		ID3D11ShaderResourceView** p_TextureView, size_t p_MaxSize, DirectX::DDS_ALPHA_MODE* p_AlphaMode);
+
+	virtual HRESULT CreateDDSTextureFromMemory(ID3D11Device* p_Device, const uint8_t* p_Data, size_t p_DataLen, ID3D11Resource** p_Texture,
+		ID3D11ShaderResourceView** p_TextureView, size_t p_MaxSize, DirectX::DDS_ALPHA_MODE* p_AlphaMode);
+
 private:
-	char* checkCompability(char* p_FileType);
+	char* checkCompability(const char* p_FileType);
 };

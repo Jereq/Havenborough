@@ -39,14 +39,15 @@ public:
 	*/
 	typedef int Text_Id;
 		
+	typedef uint32_t ResId;
+
 	/**
 	 * Callback for loading a texture to a model.
 	 *
-	 * @param p_ResourceName the resource name of the texture
-	 * @param p_FilePath path to where the texture is located
+	 * @param p_Res the id of the resource
 	 * @param p_UserData user defined data
 	 */
-	typedef void (*loadModelTextureCallBack)(const char *p_ResourceName, const char *p_FilePath, void *p_Userdata);
+	typedef void (*loadModelTextureCallBack)(const char* p_ResourceName, ResId p_Res, void *p_Userdata);
 
 	/**
 	 * Callback for releasing a texture to a model.
@@ -54,7 +55,7 @@ public:
 	 * @param p_ResourceName the resource name of the texture
 	 * @param p_UserData user defined data
 	 */
-	typedef void (*releaseModelTextureCallBack)(const char *p_ResourceName, void *p_Userdata);
+	typedef void (*releaseModelTextureCallBack)(ResId p_Res, void *p_Userdata);
 
 	/**
 	 * Callback for logging.
@@ -63,6 +64,16 @@ public:
 	 * @param p_Message the log message.
 	 */
 	typedef void (*clientLogCallback_t)(uint32_t p_Level, const char* p_Message);
+
+	typedef ResId (*findResourceIdCallback)(const char* p_ResourceName, void* p_UserData);
+
+	struct Buff
+	{
+		const char* data;
+		size_t size;
+	};
+
+	typedef Buff (*resourceDataCallback)(ResId p_Res, void* p_UserData);
 
 public:
 	/**
@@ -118,24 +129,24 @@ public:
 	 * Creates a new static or animated model and stores in a vector connected with an ID.
 	 *
 	 * @param p_ModelId the ID of the model
-	 * @param p_Filename the filename of the model
+	 * @param p_Res the resource ID of the model
 	 * @return true if the model was successfully created, otherwise false
 	 */
-	virtual bool createModel(const char *p_ModelId, const char *p_Filename) = 0;
+	virtual bool createModel(const char *p_ModelId, ResId p_Res) = 0;
 
 	/**
 	* Release a previously created model.
 	*
-	* @param p_ResourceName the resource name of the resource
+	* @param p_ModelId the ID of the resource
 	* @return true if the resource existed and was successfully released
 	*/
-	virtual bool releaseModel(const char* p_ResourceName) = 0;
+	virtual bool releaseModel(const char* p_ModelId) = 0;
 
 	/**
-	 * Automatically creates a shader based on layout in the shader file and stores in a vector connected with and ID.
+	 * Automatically creates a shader based on layout in the shader file and stores in a vector connected with an ID.
 	 *
 	 * @param p_ShaderId the ID of the shader
-	 * @param p_Filename the file where the shader code is located
+	 * @param p_Res the resource ID of the shader
 	 * @param p_EntryPoint the main entry point in the shader file, can be combined as e.g.
 	 *		 "mainVS,mainPS,mainGS,mainHS,mainDS", note this order is important to be kept but all steps are not necessary,
 	 *		 note the ',' is the separator
@@ -143,7 +154,7 @@ public:
 	 * @param p_ShaderType the shader types to be created, can be combined as
 	 *		 ShaderType::VERTEX_SHADER | ShaderType::PIXEL_SHADER | ShaderType::GEOMETRY_SHADER | ShaderType::HULL_SHADER | ShaderType::DOMAIN_SHADER
 	 */
-	virtual void createShader(const char *p_shaderId, LPCWSTR p_Filename, const char *p_EntryPoint,
+	virtual void createShader(const char *p_shaderId, ResId p_Res, const char *p_EntryPoint,
 		const char *p_ShaderModel, ShaderType p_Type) = 0;
 
 	/**
@@ -151,7 +162,7 @@ public:
 	 * is added an exception is thrown.
 	 *
 	 * @param p_ShaderId the ID of the shader that should be created, note if the ID already exists an exception will be thrown
-	 * @param p_Filename the file where the shader code is located
+	 * @param p_Res the resource ID of the shader
 	 * @param p_EntryPoint the main entry point in the shader file, can be combined as e.g.
 	 *		 "mainVS,mainPS,mainGS,mainHS,mainDS", note this order is important to be kept but all steps are not necessary,
 	 *		 note the ',' is the separator
@@ -162,7 +173,7 @@ public:
 	 * @param p_VertexLayout the user defined vertex layout
 	 * @param p_NumOfElement the number of elements in the layout
 	 */
-	virtual void createShader(const char *p_shaderId, LPCWSTR p_Filename, const char *p_EntryPoint,
+	virtual void createShader(const char *p_shaderId, ResId p_Res, const char *p_EntryPoint,
 		const char *p_ShaderModel, ShaderType p_Type, ShaderInputElementDescription *p_VertexLayout,
 		unsigned int p_NumOfElements) = 0;
 
@@ -186,10 +197,10 @@ public:
 	 * WARNING: Should only be called by the resource manager.
 	 *
 	 * @param p_TextureId the ID of the texture
-	 * @param p_Filename the filename of the texture
+	 * @param p_Res the resource ID of the texture data
 	 * @return true if the texture was successfully loaded, otherwise false
 	 */
-	virtual bool createTexture(const char *p_TextureId, const char *p_Filename) = 0;
+	virtual bool createTexture(const char *p_TextureId, ResId p_Res, const char* p_FileType) = 0;
 
 	/**
 	 * Release a previously created texture.
@@ -203,10 +214,10 @@ public:
 	 * Creates a new particle system and stores in a vector connected with an ID.
 	 *
 	 * @param p_ParticleSystemId the ID of the particle system
-	 * @param p_Filename the filename of the particle system
+	 * @param p_Res the resource ID of the particle system data
 	 * @return true if the particle system was successfully loaded, otherwise false
 	 */
-	virtual bool createParticleEffectDefinition(const char * /*p_FileId*/, const char *p_FilePath) = 0;
+	virtual bool createParticleEffectDefinition(const char * /*p_FileId*/, ResId p_Res) = 0;
 
 	/** 
 	 * Release a previously created particle system.
@@ -676,6 +687,9 @@ public:
 	 *			be logged from this component. Set to null to disable logging.
 	 */
 	virtual void setLogFunction(clientLogCallback_t p_LogCallback) = 0;
+
+	virtual void setResourceCallbacks(resourceDataCallback p_DataCallback, void* p_DataUserData,
+		findResourceIdCallback p_FindCallback, void* p_FindUserData) = 0;
 
 	/**
 	 * Set the tweaker object to use to tweak variables at runtime.

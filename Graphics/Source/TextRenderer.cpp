@@ -43,7 +43,8 @@ TextRenderer::~TextRenderer(void)
 }
 
 void TextRenderer::initialize(ID3D11Device *p_Device, ID3D11DeviceContext *p_DeviceContext, XMFLOAT3 *p_CameraPosition,
-	XMFLOAT4X4 *p_ViewMatrix, XMFLOAT4X4 *p_ProjectionMatrix, ID3D11RenderTargetView *p_RenderTarget)
+	XMFLOAT4X4 *p_ViewMatrix, XMFLOAT4X4 *p_ProjectionMatrix, ID3D11RenderTargetView *p_RenderTarget,
+	ResourceProxy* p_ResProxy)
 {
 	if(!p_Device || !p_DeviceContext)
 		throw TextRendererException("Failed to initialize text renderer, nullpointers are not allowed. ",
@@ -57,7 +58,8 @@ void TextRenderer::initialize(ID3D11Device *p_Device, ID3D11DeviceContext *p_Dev
 
 	createBuffers();
 
-	m_Shader = WrapperFactory::getInstance()->createShader(L"assets/shaders/BillboardShader.hlsl", "VS,PS,GS", "5_0",
+	ResourceProxy::Buff buff = p_ResProxy->getData("assets/shaders/BillboardShader.hlsl");
+	m_Shader = WrapperFactory::getInstance()->createShader(buff.data, buff.size, "VS,PS,GS", "5_0",
 		ShaderType::VERTEX_SHADER | ShaderType::GEOMETRY_SHADER | ShaderType::PIXEL_SHADER);
 
 	createBlendState();

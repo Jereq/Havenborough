@@ -1,5 +1,6 @@
 #pragma once
 #include "Renderable2D.h"
+#include "ResourceProxy.h"
 
 class ScreenRenderer
 {
@@ -23,6 +24,8 @@ private:
 
 	ID3D11BlendState *m_TransparencyAdditiveBlend;
 
+	ResourceProxy* m_ResProxy;
+
 public:
 	/**
 	* Constructor.
@@ -45,7 +48,8 @@ public:
 	* @param p_RenderTarget, make it use the same render target as the other.
 	*/
 	void initialize(ID3D11Device *p_Device, ID3D11DeviceContext *p_DeviceContext, DirectX::XMFLOAT4X4 *p_ViewMatrix,
-		DirectX::XMFLOAT4 p_OrthoData, ID3D11DepthStencilView *p_DepthStencilView, ID3D11RenderTargetView *p_RenderTarget);
+		DirectX::XMFLOAT4 p_OrthoData, ID3D11DepthStencilView *p_DepthStencilView, ID3D11RenderTargetView *p_RenderTarget,
+		ResourceProxy* p_ResProxy);
 	
 	/**
 	 * Resizes all rendering buffers, used to change resolution.

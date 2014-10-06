@@ -21,6 +21,7 @@
 #include "ModelDefinition.h"
 #include "ParticleFactory.h"
 #include "ParticleInstance.h"
+#include "ResourceProxy.h"
 #include "TextFactory.h"
 
 class Graphics : public IGraphics
@@ -65,7 +66,7 @@ private:
 
 	std::map<std::string, Shader*> m_ShaderList;
 	std::map<std::string, ModelDefinition> m_ModelList;
-	std::map<std::string, ID3D11ShaderResourceView*> m_TextureList;
+	std::map<std::string, std::pair<ResId, ID3D11ShaderResourceView*>> m_TextureList;
 	std::map<InstanceId, ModelInstance> m_ModelInstances;
 	std::map<Object2D_Id, Renderable2D> m_2D_Objects;
 	InstanceId m_NextInstanceId;
@@ -101,6 +102,8 @@ private:
 	IGraphics::releaseModelTextureCallBack m_ReleaseModelTexture;
 	void *m_ReleaseModelTextureUserdata;
 
+	ResourceProxy m_ResProxy;
+
 	TextFactory m_TextFactory;
 
 	ID3D11ShaderResourceView *textSRV;
@@ -117,23 +120,23 @@ public:
 	bool reInitialize(HWND p_Hwnd, int p_ScreenWidht, int p_ScreenHeight, bool p_Fullscreen) override;
 	void resize(unsigned int p_ScreenWidth, unsigned int p_ScreenHeight) override;
 	
-	bool createModel(const char *p_ModelId, const char *p_Filename) override;
+	bool createModel(const char *p_ModelId, ResId p_Res) override;
 	bool releaseModel(const char *p_ModelID) override;
 	
-	void createShader(const char *p_shaderId, LPCWSTR p_Filename,
+	void createShader(const char *p_shaderId, ResId p_Res,
 		const char *p_EntryPoint, const char *p_ShaderModel, ShaderType p_Type) override;
-	void createShader(const char *p_shaderId, LPCWSTR p_Filename,
+	void createShader(const char *p_shaderId, ResId p_Res,
 		const char *p_EntryPoint, const char *p_ShaderModel, ShaderType p_Type,
 		ShaderInputElementDescription *p_VertexLayout, unsigned int p_NumOfInputElements) override;
 	void linkShaderToModel(const char *p_ShaderId, const char *p_ModelId) override;
 	
 	void deleteShader(const char *p_ShaderId) override;
 
-	bool createTexture(const char *p_TextureId, const char *p_filename) override;
+	bool createTexture(const char *p_TextureId, ResId p_Res, const char* p_FileType) override;
 	bool releaseTexture(const char *p_TextureId) override;	
 
 	//Particles
-	bool createParticleEffectDefinition(const char * /*p_FileId*/, const char *p_filePath) override;
+	bool createParticleEffectDefinition(const char * /*p_FileId*/, ResId p_Res) override;
 	bool releaseParticleEffectDefinition(const char *p_ParticleEffectId) override;
 
 	InstanceId createParticleEffectInstance(const char *p_ParticleEffectId) override;
@@ -213,6 +216,8 @@ public:
 	void addBVTriangle(Vector3 p_Corner1, Vector3 p_Corner2, Vector3 p_Corner3) override;
 
 	void setLogFunction(clientLogCallback_t p_LogCallback) override;
+	void setResourceCallbacks(resourceDataCallback p_DataCallback, void* p_DataUserData,
+		findResourceIdCallback p_FindCallback, void* p_FindUserData) override;
 	void setTweaker(TweakSettings* p_Tweaker) override;
 	void setRenderTarget(IGraphics::RenderTarget p_RenderTarget) override;
 

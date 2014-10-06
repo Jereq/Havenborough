@@ -2,6 +2,7 @@
 #include "IGraphics.h"
 #include "Light.h"
 #include "Renderable.h"
+#include "ResourceProxy.h"
 #include "SkyDome.h"
 #include "ConstantBuffers.h"
 //#include "GPUTimer.h"
@@ -14,6 +15,8 @@
 class DeferredRenderer
 {
 private:
+	typedef ResourceProxy::Buff Buff;
+
 	float *m_FOV;
 	float m_FarZ;
 	float m_ScreenWidth;
@@ -76,8 +79,12 @@ private:
 	float				m_MaxFogDistance;
 	std::string			m_FogColor;
 
+	ResourceProxy* m_ResProxy;
+
 	//GPUTimer *m_Timer;
 public:
+	typedef ResourceProxy::ResId ResId;
+
 	/**
 	* Constructor. 
 	*/
@@ -106,7 +113,7 @@ public:
 		DirectX::XMFLOAT3 p_CameraPosition, DirectX::XMFLOAT4X4 *p_ViewMatrix,
 		DirectX::XMFLOAT4X4 *p_ProjectionMatrix,int p_ShadowMapResolution, std::vector<Light> *p_SpotLights,
 		std::vector<Light> *p_PointLights, std::vector<Light> *p_DirectionalLights, Light *p_ShadowMappedLight,
-		float *p_FOV, float p_FarZ);
+		float *p_FOV, float p_FarZ, ResourceProxy* p_ResProxy);
 
 	/**
 	 * Resizes all rendering buffers, used to change resolution.

@@ -4,6 +4,9 @@
 
 #include <DirectXMath.h>
 
+#include <boost/iostreams/stream.hpp>
+#include <boost/iostreams/stream_buffer.hpp>
+
 ModelBinaryLoader::ModelBinaryLoader()
 {
 
@@ -134,6 +137,31 @@ void ModelBinaryLoader::loadBinaryFile(std::string p_FilePath)
 	}
 	m_MaterialBuffer = readMaterialBuffer(m_FileHeader.m_NumMaterialBuffer, &input);
 	
+}
+
+void ModelBinaryLoader::loadBinaryFromMemory(const char* p_Data, uint32_t p_DataLen)
+{
+	clearData();
+	typedef boost::iostreams::basic_array_source<char> Device;
+	boost::iostreams::stream_buffer<Device> buffer(p_Data, p_DataLen);
+	std::istream input(&buffer);
+	if(!input)
+	{
+		throw GraphicsException("Memory stream could not be created", __LINE__, __FILE__);
+	}
+	m_FileHeader = readHeader(&input);
+	m_Material = readMaterial(m_FileHeader.m_NumMaterial,&input);
+	if(m_FileHeader.m_Animated)
+	{
+		m_AnimationVertexBuffer = readVertexBufferAnimation(m_FileHeader.m_NumVertex, &input);
+		calculateBoundingVolume(m_AnimationVertexBuffer);
+	}
+	else
+	{
+		m_VertexBuffer = readVertexBuffer(m_FileHeader.m_NumVertex, &input);
+		calculateBoundingVolume(m_VertexBuffer);
+	}
+	m_MaterialBuffer = readMaterialBuffer(m_FileHeader.m_NumMaterialBuffer, &input);
 }
 
 const std::vector<Material>& ModelBinaryLoader::getMaterial() const

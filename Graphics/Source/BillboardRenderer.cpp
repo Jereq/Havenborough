@@ -52,7 +52,7 @@ BillboardRenderer::~BillboardRenderer(void)
 void BillboardRenderer::init(ID3D11Device *p_Device, ID3D11DeviceContext *p_DeviceContext,
 							DirectX::XMFLOAT3 p_CameraPosition, DirectX::XMFLOAT4X4 *p_ViewMatrix,
 							DirectX::XMFLOAT4X4 *p_ProjectionMatrix, ID3D11DepthStencilView* p_DepthStencilView,
-							ID3D11RenderTargetView *p_RenderTarget)
+							ID3D11RenderTargetView *p_RenderTarget, ResourceProxy* p_ResProxy)
 {
 	m_Device = p_Device;
 	m_DeviceContext = p_DeviceContext;
@@ -64,13 +64,16 @@ void BillboardRenderer::init(ID3D11Device *p_Device, ID3D11DeviceContext *p_Devi
 	m_ViewMatrix = p_ViewMatrix;
 	m_ProjectionMatrix = p_ProjectionMatrix;
 
+	m_ResProxy = p_ResProxy;
+
 	createBlendStates();
 	createForwardBuffers();
 	createSampler();
 	createRasterState();
 	createDepthStencilState();
 
-	m_Shader = WrapperFactory::getInstance()->createShader(L"assets/shaders/BillboardShader.hlsl", "VS,PS,GS", "5_0",
+	Buff buff = m_ResProxy->getData("assets/shaders/BillboardShader.hlsl");
+	m_Shader = WrapperFactory::getInstance()->createShader(buff.data, buff.size, "VS,PS,GS", "5_0",
 		ShaderType::VERTEX_SHADER | ShaderType::GEOMETRY_SHADER | ShaderType::PIXEL_SHADER);
 }
 
