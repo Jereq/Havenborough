@@ -1,7 +1,7 @@
 #pragma once
 #include "WrapperFactory.h"
 #include "ModelDefinition.h"
-#include "ResourceProxy.h"
+#include <ModelStructs.h>
 #include "ShaderStructs.h"
 #include "Utilities/XMFloatUtil.h"
 
@@ -32,8 +32,6 @@ private:
 	loadModelTextureCallBack m_LoadModelTexture;
 	void *m_LoadModelTextureUserdata;
 
-	ResourceProxy* m_ResProxy;
-
 public:
 	/**
 	* Gets an instance of the model factory.
@@ -47,8 +45,7 @@ public:
 	* @param p_ShaderList pointer to the shader map with the available shaders
 	*/
 	void initialize(TextureMap* p_TextureList,
-		std::map<std::string, Shader*> *p_ShaderList,
-		ResourceProxy* p_ResProxy);
+		std::map<std::string, Shader*> *p_ShaderList);
 
 	/**
 	* Shuts down the factory and releases the memory allocated. Nulls all pointers.
@@ -57,10 +54,14 @@ public:
 
 	/**
 	* Creates a model with buffers and default shader and connects the textures to it.
-	* @param p_Res the model file to read
+	* @param p_Data the resource data
+	* @param p_DataLen the length of the data
 	* @return copy of the created model
 	*/
-	virtual ModelDefinition createModel(ResId p_Res);
+	virtual ModelDefinition createModel(const CMaterial* p_Materials, size_t p_NumMaterials,
+						const CMaterialBuffer* p_MaterialBuffers, size_t p_NumMaterialBuffers,
+						bool p_Animated, bool p_Transparent, const void* p_VertexData, size_t p_VertexSize, size_t p_NumVert,
+						const DirectX::XMFLOAT3* p_BoundingVolume);
 
 	/**
 	* Creates a quad model with with a texture attached to it.
@@ -94,7 +95,7 @@ private:
 	void create2D_VertexBuffer(ModelDefinition *p_Model, Vector2 p_HalfSize);
 
 	void loadTextures(ModelDefinition &model, unsigned int p_NumOfMaterials,
-		const std::vector<Material> &p_Materials, const char *p_Style);
+		const CMaterial* p_Materials, const char *p_Style);
 	void load2D_Texture(ModelDefinition &model, const char *p_TextureId);
 	ID3D11ShaderResourceView *getTextureFromList(std::string p_Identifier);
 };

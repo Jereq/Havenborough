@@ -2,6 +2,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
+#include "ModelStructs.h"
 #include "ShaderDefinitions.h"
 #include "TextEnums.h"
 #include <TweakSettings.h>
@@ -129,10 +130,14 @@ public:
 	 * Creates a new static or animated model and stores in a vector connected with an ID.
 	 *
 	 * @param p_ModelId the ID of the model
-	 * @param p_Res the resource ID of the model
+	 * @param p_Data the resource data
+	 * @param p_DataLen the length of the data
 	 * @return true if the model was successfully created, otherwise false
 	 */
-	virtual bool createModel(const char *p_ModelId, ResId p_Res) = 0;
+	virtual bool createModel(const char *p_ModelId, const CMaterial* p_Materials, size_t p_NumMaterials,
+						const CMaterialBuffer* p_MaterialBuffers, size_t p_NumMaterialBuffers,
+						bool p_Animated, bool p_Transparent, const void* p_VertexData, size_t p_VertexSize, size_t p_NumVert,
+						const DirectX::XMFLOAT3* p_BoundingVolume) = 0;
 
 	/**
 	* Release a previously created model.
@@ -765,6 +770,7 @@ public:
 	 * @return Projection matrix
 	 */
 	virtual DirectX::XMFLOAT4X4 getProj() const = 0;
+
 private:
 
 	/**

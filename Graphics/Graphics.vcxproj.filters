@@ -35,9 +35,6 @@
     <ClCompile Include="Source\DeferredRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\ModelBinaryLoader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\ModelFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -83,6 +80,9 @@
     <ClCompile Include="Source\BillboardRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\ModelBinaryLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Buffer.h">
@@ -113,9 +113,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\ModelDefinition.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\ModelBinaryLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\GraphicsLogger.h">
@@ -194,6 +191,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\ResourceProxy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ModelStructs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ModelBinaryLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

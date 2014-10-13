@@ -22,13 +22,6 @@ struct AnimatedVertex
 	DirectX::XMINT4 m_BoneId;
 };
 
-struct MaterialBuffer
-{
-	std::string material;
-	int start;
-	int length;
-};
-
 struct IndexDesc
 {
 	std::string m_MaterialID;
@@ -44,6 +37,13 @@ struct Material
 	std::string m_DiffuseMap;
 	std::string m_NormalMap;
 	std::string m_SpecularMap;
+};
+
+struct MaterialBuffer
+{
+	std::string material;
+	int start;
+	int length;
 };
 
 struct particlecBuffer

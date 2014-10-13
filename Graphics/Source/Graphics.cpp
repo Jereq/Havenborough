@@ -430,9 +430,15 @@ void IGraphics::deleteGraphics(IGraphics *p_Graphics)
 	SAFE_DELETE(p_Graphics);
 }
 
-bool Graphics::createModel(const char *p_ModelId, ResId p_Res)
+bool Graphics::createModel(const char *p_ModelId, const CMaterial* p_Materials, size_t p_NumMaterials,
+						const CMaterialBuffer* p_MaterialBuffers, size_t p_NumMaterialBuffers,
+						bool p_Animated, bool p_Transparent, const void* p_VertexData, size_t p_VertexSize, size_t p_NumVert,
+						const DirectX::XMFLOAT3* p_BoundingVolume)
 {
-	m_ModelList.insert(pair<string, ModelDefinition>(p_ModelId, std::move(m_ModelFactory->getInstance()->createModel(p_Res))));
+	m_ModelList.insert(pair<string, ModelDefinition>(p_ModelId, std::move(
+		m_ModelFactory->getInstance()->createModel(p_Materials, p_NumMaterials,
+		p_MaterialBuffers, p_NumMaterialBuffers,
+		p_Animated, p_Transparent, p_VertexData, p_VertexSize, p_NumVert, p_BoundingVolume))));
 	return true;
 }
 
@@ -1208,7 +1214,7 @@ void Graphics::setLoadModelTextureCallBack(loadModelTextureCallBack p_LoadModelT
 	if(!m_ModelFactory)
 	{
 		m_ModelFactory = ModelFactory::getInstance();
-		m_ModelFactory->initialize(&m_TextureList, &m_ShaderList, &m_ResProxy);
+		m_ModelFactory->initialize(&m_TextureList, &m_ShaderList);
 		m_ModelFactory->setLoadModelTextureCallBack(p_LoadModelTexture, p_Userdata);
 	}
 	m_ModelFactory->setLoadModelTextureCallBack(p_LoadModelTexture, p_Userdata);
@@ -1535,7 +1541,7 @@ void Graphics::initializeFactories(void)
 	m_WrapperFactory = WrapperFactory::getInstance();
 	VRAMInfo::getInstance();
 	m_ModelFactory = ModelFactory::getInstance();
-	m_ModelFactory->initialize(&m_TextureList, &m_ShaderList, &m_ResProxy);
+	m_ModelFactory->initialize(&m_TextureList, &m_ShaderList);
 	m_ParticleFactory.reset(new ParticleFactory);
 	m_ParticleFactory->initialize(&m_TextureList, &m_ShaderList, m_Device, &m_ResProxy);
 	m_TextureLoader = TextureLoader(m_Device, m_DeviceContext);

@@ -1,6 +1,5 @@
 #include "ModelFactory.h"
 #include "GraphicsExceptions.h"
-#include "ModelBinaryLoader.h"
 #include "Utilities/MemoryUtil.h"
 #include "..\..\Common\Source\AnimationLoader.h"
 
@@ -20,15 +19,13 @@ ModelFactory *ModelFactory::getInstance(void)
 	return m_Instance;
 }
 
-void ModelFactory::initialize(TextureMap* p_TextureList, map<string, Shader*> *p_ShaderList,
-							  ResourceProxy* p_ResProxy)
+void ModelFactory::initialize(TextureMap* p_TextureList, map<string, Shader*> *p_ShaderList)
 {
 	if(!m_Instance)
 		throw ModelFactoryException("Error when initializing ModelFactory, no instance exists", __LINE__, __FILE__);
 
 	m_TextureList = p_TextureList;
 	m_ShaderList = p_ShaderList;
-	m_ResProxy = p_ResProxy;
 }
 
 void ModelFactory::shutdown(void)
@@ -36,24 +33,25 @@ void ModelFactory::shutdown(void)
 	SAFE_DELETE(m_Instance);
 }
 
-ModelDefinition ModelFactory::createModel(ResId p_Res)
+ModelDefinition ModelFactory::createModel(const CMaterial* p_Materials, size_t p_NumMaterials,
+						const CMaterialBuffer* p_MaterialBuffers, size_t p_NumMaterialBuffers,
+						bool p_Animated, bool p_Transparent, const void* p_VertexData, size_t p_VertexSize, size_t p_NumVert,
+						const DirectX::XMFLOAT3* p_BoundingVolume)
 {
-	ModelBinaryLoader modelLoader;
-	ResourceProxy::Buff buff = m_ResProxy->getData(p_Res);
-	modelLoader.loadBinaryFromMemory(buff.data, buff.size);
-
 	ModelDefinition model;
 	Buffer::Description bufferDescription;
-	const vector<Material> &materialData = modelLoader.getMaterial();
-	const vector<MaterialBuffer> &materialBufferData = modelLoader.getMaterialBuffer();
 	
-	model.isAnimated = modelLoader.getAnimated();
-	model.isTransparent = modelLoader.getTransparent();
+	model.isAnimated = p_Animated;
+	model.isTransparent = p_Transparent;
+	
+	bufferDescription.initData = p_VertexData;
+	bufferDescription.numOfElements = p_NumVert;
+	bufferDescription.sizeOfElement = p_VertexSize;
+	bufferDescription.type = Buffer::Type::VERTEX_BUFFER;
+	bufferDescription.usage = Buffer::Usage::USAGE_IMMUTABLE;
 
 	if(!model.isAnimated)
 	{
-		const vector<StaticVertex> &vertexData = modelLoader.getStaticVertexBuffer();
-		bufferDescription = createBufferDescription(vertexData, Buffer::Usage::USAGE_IMMUTABLE); //Change to default when needed to change data.
 		if(model.isTransparent)
 			model.shader = m_ShaderList->at("DefaultForwardShader");
 		else
@@ -61,10 +59,9 @@ ModelDefinition ModelFactory::createModel(ResId p_Res)
 	}
 	else
 	{
-		const vector<AnimatedVertex> &vertexData = modelLoader.getAnimatedVertexBuffer();
-		bufferDescription = createBufferDescription(vertexData, Buffer::Usage::USAGE_IMMUTABLE); //Change to default when needed to change data.
 		model.shader = m_ShaderList->at("DefaultAnimatedShader");
 	}
+
 	std::unique_ptr<Buffer> vertexBuffer(WrapperFactory::getInstance()->createBuffer(bufferDescription));
 
 	if (model.isAnimated)
@@ -81,36 +78,34 @@ ModelDefinition ModelFactory::createModel(ResId p_Res)
 		{
 			unsigned int startIndex = model.diffuseTexture.size();
 
-			vector<ModelDefinition::Material> tempInterval(materialBufferData.size());
-			for(unsigned int i = 0; i < materialBufferData.size(); i++)
+			vector<ModelDefinition::Material> tempInterval(p_NumMaterialBuffers);
+			for(unsigned int i = 0; i < p_NumMaterialBuffers; i++)
 			{
-				tempInterval.at(i).vertexStart = materialBufferData.at(i).start;
-				tempInterval.at(i).numOfVertices = materialBufferData.at(i).length;
+				tempInterval.at(i).vertexStart = p_MaterialBuffers[i].start;
+				tempInterval.at(i).numOfVertices = p_MaterialBuffers[i].length;
 				tempInterval.at(i).textureIndex = startIndex + i;
 			}
 			model.materialSets.push_back(std::make_pair(styles[styleId], tempInterval));
 
-			loadTextures(model, materialData.size(), materialData, styles[styleId]);
+			loadTextures(model, p_NumMaterials, p_Materials, styles[styleId]);
 		}
 	}
 	else
 	{
-		vector<ModelDefinition::Material> tempInterval(materialBufferData.size());
-		for(unsigned int i = 0; i < materialBufferData.size(); i++)
+		vector<ModelDefinition::Material> tempInterval(p_NumMaterialBuffers);
+		for(unsigned int i = 0; i < p_NumMaterialBuffers; i++)
 		{
-			tempInterval.at(i).vertexStart = materialBufferData.at(i).start;
-			tempInterval.at(i).numOfVertices = materialBufferData.at(i).length;
+			tempInterval.at(i).vertexStart = p_MaterialBuffers[i].start;
+			tempInterval.at(i).numOfVertices = p_MaterialBuffers[i].length;
 			tempInterval.at(i).textureIndex = i;
 		}
 		model.materialSets.push_back(std::make_pair("default", tempInterval));
 
-		loadTextures(model, materialData.size(), materialData, nullptr);
+		loadTextures(model, p_NumMaterials, p_Materials, nullptr);
 	}
 
 	model.vertexBuffer.swap(vertexBuffer);
-	model.boundingVolume = modelLoader.getBoundingVolume();
-
-	modelLoader.clear();
+	model.boundingVolume.assign(*p_BoundingVolume);
 	
 	return model;
 }
@@ -220,7 +215,7 @@ void ModelFactory::create2D_VertexBuffer(ModelDefinition *p_Model, Vector2 p_Hal
 }
 
 void ModelFactory::loadTextures(ModelDefinition &p_Model, unsigned int p_NumOfMaterials,
-	const vector<Material> &p_Materials, const char *p_Style)
+	const CMaterial* p_Materials, const char *p_Style)
 {
 	using std::pair;
 
@@ -229,15 +224,7 @@ void ModelFactory::loadTextures(ModelDefinition &p_Model, unsigned int p_NumOfMa
 		styleOfDoom = p_Style;
 	for(unsigned int i = 0; i < p_NumOfMaterials; i++)
 	{
-		const Material &material = p_Materials.at(i);
-
-		ResId diffId = m_ResProxy->findResourceId(("assets/textures/" + material.m_DiffuseMap).c_str());
-		ResId normId = m_ResProxy->findResourceId(("assets/textures/" + material.m_NormalMap).c_str());
-		ResId specId = m_ResProxy->findResourceId(("assets/textures/" + material.m_SpecularMap).c_str());
-			
-		m_LoadModelTexture(material.m_DiffuseMap.c_str(), diffId, m_LoadModelTextureUserdata);
-		m_LoadModelTexture(material.m_NormalMap.c_str(), normId, m_LoadModelTextureUserdata);
-		m_LoadModelTexture(material.m_SpecularMap.c_str(), specId, m_LoadModelTextureUserdata);
+		const CMaterial &material = p_Materials[i];
 
 		p_Model.diffuseTexture.push_back(std::make_pair(material.m_DiffuseMap, getTextureFromList(material.m_DiffuseMap)));
 		p_Model.normalTexture.push_back(std::make_pair(material.m_NormalMap, getTextureFromList(material.m_NormalMap)));

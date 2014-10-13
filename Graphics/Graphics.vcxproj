@@ -100,6 +100,7 @@
     <ClCompile Include="Source\BillboardRenderer.cpp" />
     <ClCompile Include="Source\FontCollectionLoader.cpp" />
     <ClCompile Include="Source\GPUTimer.cpp" />
+    <ClCompile Include="Source\ModelBinaryLoader.cpp" />
     <ClCompile Include="Source\ParticleInstance.cpp" />
     <ClCompile Include="Source\ParticleFactory.cpp" />
     <ClCompile Include="Source\ScreenRenderer.cpp" />
@@ -107,7 +108,6 @@
     <ClCompile Include="Source\ForwardRendering.cpp" />
     <ClCompile Include="Source\DeferredRenderer.cpp" />
     <ClCompile Include="Source\DDSTextureLoader.cpp" />
-    <ClCompile Include="Source\ModelBinaryLoader.cpp" />
     <ClCompile Include="Source\ModelFactory.cpp" />
     <ClCompile Include="Source\GraphicsLogger.cpp" />
     <ClCompile Include="Source\TextResource.cpp" />
@@ -122,10 +122,12 @@
     <ClCompile Include="Source\TextRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\ModelStructs.h" />
     <ClInclude Include="Source\BillboardRenderable.h" />
     <ClInclude Include="Source\BillboardRenderer.h" />
     <ClInclude Include="Source\FontCollectionLoader.h" />
     <ClInclude Include="Source\GPUTimer.h" />
+    <ClInclude Include="Source\ModelBinaryLoader.h" />
     <ClInclude Include="Source\Renderable2D.h" />
     <ClInclude Include="Source\ConstantBuffers.h" />
     <ClInclude Include="Source\ParticleInstance.h" />
@@ -141,7 +143,6 @@
     <ClInclude Include="Source\DDSTextureLoader.h" />
     <ClInclude Include="Source\Light.h" />
     <ClInclude Include="Source\ShaderStructs.h" />
-    <ClInclude Include="Source\ModelBinaryLoader.h" />
     <ClInclude Include="Source\ModelDefinition.h" />
     <ClInclude Include="Source\GraphicsLogger.h" />
     <ClInclude Include="Source\ModelFactory.h" />

@@ -2,6 +2,8 @@
 
 #include "ShaderStructs.h"
 
+#include <DirectXMath.h>
+
 #include <array>
 #include <fstream>
 #include <vector>

@@ -120,7 +120,10 @@ public:
 	bool reInitialize(HWND p_Hwnd, int p_ScreenWidht, int p_ScreenHeight, bool p_Fullscreen) override;
 	void resize(unsigned int p_ScreenWidth, unsigned int p_ScreenHeight) override;
 	
-	bool createModel(const char *p_ModelId, ResId p_Res) override;
+	bool createModel(const char *p_ModelId, const CMaterial* p_Materials, size_t p_NumMaterials,
+						const CMaterialBuffer* p_MaterialBuffers, size_t p_NumMaterialBuffers,
+						bool p_Animated, bool p_Transparent, const void* p_VertexData, size_t p_VertexSize, size_t p_NumVert,
+						const DirectX::XMFLOAT3* p_BoundingVolume) override;
 	bool releaseModel(const char *p_ModelID) override;
 	
 	void createShader(const char *p_shaderId, ResId p_Res,
