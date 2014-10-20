@@ -56,7 +56,7 @@ public:
 	 * @param p_ResourceName the resource name of the texture
 	 * @param p_UserData user defined data
 	 */
-	typedef void (*releaseModelTextureCallBack)(ResId p_Res, void *p_Userdata);
+	typedef void (*releaseModelTextureCallBack)(const char* p_ResourceName, void *p_Userdata);
 
 	/**
 	 * Callback for logging.
@@ -205,7 +205,7 @@ public:
 	 * @param p_Res the resource ID of the texture data
 	 * @return true if the texture was successfully loaded, otherwise false
 	 */
-	virtual bool createTexture(const char *p_TextureId, ResId p_Res, const char* p_FileType) = 0;
+	virtual bool createTexture(const char *p_TextureId, const void* p_Data, size_t p_DataLen, const char* p_FileType) = 0;
 
 	/**
 	 * Release a previously created texture.

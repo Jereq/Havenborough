@@ -353,7 +353,7 @@ void Graphics::shutdown(void)
 
 	for(auto &texture : m_TextureList)
 	{
-		SAFE_RELEASE(texture.second.second);
+		SAFE_RELEASE(texture.second);
 	}
 	m_TextureList.clear();
 		
@@ -451,13 +451,13 @@ bool Graphics::releaseModel(const char* p_ResourceName)
 		if (!model.is2D)
 		{
 			for (auto& tex : model.diffuseTexture)
-				m_ReleaseModelTexture(m_TextureList[tex.first].first, m_ReleaseModelTextureUserdata);
+				m_ReleaseModelTexture(tex.first.c_str(), m_ReleaseModelTextureUserdata);
 
 			for (auto& tex : model.normalTexture)
-				m_ReleaseModelTexture(m_TextureList[tex.first].first, m_ReleaseModelTextureUserdata);
+				m_ReleaseModelTexture(tex.first.c_str(), m_ReleaseModelTextureUserdata);
 
 			for (auto& tex : model.specularTexture)
-				m_ReleaseModelTexture(m_TextureList[tex.first].first, m_ReleaseModelTextureUserdata);
+				m_ReleaseModelTexture(tex.first.c_str(), m_ReleaseModelTextureUserdata);
 		}
 
 		m_ModelList.erase(resourceName);
@@ -540,11 +540,10 @@ void Graphics::deleteShader(const char *p_ShaderId)
 		throw GraphicsException("Failed to set delete shader: " + shaderId + " does not exist", __LINE__, __FILE__);
 }
 
-bool Graphics::createTexture(const char *p_TextureId, ResId p_Res, const char* p_FileType)
+bool Graphics::createTexture(const char *p_TextureId, const void* p_Data, size_t p_DataLen, const char* p_FileType)
 {
 	// TODO: Get resource data and type
-	ResourceProxy::Buff buff = m_ResProxy.getData(p_Res);
-	ID3D11ShaderResourceView *resourceView = m_TextureLoader.createTextureFromMemory(buff.data, buff.size, p_FileType);
+	ID3D11ShaderResourceView *resourceView = m_TextureLoader.createTextureFromMemory((const char*)p_Data, p_DataLen, p_FileType);
 	if(!resourceView)
 	{
 		return false;
@@ -553,7 +552,7 @@ bool Graphics::createTexture(const char *p_TextureId, ResId p_Res, const char* p
 	int size = calculateTextureSize(resourceView);
 	VRAMInfo::getInstance()->updateUsage(size);
 
-	m_TextureList.insert(make_pair(p_TextureId, make_pair(p_Res, resourceView)));
+	m_TextureList.insert(make_pair(p_TextureId, resourceView));
 
 	return true;
 }
@@ -563,7 +562,7 @@ bool Graphics::releaseTexture(const char *p_TextureId)
 	std::string textureId(p_TextureId);
 	if(m_TextureList.count(textureId) > 0)
 	{
-		ID3D11ShaderResourceView *&m = m_TextureList.at(textureId).second;
+		ID3D11ShaderResourceView *&m = m_TextureList.at(textureId);
 		int size = calculateTextureSize(m);
 		VRAMInfo::getInstance()->updateUsage(-size);
 
@@ -592,7 +591,7 @@ bool Graphics::releaseParticleEffectDefinition(const char *p_ParticleEffectId)
 	if(m_ParticleEffectDefinitionList.count(id) > 0)
 	{
 		const std::string& texName = m_ParticleEffectDefinitionList.at(id)->textureResourceName;
-		m_ReleaseModelTexture(m_TextureList.at(texName).first, m_ReleaseModelTextureUserdata);
+		m_ReleaseModelTexture(texName.c_str(), m_ReleaseModelTextureUserdata);
 		m_ParticleEffectDefinitionList.erase(id);
 		return true;
 	}
@@ -679,7 +678,7 @@ void Graphics::createBillboard_Object(Vector3 p_Position, Vector2 p_HalfSize, fl
 {
 	if(m_TextureList.count(p_TextureId) > 0)
 	{
-		m_BillboardRenderer->addRenderable(BillboardRenderable(p_Position, p_HalfSize, p_Scale, p_Rotation, m_TextureList.at(p_TextureId).second));
+		m_BillboardRenderer->addRenderable(BillboardRenderable(p_Position, p_HalfSize, p_Scale, p_Rotation, m_TextureList.at(p_TextureId)));
 	}
 	else
 		throw GraphicsException("Texture not found when trying to create a billboard object.",__LINE__, __FILE__);
@@ -1602,7 +1601,7 @@ ParticleEffectDefinition::ptr Graphics::getParticleFromList(string p_Identifier)
 ID3D11ShaderResourceView *Graphics::getTextureFromList(string p_Identifier)
 {
 	if(m_TextureList.count(p_Identifier) > 0)
-		return m_TextureList.at(p_Identifier).second;
+		return m_TextureList.at(p_Identifier);
 	else
 		throw GraphicsException("Failed to get texture from list, vector out of bounds: " + p_Identifier,
 		__LINE__, __FILE__);

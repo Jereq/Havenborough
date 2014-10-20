@@ -66,7 +66,7 @@ private:
 
 	std::map<std::string, Shader*> m_ShaderList;
 	std::map<std::string, ModelDefinition> m_ModelList;
-	std::map<std::string, std::pair<ResId, ID3D11ShaderResourceView*>> m_TextureList;
+	std::map<std::string, ID3D11ShaderResourceView*> m_TextureList;
 	std::map<InstanceId, ModelInstance> m_ModelInstances;
 	std::map<Object2D_Id, Renderable2D> m_2D_Objects;
 	InstanceId m_NextInstanceId;
@@ -135,7 +135,7 @@ public:
 	
 	void deleteShader(const char *p_ShaderId) override;
 
-	bool createTexture(const char *p_TextureId, ResId p_Res, const char* p_FileType) override;
+	bool createTexture(const char *p_TextureId, const void* p_Data, size_t p_DataLen, const char* p_FileType) override;
 	bool releaseTexture(const char *p_TextureId) override;	
 
 	//Particles

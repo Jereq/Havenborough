@@ -235,7 +235,7 @@ void ModelFactory::loadTextures(ModelDefinition &p_Model, unsigned int p_NumOfMa
 ID3D11ShaderResourceView *ModelFactory::getTextureFromList(string p_Identifier)
 {
 	if(m_TextureList->count(p_Identifier) > 0)
-		return m_TextureList->at(p_Identifier).second;
+		return m_TextureList->at(p_Identifier);
 	else
 		throw GraphicsException("Texture was not found. The " + p_Identifier + " identifier does not exist.", __LINE__, __FILE__);
 }

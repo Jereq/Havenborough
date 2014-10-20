@@ -19,7 +19,7 @@ public:
 	typedef void (*loadParticleTextureCallBack)(const char *p_ResourceName, ResId p_Res, void *p_Userdata);
 
 private:
-	std::map<std::string, std::pair<ResId, ID3D11ShaderResourceView*>> *m_TextureList;
+	std::map<std::string, ID3D11ShaderResourceView*> *m_TextureList;
 	std::map<std::string, Shader*> *m_ShaderList;
 	ID3D11SamplerState* m_Sampler;
 
@@ -38,7 +38,7 @@ public:
 	* @param p_ShaderList pointer to the shader map with the available shaders
 	* @param p_Device pointer to the device
 	*/
-	void initialize(std::map<std::string, std::pair<ResId, ID3D11ShaderResourceView*>> *p_TextureList, 
+	void initialize(std::map<std::string, ID3D11ShaderResourceView*> *p_TextureList, 
 		std::map<std::string, Shader*> *p_ShaderList, ID3D11Device *p_Device, ResourceProxy* p_ResProxy);
 
 	/**

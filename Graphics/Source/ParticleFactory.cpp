@@ -15,7 +15,7 @@ ParticleFactory::~ParticleFactory()
 	SAFE_RELEASE(m_Sampler);
 }
 
-void ParticleFactory::initialize(std::map<std::string, std::pair<ResId, ID3D11ShaderResourceView*>> *p_TextureList,
+void ParticleFactory::initialize(std::map<std::string, ID3D11ShaderResourceView*> *p_TextureList,
 	std::map<string, Shader*> *p_ShaderList, ID3D11Device *p_Device, ResourceProxy* p_ResProxy)
 {
 	m_TextureList = p_TextureList;
@@ -172,7 +172,7 @@ ID3D11ShaderResourceView *ParticleFactory::loadTexture(ResId p_Res)
 
 ID3D11ShaderResourceView *ParticleFactory::getTextureFromList(string p_Identifier)
 {
-	return m_TextureList->at(p_Identifier).second;
+	return m_TextureList->at(p_Identifier);
 }
 
 void ParticleFactory::createSampler(ID3D11Device* p_Device)

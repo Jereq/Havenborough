@@ -14,7 +14,7 @@ class ModelFactory
 {
 public:
 	typedef uint32_t ResId;
-	typedef std::map<std::string, std::pair<ResId, ID3D11ShaderResourceView*>> TextureMap;
+	typedef std::map<std::string, ID3D11ShaderResourceView*> TextureMap;
 
 	/**
 	* Callback for loading a texture to a model.
