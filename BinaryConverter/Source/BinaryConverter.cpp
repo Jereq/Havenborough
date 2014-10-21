@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
 			setFileInfo(&loader, &converter);
 			result = converter.writeFile(outputBuffer.data());
 			if(!result){std::cout<<"Error writing file";return EXIT_FAILURE;}
-			std::cout << outputBuffer.data();
+			std::cout << outputBuffer.data() << std::endl;
 			loader.clear();
 			converter.clear();
 			return EXIT_SUCCESS;

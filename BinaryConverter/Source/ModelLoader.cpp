@@ -406,6 +406,7 @@ void ModelLoader::printOutResourceInfo(std::string p_ResourceListLocation)
 	tinyxml2::XMLElement* element;
 	if(error == tinyxml2::XML_ERROR_EMPTY_DOCUMENT || error == tinyxml2::XML_ERROR_FILE_NOT_FOUND)
 	{
+		resource.Clear();
 		element = resource.NewElement("Resources");
 		resource.InsertFirstChild(element);
 	}
