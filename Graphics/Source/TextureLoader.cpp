@@ -92,21 +92,23 @@ ID3D11ShaderResourceView* TextureLoader::createTextureFromFile(const char* p_Fil
 	return textureSRV;
 }
 
-ID3D11ShaderResourceView* TextureLoader::createTextureFromMemory(const char* p_Data, size_t p_DataLen, const char* p_Type)
+ID3D11ShaderResourceView* TextureLoader::createTextureFromMemory(const char* p_Data, size_t p_DataLen)
 {
 	//Pick out file extension
-	const char* result = checkCompability(p_Type);
+	//const char* result = checkCompability(p_Type);
 
 	//If file format is not supported or invalid filename return nullptr.
-	if(strcmp(result, "err") == 0)
-		return nullptr;
+	//if(strcmp(result, "err") == 0)
+	//	return nullptr;
 
 	ID3D11Resource*				textureResource = nullptr;
 	ID3D11ShaderResourceView*	textureSRV = nullptr;
 
+	bool isDDS = (p_DataLen >= 4 && (memcmp(p_Data, "DDS ", 4) == 0));
+
 	HRESULT hr = S_OK;
 	//All supported file formats except dds uses the WIC TextureLoader.
-	if(strcmp(result, "wic") == 0)
+	if(!isDDS)
 	{
 		hr = CreateWICTextureFromMemory(m_Device, m_DeviceContext, (const uint8_t*)p_Data, p_DataLen, 
 																		&textureResource, &textureSRV,0);

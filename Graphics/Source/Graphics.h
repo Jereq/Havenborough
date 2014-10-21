@@ -135,7 +135,7 @@ public:
 	
 	void deleteShader(const char *p_ShaderId) override;
 
-	bool createTexture(const char *p_TextureId, const void* p_Data, size_t p_DataLen, const char* p_FileType) override;
+	bool createTexture(const char *p_TextureId, const void* p_Data, size_t p_DataLen) override;
 	bool releaseTexture(const char *p_TextureId) override;	
 
 	//Particles

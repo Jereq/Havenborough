@@ -205,7 +205,7 @@ public:
 	 * @param p_Res the resource ID of the texture data
 	 * @return true if the texture was successfully loaded, otherwise false
 	 */
-	virtual bool createTexture(const char *p_TextureId, const void* p_Data, size_t p_DataLen, const char* p_FileType) = 0;
+	virtual bool createTexture(const char *p_TextureId, const void* p_Data, size_t p_DataLen) = 0;
 
 	/**
 	 * Release a previously created texture.

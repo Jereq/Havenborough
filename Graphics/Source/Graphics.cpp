@@ -540,10 +540,10 @@ void Graphics::deleteShader(const char *p_ShaderId)
 		throw GraphicsException("Failed to set delete shader: " + shaderId + " does not exist", __LINE__, __FILE__);
 }
 
-bool Graphics::createTexture(const char *p_TextureId, const void* p_Data, size_t p_DataLen, const char* p_FileType)
+bool Graphics::createTexture(const char *p_TextureId, const void* p_Data, size_t p_DataLen)
 {
 	// TODO: Get resource data and type
-	ID3D11ShaderResourceView *resourceView = m_TextureLoader.createTextureFromMemory((const char*)p_Data, p_DataLen, p_FileType);
+	ID3D11ShaderResourceView *resourceView = m_TextureLoader.createTextureFromMemory((const char*)p_Data, p_DataLen);
 	if(!resourceView)
 	{
 		return false;
