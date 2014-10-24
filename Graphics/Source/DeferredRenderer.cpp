@@ -1565,6 +1565,9 @@ void DeferredRenderer::recompileFogShader(void)
 
 bool DeferredRenderer::isVisible(const Renderable& p_Object) const
 {
+	// It fails to much
+	return true;
+
 	XMMATRIX world = XMLoadFloat4x4(&p_Object.world);
 	XMMATRIX view = XMLoadFloat4x4(&m_CurrentView);
 	XMMATRIX proj = XMLoadFloat4x4(&m_CurrentProjection);
